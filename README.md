@@ -1,1 +1,2 @@
-# python-uml-tool
+`pip install -e domain`
+`pip install -e .`
