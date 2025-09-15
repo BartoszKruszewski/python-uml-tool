@@ -1,11 +1,200 @@
 <!doctype html>
-<html>
-  <head>
-    <link rel="stylesheet" href="/static/styles.css">
-    <meta charset="utf-8">
-    <title>Python UML Tool</title>
-  </head>
-  <body>
-    <h1>Welcome to Python UML Tool</h1>
-  </body>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>UML Class Diagram → XMI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/static/styles.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            canvas: '#0b1020',
+            panel: '#0f172a',
+            card: '#0b1220',
+            muted: '#94a3b8',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+
+<body class="bg-canvas text-slate-100">
+  <!-- Layout: left editor (semi‑transparent) | canvas | right tree (semi‑transparent) -->
+  <main class="grid grid-cols-[340px_1fr_300px] h-screen">
+    <!-- Left: Selection editor -->
+    <aside class="border-r border-slate-800 bg-panel/70 backdrop-blur-sm overflow-auto p-3">
+      <div class="space-y-3">
+        <div class="rounded-xl border border-slate-800 bg-card/70 backdrop-blur-sm p-3">
+          <h3 class="text-sm font-semibold mb-2">Selection</h3>
+          <div id="noSelection" class="text-sm text-muted">Nothing selected.</div>
+
+          <div id="classEditor" class="hidden space-y-2">
+            <label class="text-xs text-muted">Class name</label>
+            <input id="clsName" type="text"
+              class="w-full rounded-lg border border-slate-700 bg-[#0b1220]/80 px-2 py-1.5 text-sm" />
+            <label class="text-xs text-muted">Attributes (one per line)</label>
+            <textarea id="clsAttrs"
+              class="w-full rounded-lg border border-slate-700 bg-[#0b1220]/80 px-2 py-1.5 text-sm min-h-[80px]"
+              placeholder="name: String&#10;age: Integer"></textarea>
+            <label class="text-xs text-muted">Operations (one per line)</label>
+            <textarea id="clsOps"
+              class="w-full rounded-lg border border-slate-700 bg-[#0b1220]/80 px-2 py-1.5 text-sm min-h-[80px]"
+              placeholder="toString(): String&#10;save(): void"></textarea>
+            <label class="text-xs text-muted">Module</label>
+            <select id="clsPackage"
+              class="w-full rounded-lg border border-slate-700 bg-[#0b1220]/80 px-2 py-1.5 text-sm"></select>
+            <div class="flex gap-2 pt-1">
+              <button id="btnUpdate"
+                class="px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800/80 hover:border-sky-400 inline-flex items-center gap-2">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path stroke="#cbd5e1" stroke-width="2" d="M5 12h14M12 5v14" />
+                </svg>
+                Save
+              </button>
+              <button id="btnDelete"
+                class="px-3 py-1.5 rounded-lg border border-rose-700 bg-rose-600/80 hover:bg-rose-600 text-rose-50 inline-flex items-center gap-2">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path stroke="#fff" stroke-width="2"
+                    d="M3 6h18M8 6v12m8-12v12M5 6l1 14a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2l1-14M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
+                </svg>
+                Delete
+              </button>
+            </div>
+          </div>
+
+          <div id="packageEditor" class="hidden space-y-2">
+            <label class="text-xs text-muted">Module name</label>
+            <input id="pkgName" type="text"
+              class="w-full rounded-lg border border-slate-700 bg-[#0b1220]/80 px-2 py-1.5 text-sm" />
+            <div class="flex gap-2 pt-1">
+              <button id="btnPkgUpdate"
+                class="px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800/80 hover:border-sky-400 inline-flex items-center gap-2">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path stroke="#cbd5e1" stroke-width="2" d="M5 12h14M12 5v14" />
+                </svg>
+                Save
+              </button>
+              <button id="btnPkgDelete"
+                class="px-3 py-1.5 rounded-lg border border-rose-700 bg-rose-600/80 hover:bg-rose-600 text-rose-50 inline-flex items-center gap-2">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path stroke="#fff" stroke-width="2"
+                    d="M3 6h18M8 6v12m8-12v12M5 6l1 14a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2l1-14M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
+                </svg>
+                Delete Module
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="rounded-xl border border-slate-800 bg-card/70 backdrop-blur-sm p-3">
+          <h3 class="text-sm font-semibold mb-2">Diagram</h3>
+          <label class="text-xs text-muted">Model name</label>
+          <input id="modelName" type="text" value="Diagram"
+            class="w-full rounded-lg border border-slate-700 bg-[#0b1220]/80 px-2 py-1.5 text-sm" />
+          <label class="text-xs text-muted mt-2 block">Grid size (px)</label>
+          <input id="gridSize" type="number" value="16" min="4" step="2"
+            class="w-28 rounded-lg border border-slate-700 bg-[#0b1220]/80 px-2 py-1.5 text-sm" />
+        </div>
+      </div>
+    </aside>
+
+    <!-- Center: Canvas -->
+    <div class="relative" id="canvas">
+      <svg id="svg" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <!-- Grid pattern -->
+          <pattern id="gridPattern" width="16" height="16" patternUnits="userSpaceOnUse">
+            <path d="M 16 0 L 0 0 0 16" fill="none" stroke="#1f2937" stroke-width="1" />
+            <path d="M 80 0 L 0 0 0 80" fill="none" stroke="#283548" stroke-width="1" opacity="0.6" />
+          </pattern>
+          <!-- Markers -->
+          <marker id="arrowAssoc" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+            <path d="M0,0 L12,6 L0,12" fill="none" stroke="#cbd5e1" stroke-width="1.6" />
+          </marker>
+          <marker id="arrowTriHollow" markerWidth="18" markerHeight="18" refX="14" refY="9" orient="auto">
+            <path d="M0,9 L14,18 L14,0 Z" fill="none" stroke="#cbd5e1" stroke-width="1.6" />
+          </marker>
+          <marker id="diamondOpen" markerWidth="18" markerHeight="18" refX="4" refY="9" orient="auto">
+            <path d="M0,9 L4,14 L8,9 L4,4 Z" fill="#0b1020" stroke="#cbd5e1" stroke-width="1.6" />
+          </marker>
+          <marker id="diamondSolid" markerWidth="18" markerHeight="18" refX="4" refY="9" orient="auto">
+            <path d="M0,9 L4,14 L8,9 L4,4 Z" fill="#cbd5e1" stroke="#cbd5e1" stroke-width="1.2" />
+          </marker>
+        </defs>
+        <!-- World group (pannable) -->
+        <g id="viewport">
+          <rect id="gridRect" x="-100000" y="-100000" width="200000" height="200000" fill="url(#gridPattern)"></rect>
+        </g>
+      </svg>
+
+      <!-- Bottom floating toolbar island (bigger padding, translucent + blur) -->
+      <div class="pointer-events-auto fixed left-1/2 bottom-4 -translate-x-1/2 z-20">
+        <div
+          class="rounded-2xl border border-slate-700 bg-panel/70 backdrop-blur-md px-6 py-4 shadow-2xl flex items-center gap-3">
+          <button id="btnAddClass"
+            class="px-3 py-2 rounded-lg border border-slate-700 bg-card/80 hover:border-sky-400 text-slate-100 inline-flex items-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path stroke="#93c5fd" stroke-width="2" d="M12 5v14M5 12h14" />
+            </svg>
+            Class
+          </button>
+          <button id="btnAddPackage"
+            class="px-3 py-2 rounded-lg border border-slate-700 bg-card/80 hover:border-sky-400 text-slate-100 inline-flex items-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path stroke="#93c5fd" stroke-width="2" d="M3 7h18M5 7v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7" />
+            </svg>
+            Module
+          </button>
+          <div class="h-6 w-px bg-slate-700 mx-1"></div>
+          <label class="text-xs text-muted">Link</label>
+          <select id="linkType" class="rounded-lg border border-slate-700 bg-card/80 px-2 py-2 text-sm">
+            <option value="association">Association</option>
+            <option value="aggregation">Aggregation</option>
+            <option value="composition">Composition</option>
+            <option value="dependency">Dependency</option>
+            <option value="realization">Realization</option>
+            <option value="generalization">Generalization</option>
+          </select>
+          <button id="btnLinkMode"
+            class="px-3 py-2 rounded-lg border border-slate-700 bg-slate-800/80 hover:border-sky-400 inline-flex items-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path stroke="#cbd5e1" stroke-width="2" d="M6 12h12M12 6v12" />
+            </svg>
+            Start Link
+          </button>
+          <div class="h-6 w-px bg-slate-700 mx-1"></div>
+          <button id="btnGenerate"
+            class="px-3 py-2 rounded-lg border border-emerald-700 bg-gradient-to-b from-emerald-400 to-emerald-600 text-emerald-950 font-semibold inline-flex items-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path stroke="#064e3b" stroke-width="2" d="M5 12h9m0 0l-3-3m3 3l-3 3M19 5v14" />
+            </svg>
+            Generate
+          </button>
+          <button id="btnClear"
+            class="px-3 py-2 rounded-lg border border-rose-700 bg-gradient-to-b from-rose-400/90 to-rose-600/90 text-rose-950 font-semibold inline-flex items-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path stroke="#3b0710" stroke-width="2"
+                d="M3 6h18M8 6v12m8-12v12M5 6l1 14a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2l1-14" />
+            </svg>
+            Clear
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Model tree -->
+    <aside class="border-l border-slate-800 bg-panel/70 backdrop-blur-sm overflow-auto p-3">
+      <h3 class="text-sm font-semibold mb-2">Model tree</h3>
+      <div id="tree" class="text-sm"></div>
+    </aside>
+  </main>
+
+  <script src="/static/main.js"></script>
+</body>
+
 </html>
