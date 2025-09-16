@@ -1,0 +1,28 @@
+<div class="relative" id="canvas">
+    <svg id="svg" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <!-- Grid pattern -->
+            <pattern id="gridPattern" width="16" height="16" patternUnits="userSpaceOnUse">
+                <path d="M 16 0 L 0 0 0 16" fill="none" stroke="#1f2937" stroke-width="1" />
+                <path d="M 80 0 L 0 0 0 80" fill="none" stroke="#283548" stroke-width="1" opacity="0.6" />
+            </pattern>
+            <!-- Markers -->
+            <marker id="arrowAssoc" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+                <path d="M0,0 L12,6 L0,12" fill="none" stroke="#cbd5e1" stroke-width="1.6" />
+            </marker>
+            <marker id="arrowTriHollow" markerWidth="18" markerHeight="18" refX="14" refY="9" orient="auto">
+                <path d="M0,9 L14,18 L14,0 Z" fill="none" stroke="#cbd5e1" stroke-width="1.6" />
+            </marker>
+            <marker id="diamondOpen" markerWidth="18" markerHeight="18" refX="4" refY="9" orient="auto">
+                <path d="M0,9 L4,14 L8,9 L4,4 Z" fill="#0b1020" stroke="#cbd5e1" stroke-width="1.6" />
+            </marker>
+            <marker id="diamondSolid" markerWidth="18" markerHeight="18" refX="4" refY="9" orient="auto">
+                <path d="M0,9 L4,14 L8,9 L4,4 Z" fill="#cbd5e1" stroke="#cbd5e1" stroke-width="1.2" />
+            </marker>
+        </defs>
+        <!-- World group (pannable) -->
+        <g id="viewport">
+            <rect id="gridRect" x="-100000" y="-100000" width="200000" height="200000" fill="url(#gridPattern)"></rect>
+        </g>
+    </svg>
+</div>
