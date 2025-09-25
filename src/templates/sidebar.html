@@ -1,75 +1,49 @@
-<aside class="border-r border-slate-800 bg-panel/70 backdrop-blur-sm overflow-auto p-3">
-    <div class="space-y-3">
-        <div class="rounded-xl border border-slate-800 bg-card/70 backdrop-blur-sm p-3">
-            <h3 class="text-sm font-semibold mb-2">Selection</h3>
-            <div id="noSelection" class="text-sm text-muted">Nothing selected.</div>
-
-            <div id="classEditor" class="hidden space-y-2">
-                <label class="text-xs text-muted">Class name</label>
-                <input id="clsName" type="text"
-                    class="w-full rounded-lg border border-slate-700 bg-[#0b1220]/80 px-2 py-1.5 text-sm" />
-                <label class="text-xs text-muted">Attributes (one per line)</label>
-                <textarea id="clsAttrs"
-                    class="w-full rounded-lg border border-slate-700 bg-[#0b1220]/80 px-2 py-1.5 text-sm min-h-[80px]"
-                    placeholder="name: String&#10;age: Integer"></textarea>
-                <label class="text-xs text-muted">Operations (one per line)</label>
-                <textarea id="clsOps"
-                    class="w-full rounded-lg border border-slate-700 bg-[#0b1220]/80 px-2 py-1.5 text-sm min-h-[80px]"
-                    placeholder="toString(): String&#10;save(): void"></textarea>
-                <label class="text-xs text-muted">Module</label>
-                <select id="clsPackage"
-                    class="w-full rounded-lg border border-slate-700 bg-[#0b1220]/80 px-2 py-1.5 text-sm"></select>
-                <div class="flex gap-2 pt-1">
-                    <button id="btnUpdate"
-                        class="px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800/80 hover:border-sky-400 inline-flex items-center gap-2">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                            <path stroke="#cbd5e1" stroke-width="2" d="M5 12h14M12 5v14" />
-                        </svg>
-                        Save
-                    </button>
-                    <button id="btnDelete"
-                        class="px-3 py-1.5 rounded-lg border border-rose-700 bg-rose-600/80 hover:bg-rose-600 text-rose-50 inline-flex items-center gap-2">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                            <path stroke="#fff" stroke-width="2"
-                                d="M3 6h18M8 6v12m8-12v12M5 6l1 14a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2l1-14M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
-                        </svg>
-                        Delete
-                    </button>
-                </div>
-            </div>
-
-            <div id="packageEditor" class="hidden space-y-2">
-                <label class="text-xs text-muted">Module name</label>
-                <input id="pkgName" type="text"
-                    class="w-full rounded-lg border border-slate-700 bg-[#0b1220]/80 px-2 py-1.5 text-sm" />
-                <div class="flex gap-2 pt-1">
-                    <button id="btnPkgUpdate"
-                        class="px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800/80 hover:border-sky-400 inline-flex items-center gap-2">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                            <path stroke="#cbd5e1" stroke-width="2" d="M5 12h14M12 5v14" />
-                        </svg>
-                        Save
-                    </button>
-                    <button id="btnPkgDelete"
-                        class="px-3 py-1.5 rounded-lg border border-rose-700 bg-rose-600/80 hover:bg-rose-600 text-rose-50 inline-flex items-center gap-2">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                            <path stroke="#fff" stroke-width="2"
-                                d="M3 6h18M8 6v12m8-12v12M5 6l1 14a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2l1-14M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
-                        </svg>
-                        Delete Module
-                    </button>
-                </div>
-            </div>
+<aside class="border border-slate-800 bg-card/70 backdrop-blur-sm p-3">
+    <div id="noSelection" class="text-sm text-muted">Nothing selected.</div>
+    <div id="classEditor" class="hidden space-y-2">
+        <label class="text-xs text-muted">Class name</label>
+        <input id="clsName" type="text"
+            class="w-full rounded-lg border border-slate-700 bg-[#0b1220]/80 px-2 py-1.5 text-sm" />
+        <label class="text-xs text-muted">Attributes (one per line)</label>
+        <textarea id="clsAttrs"
+            class="w-full rounded-lg border border-slate-700 bg-[#0b1220]/80 px-2 py-1.5 text-sm min-h-[80px]"
+            placeholder="name: String&#10;age: Integer"></textarea>
+        <label class="text-xs text-muted">Operations (one per line)</label>
+        <textarea id="clsOps"
+            class="w-full rounded-lg border border-slate-700 bg-[#0b1220]/80 px-2 py-1.5 text-sm min-h-[80px]"
+            placeholder="toString(): String&#10;save(): void"></textarea>
+        <label class="text-xs text-muted">Module</label>
+        <select id="clsPackage"
+            class="w-full rounded-lg border border-slate-700 bg-[#0b1220]/80 px-2 py-1.5 text-sm"></select>
+        <div class="flex gap-2 pt-1">
+            <button id="btnUpdate"
+                class="px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800/80 hover:border-sky-400 inline-flex items-center gap-2">
+                <i class="fas fa-floppy-disk"></i>
+                Save
+            </button>
+            <button id="btnDelete"
+                class="px-3 py-1.5 rounded-lg border border-rose-700 bg-rose-600/80 hover:bg-rose-600 text-rose-50 inline-flex items-center gap-2">
+                <i class="fas fa-trash"></i>
+                Delete
+            </button>
         </div>
+    </div>
 
-        <div class="rounded-xl border border-slate-800 bg-card/70 backdrop-blur-sm p-3">
-            <h3 class="text-sm font-semibold mb-2">Diagram</h3>
-            <label class="text-xs text-muted">Model name</label>
-            <input id="modelName" type="text" value="Diagram"
-                class="w-full rounded-lg border border-slate-700 bg-[#0b1220]/80 px-2 py-1.5 text-sm" />
-            <label class="text-xs text-muted mt-2 block">Grid size (px)</label>
-            <input id="gridSize" type="number" value="16" min="4" step="2"
-                class="w-28 rounded-lg border border-slate-700 bg-[#0b1220]/80 px-2 py-1.5 text-sm" />
+    <div id="packageEditor" class="hidden space-y-2">
+        <label class="text-xs text-muted">Module name</label>
+        <input id="pkgName" type="text"
+            class="w-full rounded-lg border border-slate-700 bg-[#0b1220]/80 px-2 py-1.5 text-sm" />
+        <div class="flex gap-2 pt-1">
+            <button id="btnPkgUpdate"
+                class="px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800/80 hover:border-sky-400 inline-flex items-center gap-2">
+                <i class="fas fa-floppy-disk"></i>
+                Save
+            </button>
+            <button id="btnPkgDelete"
+                class="px-3 py-1.5 rounded-lg border border-rose-700 bg-rose-600/80 hover:bg-rose-600 text-rose-50 inline-flex items-center gap-2">
+                <i class="fas fa-trash"></i>
+                Delete
+            </button>
         </div>
     </div>
 </aside>

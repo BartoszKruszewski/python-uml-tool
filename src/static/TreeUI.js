@@ -4,13 +4,11 @@ export default class TreeUI {
     this.state = state;
     this.onSelect = onSelect;
   }
-  render(modelName) {
+  render() {
     const div = document.createElement("div");
     div.className = "space-y-2";
     const root = document.createElement("div");
-    root.innerHTML = `<div class="font-semibold">Model: ${
-      modelName || "Diagram"
-    }</div>`;
+    root.innerHTML = "";
     div.appendChild(root);
 
     this.state.packages.forEach((p) => {

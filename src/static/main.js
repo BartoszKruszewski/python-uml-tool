@@ -25,7 +25,6 @@ const btnDelete = document.getElementById("btnDelete");
 const inPkgName = document.getElementById("pkgName");
 const btnPkgUpdate = document.getElementById("btnPkgUpdate");
 const btnPkgDelete = document.getElementById("btnPkgDelete");
-const inModelName = document.getElementById("modelName");
 const inGridSize = document.getElementById("gridSize");
 
 const app = new App({
@@ -52,6 +51,5 @@ const app = new App({
   inPkgName,
   btnPkgUpdate,
   btnPkgDelete,
-  inModelName,
   inGridSize,
 });

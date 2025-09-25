@@ -1,5 +1,5 @@
 export default class Exporter {
-  buildXMI(state, modelName) {
+  buildXMI(state) {
     const xmiNS = 'http://schema.omg.org/spec/XMI/2.1', umlNS = 'http://schema.omg.org/spec/UML/2.1';
     const doc = document.implementation.createDocument('', '', null);
     const xmi = doc.createElementNS(xmiNS, 'xmi:XMI');
@@ -8,7 +8,7 @@ export default class Exporter {
 
     const model = doc.createElementNS(umlNS, 'uml:Model');
     model.setAttribute('xmi:id', 'model1');
-    model.setAttribute('name', modelName || 'Diagram');
+    model.setAttribute('name', 'Project');
 
     const pkgNodeById = new Map();
     state.packages.forEach(pkg => {

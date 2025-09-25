@@ -1,18 +1,14 @@
-<div class="pointer-events-auto fixed left-1/2 bottom-4 -translate-x-1/2 z-20">
+<div class="pointer-events-auto fixed left-1/2 bottom-4 -translate-x-1/2 z-20 ">
     <div
         class="rounded-2xl border border-slate-700 bg-panel/70 backdrop-blur-md px-6 py-4 shadow-2xl flex items-center gap-3">
         <button id="btnAddClass"
             class="px-3 py-2 rounded-lg border border-slate-700 bg-card/80 hover:border-sky-400 text-slate-100 inline-flex items-center gap-2">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                <path stroke="#93c5fd" stroke-width="2" d="M12 5v14M5 12h14" />
-            </svg>
+            <i class="fas fa-code"></i>
             Class
         </button>
         <button id="btnAddPackage"
             class="px-3 py-2 rounded-lg border border-slate-700 bg-card/80 hover:border-sky-400 text-slate-100 inline-flex items-center gap-2">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                <path stroke="#93c5fd" stroke-width="2" d="M3 7h18M5 7v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7" />
-            </svg>
+            <i class="fas fa-folder"></i>
             Module
         </button>
         <div class="h-6 w-px bg-slate-700 mx-1"></div>
@@ -27,26 +23,23 @@
         </select>
         <button id="btnLinkMode"
             class="px-3 py-2 rounded-lg border border-slate-700 bg-slate-800/80 hover:border-sky-400 inline-flex items-center gap-2">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                <path stroke="#cbd5e1" stroke-width="2" d="M6 12h12M12 6v12" />
-            </svg>
+            <i class="fas fa-plus"></i>
             Start Link
         </button>
         <div class="h-6 w-px bg-slate-700 mx-1"></div>
         <button id="btnGenerate"
             class="px-3 py-2 rounded-lg border border-emerald-700 bg-gradient-to-b from-emerald-400 to-emerald-600 text-emerald-950 font-semibold inline-flex items-center gap-2">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                <path stroke="#064e3b" stroke-width="2" d="M5 12h9m0 0l-3-3m3 3l-3 3M19 5v14" />
-            </svg>
+            <i class="fas fa-microchip"></i>
             Generate
         </button>
         <button id="btnClear"
             class="px-3 py-2 rounded-lg border border-rose-700 bg-gradient-to-b from-rose-400/90 to-rose-600/90 text-rose-950 font-semibold inline-flex items-center gap-2">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                <path stroke="#3b0710" stroke-width="2"
-                    d="M3 6h18M8 6v12m8-12v12M5 6l1 14a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2l1-14" />
-            </svg>
+            <i class="fas fa-trash"></i>
             Clear
         </button>
+        <div class="h-6 w-px bg-slate-700 mx-1"></div>
+        <label class="text-xs text-muted">Grid size (px)</label>
+        <input id="gridSize" type="number" value="16" min="4" step="2"
+                class="w-28 rounded-lg border border-slate-700 bg-[#0b1220]/80 px-2 py-1.5 text-sm" />
     </div>
 </div>

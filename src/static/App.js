@@ -111,7 +111,7 @@ export default class App {
       this.scheduleRender();
     });
     refs.btnGenerate.addEventListener("click", async () => {
-      const xml = this.exporter.buildXMI(this.state, refs.inModelName.value);
+      const xml = this.exporter.buildXMI(this.state);
       await this.generator.generate(xml);
     });
 
@@ -140,7 +140,7 @@ export default class App {
       );
       this.renderer.render(step);
       this.editors.updateEditors();
-      this.tree.render(this.refs.inModelName.value);
+      this.tree.render();
     });
   }
 }
