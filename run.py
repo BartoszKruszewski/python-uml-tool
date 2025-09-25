@@ -1,5 +1,4 @@
-from uml_tool.Main import main
-
+from uml_tool.main import main
 
 if __name__ == "__main__":
     main()

@@ -1,6 +1,7 @@
 import os
 import shutil
 import tempfile
+import traceback
 from pathlib import Path
 
 import uvicorn
@@ -13,13 +14,12 @@ from fastapi.exceptions import HTTPException
 from fastapi.requests import Request
 from fastapi.responses import (
     FileResponse,
-    HTMLResponse,
+    HTMLResponse
 )
-import traceback
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from project_generator.main import generate_project
 from project_generator.exceptions import CustomException
+from project_generator.main import generate_project
 from starlette.background import BackgroundTask
 
 from uml_tool.Config import Config
