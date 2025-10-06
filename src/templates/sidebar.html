@@ -1,46 +1,48 @@
-<aside class="border border-slate-800 bg-card/70 backdrop-blur-sm p-3">
-    <div id="noSelection" class="text-sm text-muted">Nothing selected.</div>
-    <div id="classEditor" class="hidden space-y-2">
-        <label class="text-xs text-muted">Class name</label>
+<aside class="border bg-card p-3">
+    <div id="noSelection" class="small text-muted">Nothing selected.</div>
+
+    <div id="classEditor" class="d-flex flex-column gap-2">
+        <label class="form-label text-muted">Class name</label>
         <input id="clsName" type="text"
-            class="w-full rounded-lg border border-slate-700 bg-[#0b1220]/80 px-2 py-1.5 text-sm" />
-        <label class="text-xs text-muted">Attributes (one per line)</label>
-        <textarea id="clsAttrs"
-            class="w-full rounded-lg border border-slate-700 bg-[#0b1220]/80 px-2 py-1.5 text-sm min-h-[80px]"
-            placeholder="name: String&#10;age: Integer"></textarea>
-        <label class="text-xs text-muted">Operations (one per line)</label>
-        <textarea id="clsOps"
-            class="w-full rounded-lg border border-slate-700 bg-[#0b1220]/80 px-2 py-1.5 text-sm min-h-[80px]"
-            placeholder="toString(): String&#10;save(): void"></textarea>
-        <label class="text-xs text-muted">Module</label>
+            class="form-control form-control-sm text-light bg-card border rounded-3" />
+
+        <label class="form-label text-muted">Attributes (one per line)</label>
+        <textarea id="clsAttrs" class="form-control form-control-sm text-light bg-card border rounded-3"
+            style="min-height:80px;" placeholder="name: String&#10;age: Integer"></textarea>
+
+        <label class="form-label text-muted">Operations (one per line)</label>
+        <textarea id="clsOps" class="form-control form-control-sm text-light bg-card border rounded-3"
+            style="min-height:80px;" placeholder="toString(): String&#10;save(): void"></textarea>
+
+        <label class="form-label text-muted">Module</label>
         <select id="clsPackage"
-            class="w-full rounded-lg border border-slate-700 bg-[#0b1220]/80 px-2 py-1.5 text-sm"></select>
-        <div class="flex gap-2 pt-1">
+            class="form-select form-select-sm text-light bg-card border rounded-3 w-100"></select>
+
+        <div class="d-flex gap-3 pt-2">
             <button id="btnUpdate"
-                class="px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800/80 hover:border-sky-400 inline-flex items-center gap-2">
+                class="btn btn-outline-secondary d-inline-flex align-items-center gap-2 px-3 py-2 rounded-3">
                 <i class="fas fa-floppy-disk"></i>
                 Save
             </button>
-            <button id="btnDelete"
-                class="px-3 py-1.5 rounded-lg border border-rose-700 bg-rose-600/80 hover:bg-rose-600 text-rose-50 inline-flex items-center gap-2">
+            <button id="btnDelete" class="btn btn-danger d-inline-flex align-items-center gap-2 px-3 py-2 rounded-3">
                 <i class="fas fa-trash"></i>
                 Delete
             </button>
         </div>
     </div>
 
-    <div id="packageEditor" class="hidden space-y-2">
-        <label class="text-xs text-muted">Module name</label>
+    <div id="packageEditor" class="d-flex flex-column gap-2 mt-3">
+        <label class="form-label text-muted">Module name</label>
         <input id="pkgName" type="text"
-            class="w-full rounded-lg border border-slate-700 bg-[#0b1220]/80 px-2 py-1.5 text-sm" />
-        <div class="flex gap-2 pt-1">
+            class="form-control form-control-sm text-light bg-card border rounded-3" />
+
+        <div class="d-flex gap-3 pt-2">
             <button id="btnPkgUpdate"
-                class="px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800/80 hover:border-sky-400 inline-flex items-center gap-2">
+                class="btn btn-outline-secondary d-inline-flex align-items-center gap-2 px-3 py-2 rounded-3">
                 <i class="fas fa-floppy-disk"></i>
                 Save
             </button>
-            <button id="btnPkgDelete"
-                class="px-3 py-1.5 rounded-lg border border-rose-700 bg-rose-600/80 hover:bg-rose-600 text-rose-50 inline-flex items-center gap-2">
+            <button id="btnPkgDelete" class="btn btn-danger d-inline-flex align-items-center gap-2 px-3 py-2 rounded-3">
                 <i class="fas fa-trash"></i>
                 Delete
             </button>

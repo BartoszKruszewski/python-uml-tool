@@ -16,6 +16,7 @@ export default class GenerateService {
   }
   async generate(xml) {
     try {
+      console.log(xml);
       this.setBusy(true);
       const xmlBlob = new Blob([xml], { type: "application/xml" });
       const xmlFile = new File([xmlBlob], "diagram.xmi", {

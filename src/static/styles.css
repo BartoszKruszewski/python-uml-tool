@@ -1,16 +1,80 @@
+:root {
+    --canvas: #0b1020;
+    --panel: #0f172a;
+    --card: #0b1220;
+    --muted: #94a3b8;
+    --primary: #38bdf8;
+    --selected: #22c55e;
+    --alpha: 70%;
+    --border: #1f2937;
+    --text: #e2e8f0;
+    --font-sans: Consolas;
+}
+
+/* Font */
+
+body {
+    font-family: var(--font-sans);
+}
+
+/* Colors */
+
+.bg-canvas {
+    background-color: var(--canvas) !important;
+}
+
+.bg-panel {
+    background-color: var(--panel) !important;
+}
+
+.bg-card {
+    background-color: var(--card) !important;
+}
+
+.text-muted {
+    color: var(--muted) !important;
+}
+
+.border {
+    border-color: var(--border) !important;
+}
+
+/* Layout */
+
+.main-grid {
+    display: grid;
+    grid-template-columns: 1fr 5fr 1fr;
+    height: 100vh;
+}
+
+@media (max-width: 992px) {
+    .main-grid {
+        grid-template-columns: 1fr 2fr 1fr;
+    }
+}
+
+/* SVG */
+
 svg {
     width: 100%;
     height: 100%;
     display: block;
 }
 
+svg text {
+    font-size: 12px;
+    fill: var(--text);
+}
+
+/* Nodes */
+
 .node {
     cursor: move;
 }
 
 .node rect {
-    fill: #0b1220;
-    stroke: #38bdf8;
+    fill: var(--card);
+    stroke: var(--primary);
     stroke-width: 1.6;
     rx: 10;
     ry: 10;
@@ -18,24 +82,66 @@ svg {
 }
 
 .node.selected rect {
-    stroke: #22c55e;
+    stroke: var(--selected);
     stroke-width: 2;
 }
 
 .node .title {
     font-weight: 700;
-    fill: #e2e8f0;
+    fill: var(--text);;
 }
 
-.node text {
-    fill: #cbd5e1;
-    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial;
-    font-size: 12px;
+/* Packages */
+
+.package rect.body {
+    fill: var(--card);
+    stroke: var(--muted);
+    stroke-width: 1.4;
+    rx: 12;
+    ry: 12;
+    filter: drop-shadow(0 6px 16px rgba(0, 0, 0, .5));
 }
 
-.compartment line {
-    stroke: #334155;
+.package rect.header {
+    fill: var(--panel);
+    stroke: var(--primary);
+    stroke-width: 1.2;
+    rx: 6;
+    ry: 6;
 }
+
+.package text {
+    fill: var(--text);
+    font-weight: 600;
+}
+
+/* Handles */
+
+.handle {
+    fill: var(--selected);
+}
+
+.handle.se,
+.handle.nw {
+    cursor: nwse-resize;
+}
+
+.handle.ne,
+.handle.sw {
+    cursor: nesw-resize;
+}
+
+.handle.n,
+.handle.s {
+    cursor: ns-resize;
+}
+
+.handle.e,
+.handle.w {
+    cursor: ew-resize;
+}
+
+/* Associations */
 
 .edge {
     stroke: #cbd5e1;
@@ -70,55 +176,7 @@ svg {
     marker-start: url(#diamondSolid);
 }
 
-.package rect.body {
-    fill: #0a0f1d;
-    stroke: #64748b;
-    stroke-width: 1.4;
-    rx: 12;
-    ry: 12;
-    filter: drop-shadow(0 6px 16px rgba(0, 0, 0, .5));
-}
-
-.package rect.header {
-    fill: #0f1a33;
-    stroke: #3b82f6;
-    stroke-width: 1.2;
-    rx: 6;
-    ry: 6;
-}
-
-.package text {
-    fill: #e2e8f0;
-    font-weight: 600;
-    font-size: 12px;
-    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial;
-}
-
-.handle {
-    fill: #22c55e;
-    stroke: #064e3b;
-    stroke-width: 1;
-}
-
-.handle.se,
-.handle.nw {
-    cursor: nwse-resize;
-}
-
-.handle.ne,
-.handle.sw {
-    cursor: nesw-resize;
-}
-
-.handle.n,
-.handle.s {
-    cursor: ns-resize;
-}
-
-.handle.e,
-.handle.w {
-    cursor: ew-resize;
-}
+/* Cursors */
 
 #gridRect {
     cursor: grab;

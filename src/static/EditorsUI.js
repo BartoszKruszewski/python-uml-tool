@@ -87,15 +87,15 @@ export default class EditorsUI {
     } = this.refs;
     const sel = this.state.selected;
     if (!sel) {
-      noSel.classList.remove("hidden");
-      classEditor.classList.add("hidden");
-      packageEditor.classList.add("hidden");
+      noSel.classList.remove("d-none");
+      classEditor.classList.add("d-none");
+      packageEditor.classList.add("d-none");
       return;
     }
-    noSel.classList.add("hidden");
+    noSel.classList.add("d-none");
     if (sel.type === "class") {
-      classEditor.classList.remove("hidden");
-      packageEditor.classList.add("hidden");
+      classEditor.classList.remove("d-none");
+      packageEditor.classList.add("d-none");
       const c = this.state.classById(sel.id);
       inClsName.value = c.name;
       inAttrs.value = c.attributes.join("\n");
@@ -103,8 +103,8 @@ export default class EditorsUI {
       this.refreshPackageSelect();
       inClsPkg.value = c.packageId || "";
     } else {
-      packageEditor.classList.remove("hidden");
-      classEditor.classList.add("hidden");
+      packageEditor.classList.remove("d-none");
+      classEditor.classList.add("d-none");
       const p = this.state.packageById(sel.id);
       inPkgName.value = p.name;
     }

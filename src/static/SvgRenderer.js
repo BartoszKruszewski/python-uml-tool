@@ -199,21 +199,11 @@ export default class SvgRenderer {
       g.appendChild(title);
       y += 28;
 
-      const sep1 = this.svgLine(0, y, c.w, y);
-      sep1.setAttribute("class", "compartment");
-      g.appendChild(sep1);
-      y += 16;
-
       c.attributes.forEach((a) => {
         g.appendChild(this.svgText(10, y, a));
         y += 18;
       });
       if (c.attributes.length === 0) y += 8;
-
-      const sep2 = this.svgLine(0, y, c.w, y);
-      sep2.setAttribute("class", "compartment");
-      g.appendChild(sep2);
-      y += 16;
 
       c.operations.forEach((o) => {
         g.appendChild(this.svgText(10, y, o));
