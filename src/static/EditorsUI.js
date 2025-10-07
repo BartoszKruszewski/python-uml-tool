@@ -1,112 +1,116 @@
 export default class EditorsUI {
-  constructor(state, refs, onChange) {
-    this.state = state;
-    this.refs = refs; // {noSel, classEditor, packageEditor, inClsName, inAttrs, inOps, inClsPkg, btnUpdate, btnDelete, inPkgName, btnPkgUpdate, btnPkgDelete}
-    this.onChange = onChange;
+  constructor(diagramState, references, onChangeCallback) {
+    this.diagramState = diagramState;
+    this.references = references; // {noSelectionPanel, classEditorPanel, packageEditorPanel, inputClassName, inputClassAttributes, inputClassOperations, inputClassPackage, buttonUpdateClass, buttonDeleteClass, inputPackageName, buttonUpdatePackage, buttonDeletePackage}
+    this.onChangeCallback = onChangeCallback;
     // bind buttons
-    refs.btnUpdate.addEventListener("click", () => this.applyClassEditor());
-    refs.btnDelete.addEventListener("click", () => {
-      const s = this.state.selected;
-      if (s?.type === "class") {
-        this.state.removeClass(s.id);
-        this.state.clearSelection();
-        this.onChange();
+    references.buttonUpdateClass.addEventListener("click", () => this.applyClassEditor());
+    references.buttonDeleteClass.addEventListener("click", () => {
+      const selected = this.diagramState.selectedElement;
+      if (selected?.type === "class") {
+        this.diagramState.removeClass(selected.id);
+        this.diagramState.clearSelection();
+        this.onChangeCallback();
       }
     });
-    refs.btnPkgUpdate.addEventListener("click", () =>
+    references.buttonUpdatePackage.addEventListener("click", () =>
       this.applyPackageEditor()
     );
-    refs.btnPkgDelete.addEventListener("click", () => {
-      const s = this.state.selected;
-      if (s?.type === "package") {
-        this.state.removePackage(s.id);
-        this.state.clearSelection();
+    references.buttonDeletePackage.addEventListener("click", () => {
+      const selected = this.diagramState.selectedElement;
+      if (selected?.type === "package") {
+        this.diagramState.removePackage(selected.id);
+        this.diagramState.clearSelection();
         this.refreshPackageSelect();
-        this.onChange();
+        this.onChangeCallback();
       }
     });
   }
+
   refreshPackageSelect() {
-    const { inClsPkg } = this.refs;
-    const val = inClsPkg.value;
-    inClsPkg.innerHTML = "";
-    const optNone = document.createElement("option");
-    optNone.value = "";
-    optNone.textContent = "(none)";
-    inClsPkg.appendChild(optNone);
-    this.state.packages.forEach((p) => {
-      const o = document.createElement("option");
-      o.value = p.id;
-      o.textContent = p.name;
-      inClsPkg.appendChild(o);
+    const { inputClassPackage } = this.references;
+    const previousValue = inputClassPackage.value;
+    inputClassPackage.innerHTML = "";
+    const optionNone = document.createElement("option");
+    optionNone.value = "";
+    optionNone.textContent = "(none)";
+    inputClassPackage.appendChild(optionNone);
+    this.diagramState.packageList.forEach((packageElement) => {
+      const option = document.createElement("option");
+      option.value = packageElement.id;
+      option.textContent = packageElement.name;
+      inputClassPackage.appendChild(option);
     });
-    if (val) inClsPkg.value = val;
+    if (previousValue) inputClassPackage.value = previousValue;
   }
+
   applyClassEditor() {
-    const sel = this.state.selected;
-    if (!sel || sel.type !== "class") return;
-    const c = this.state.classById(sel.id);
-    const { inClsName, inAttrs, inOps, inClsPkg } = this.refs;
-    c.name = inClsName.value.trim() || "Class";
-    c.attributes = inAttrs.value
+    const selected = this.diagramState.selectedElement;
+    if (!selected || selected.type !== "class") return;
+    const classElement = this.diagramState.getClassById(selected.id);
+    const { inputClassName, inputClassAttributes, inputClassOperations, inputClassPackage } = this.references;
+    classElement.name = inputClassName.value.trim() || "Class";
+    classElement.attributes = inputClassAttributes.value
       .split("\n")
-      .map((s) => s.trim())
+      .map((attribute) => attribute.trim())
       .filter(Boolean);
-    c.operations = inOps.value
+    classElement.operations = inputClassOperations.value
       .split("\n")
-      .map((s) => s.trim())
+      .map((operation) => operation.trim())
       .filter(Boolean);
-    c.packageId = inClsPkg.value || null;
-    const base = 28,
-      line = 18,
-      sep = 12;
-    const attrH = c.attributes.length ? c.attributes.length * line + sep : sep;
-    const opH = c.operations.length ? c.operations.length * line + sep : sep;
-    c.h = base + sep + attrH + opH + 10;
-    this.onChange();
+    classElement.packageId = inputClassPackage.value || null;
+    const baseHeight = 28,
+      lineHeight = 18,
+      separator = 12;
+    const attributesHeight = classElement.attributes.length ? classElement.attributes.length * lineHeight + separator : separator;
+    const operationsHeight = classElement.operations.length ? classElement.operations.length * lineHeight + separator : separator;
+    classElement.h = baseHeight + separator + attributesHeight + operationsHeight + 10;
+    this.onChangeCallback();
   }
+
   applyPackageEditor() {
-    const sel = this.state.selected;
-    if (!sel || sel.type !== "package") return;
-    const p = this.state.packageById(sel.id);
-    const { inPkgName } = this.refs;
-    p.name = inPkgName.value.trim() || "Module";
-    this.onChange();
+    const selected = this.diagramState.selectedElement;
+    if (!selected || selected.type !== "package") return;
+    const packageElement = this.diagramState.getPackageById(selected.id);
+    const { inputPackageName } = this.references;
+    packageElement.name = inputPackageName.value.trim() || "Module";
+    this.onChangeCallback();
     this.refreshPackageSelect();
   }
+
   updateEditors() {
     const {
-      noSel,
-      classEditor,
-      packageEditor,
-      inClsName,
-      inAttrs,
-      inOps,
-      inClsPkg,
-      inPkgName,
-    } = this.refs;
-    const sel = this.state.selected;
-    if (!sel) {
-      noSel.classList.remove("d-none");
-      classEditor.classList.add("d-none");
-      packageEditor.classList.add("d-none");
+      noSelectionPanel,
+      classEditorPanel,
+      packageEditorPanel,
+      inputClassName,
+      inputClassAttributes,
+      inputClassOperations,
+      inputClassPackage,
+      inputPackageName,
+    } = this.references;
+    const selected = this.diagramState.selectedElement;
+    if (!selected) {
+      noSelectionPanel.classList.remove("d-none");
+      classEditorPanel.classList.add("d-none");
+      packageEditorPanel.classList.add("d-none");
       return;
     }
-    noSel.classList.add("d-none");
-    if (sel.type === "class") {
-      classEditor.classList.remove("d-none");
-      packageEditor.classList.add("d-none");
-      const c = this.state.classById(sel.id);
-      inClsName.value = c.name;
-      inAttrs.value = c.attributes.join("\n");
-      inOps.value = c.operations.join("\n");
+    noSelectionPanel.classList.add("d-none");
+    if (selected.type === "class") {
+      classEditorPanel.classList.remove("d-none");
+      packageEditorPanel.classList.add("d-none");
+      const classElement = this.diagramState.getClassById(selected.id);
+      inputClassName.value = classElement.name;
+      inputClassAttributes.value = classElement.attributes.join("\n");
+      inputClassOperations.value = classElement.operations.join("\n");
       this.refreshPackageSelect();
-      inClsPkg.value = c.packageId || "";
+      inputClassPackage.value = classElement.packageId || "";
     } else {
-      packageEditor.classList.remove("d-none");
-      classEditor.classList.add("d-none");
-      const p = this.state.packageById(sel.id);
-      inPkgName.value = p.name;
+      packageEditorPanel.classList.remove("d-none");
+      classEditorPanel.classList.add("d-none");
+      const packageElement = this.diagramState.getPackageById(selected.id);
+      inputPackageName.value = packageElement.name;
     }
   }
 }

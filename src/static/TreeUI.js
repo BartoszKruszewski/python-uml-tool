@@ -1,81 +1,95 @@
 export default class TreeUI {
-  constructor(container, state, onSelect) {
-    this.container = container;
-    this.state = state;
-    this.onSelect = onSelect;
+  constructor(treeElement, diagramState, onChangeCallback) {
+    this.treeElement = treeElement;
+    this.diagramState = diagramState;
+    this.onChangeCallback = onChangeCallback;
+    this.treeElement.addEventListener("click", (event) => this.onClick(event));
+    this.treeElement.addEventListener("dblclick", (event) => this.onDoubleClick(event));
+    this.treeElement.addEventListener("keydown", (event) => this.onKeyDown(event));
+    this.selectedPackageId = null;
+    this.editingPackageId = null;
   }
+
   render() {
-    const div = document.createElement("div");
-    div.className = "space-y-2";
-    const root = document.createElement("div");
-    root.innerHTML = "";
-    div.appendChild(root);
-
-    this.state.packages.forEach((p) => {
-      const wrap = document.createElement("div");
-      wrap.className = "pl-2";
-      const h = document.createElement("div");
-      h.className = "cursor-pointer hover:text-sky-300";
-      h.textContent = "📦 " + p.name;
-      h.onclick = () => this.onSelect("package", p.id);
-      wrap.appendChild(h);
-      const ul = document.createElement("ul");
-      ul.className = "pl-4 list-disc";
-      this.state.classes
-        .filter((c) => c.packageId === p.id)
-        .forEach((c) => {
-          const li = document.createElement("li");
-          li.className = "cursor-pointer hover:text-sky-300";
-          li.textContent = "📄 " + c.name;
-          li.onclick = () => this.onSelect("class", c.id);
-          ul.appendChild(li);
-        });
-      wrap.appendChild(ul);
-      div.appendChild(wrap);
+    this.treeElement.innerHTML = "";
+    const unorderedListElement = document.createElement("ul");
+    this.diagramState.packageList.forEach((packageElement) => {
+      unorderedListElement.appendChild(this.renderPackage(packageElement));
     });
-
-    const orphans = this.state.classes.filter((c) => !c.packageId);
-    if (orphans.length) {
-      const wrap = document.createElement("div");
-      wrap.className = "pl-2";
-      const h = document.createElement("div");
-      h.textContent = "📁 (no module)";
-      wrap.appendChild(h);
-      const ul = document.createElement("ul");
-      ul.className = "pl-4 list-disc";
-      orphans.forEach((c) => {
-        const li = document.createElement("li");
-        li.className = "cursor-pointer hover:text-sky-300";
-        li.textContent = "📄 " + c.name;
-        li.onclick = () => this.onSelect("class", c.id);
-        ul.appendChild(li);
-      });
-      wrap.appendChild(ul);
-      div.appendChild(wrap);
-    }
-
-    if (this.state.relations.length) {
-      const rel = document.createElement("div");
-      rel.className = "pl-2";
-      const h = document.createElement("div");
-      h.textContent = "🔗 Relations";
-      rel.appendChild(h);
-      const ul = document.createElement("ul");
-      ul.className = "pl-4 list-disc";
-      this.state.relations.forEach((r) => {
-        const a = this.state.classById(r.source),
-          b = this.state.classById(r.target);
-        const li = document.createElement("li");
-        li.textContent = `${r.type}: ${a?.name || r.source} → ${
-          b?.name || r.target
-        }`;
-        ul.appendChild(li);
-      });
-      rel.appendChild(ul);
-      div.appendChild(rel);
-    }
-
-    this.container.innerHTML = "";
-    this.container.appendChild(div);
+    this.treeElement.appendChild(unorderedListElement);
   }
-}
+
+  renderPackage(packageElement) {
+    const listItemElement = document.createElement("li");
+    listItemElement.textContent = packageElement.name;
+    listItemElement.tabIndex = 0;
+    listItemElement.dataset.id = packageElement.id;
+    listItemElement.className = "package";
+    if (this.selectedPackageId === packageElement.id) listItemElement.classList.add("selected");
+
+    // Render classes belonging to this package
+    const classList = this.diagramState.classList.filter(
+      (classElement) => classElement.packageId === packageElement.id
+    );
+    if (classList.length > 0) {
+      const classUl = document.createElement("ul");
+      classList.forEach((classElement) => {
+        const classLi = document.createElement("li");
+        classLi.textContent = classElement.name;
+        classLi.tabIndex = 0;
+        classLi.dataset.id = classElement.id;
+        classLi.className = "class";
+        if (
+          this.diagramState.selectedElement?.type === "class" &&
+          this.diagramState.selectedElement.id === classElement.id
+        ) {
+          classLi.classList.add("selected");
+        }
+        classUl.appendChild(classLi);
+      });
+      listItemElement.appendChild(classUl);
+    }
+    return listItemElement;
+  }
+
+    onClick(event) {
+      const listItemElement = event.target.closest("li");
+      if (!listItemElement) return;
+      this.selectedPackageId = listItemElement.dataset.id;
+      this.onChangeCallback?.(this.selectedPackageId);
+      this.render();
+    }
+
+    onDoubleClick(event) {
+      const listItemElement = event.target.closest("li");
+      if (!listItemElement) return;
+      this.editingPackageId = listItemElement.dataset.id;
+      this.render();
+      const inputElement = document.createElement("input");
+      inputElement.value = listItemElement.textContent;
+      listItemElement.textContent = "";
+      listItemElement.appendChild(inputElement);
+      inputElement.focus();
+      inputElement.addEventListener("blur", () => {
+        this.diagramState.packageList.find((packageElement) => packageElement.id === this.editingPackageId).name =
+          inputElement.value;
+        this.editingPackageId = null;
+        this.render();
+      });
+      inputElement.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") inputElement.blur();
+      });
+    }
+
+    onKeyDown(event) {
+      if (event.key === "Delete" && this.selectedPackageId) {
+        const packageIndex = this.diagramState.packageList.findIndex((packageElement) => packageElement.id === this.selectedPackageId);
+        if (packageIndex !== -1) {
+          this.diagramState.packageList.splice(packageIndex, 1);
+          this.selectedPackageId = null;
+          this.onChangeCallback?.(null);
+          this.render();
+        }
+      }
+    }
+  }

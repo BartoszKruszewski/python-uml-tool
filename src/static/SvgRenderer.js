@@ -1,145 +1,150 @@
 import Geometry from "./Geometry.js";
 
 export default class SvgRenderer {
-  constructor(svg, viewport, gridRect, state) {
-    this.svg = svg;
-    this.viewport = viewport;
-    this.gridRect = gridRect;
-    this.state = state;
+  constructor(svgElement, viewportGroupElement, gridRectElement, diagramState) {
+    this.svgElement = svgElement;
+    this.viewportGroupElement = viewportGroupElement;
+    this.gridRectElement = gridRectElement;
+    this.diagramState = diagramState;
   }
-  svgRect(x, y, w, h) {
-    const r = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-    r.setAttribute("x", x);
-    r.setAttribute("y", y);
-    r.setAttribute("width", w);
-    r.setAttribute("height", h);
-    return r;
+
+  svgRect(x, y, width, height) {
+    const rectElement = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    rectElement.setAttribute("x", x);
+    rectElement.setAttribute("y", y);
+    rectElement.setAttribute("width", width);
+    rectElement.setAttribute("height", height);
+    return rectElement;
   }
+
   svgLine(x1, y1, x2, y2) {
-    const l = document.createElementNS("http://www.w3.org/2000/svg", "line");
-    l.setAttribute("x1", x1);
-    l.setAttribute("y1", y1);
-    l.setAttribute("x2", x2);
-    l.setAttribute("y2", y2);
-    return l;
+    const lineElement = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    lineElement.setAttribute("x1", x1);
+    lineElement.setAttribute("y1", y1);
+    lineElement.setAttribute("x2", x2);
+    lineElement.setAttribute("y2", y2);
+    return lineElement;
   }
-  svgText(x, y, text, cls = null) {
-    const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
-    t.setAttribute("x", x);
-    t.setAttribute("y", y);
-    if (cls) t.setAttribute("class", cls);
-    t.textContent = text;
-    return t;
+
+  svgText(x, y, text, className = null) {
+    const textElement = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    textElement.setAttribute("x", x);
+    textElement.setAttribute("y", y);
+    if (className) textElement.setAttribute("class", className);
+    textElement.textContent = text;
+    return textElement;
   }
-  updatePackageDom(g, p) {
-    g.setAttribute("transform", `translate(${p.x},${p.y})`);
-    const body = g.querySelector("rect.body");
-    body.setAttribute("width", p.w);
-    body.setAttribute("height", p.h);
-    const header = g.querySelector("rect.header");
-    header.setAttribute("width", Math.max(120, p.w * 0.4));
-    const map = {
+
+  updatePackageDom(packageGroupElement, packageElement) {
+    packageGroupElement.setAttribute("transform", `translate(${packageElement.x},${packageElement.y})`);
+    const bodyRect = packageGroupElement.querySelector("rect.body");
+    bodyRect.setAttribute("width", packageElement.w);
+    bodyRect.setAttribute("height", packageElement.h);
+    const headerRect = packageGroupElement.querySelector("rect.header");
+    headerRect.setAttribute("width", Math.max(120, packageElement.w * 0.4));
+    const handlePositionMap = {
       nw: [0, 16],
-      n: [p.w / 2, 16],
-      ne: [p.w, 16],
-      w: [0, 16 + p.h / 2],
-      e: [p.w, 16 + p.h / 2],
-      sw: [0, 16 + p.h],
-      s: [p.w / 2, 16 + p.h],
-      se: [p.w, 16 + p.h],
+      n: [packageElement.w / 2, 16],
+      ne: [packageElement.w, 16],
+      w: [0, 16 + packageElement.h / 2],
+      e: [packageElement.w, 16 + packageElement.h / 2],
+      sw: [0, 16 + packageElement.h],
+      s: [packageElement.w / 2, 16 + packageElement.h],
+      se: [packageElement.w, 16 + packageElement.h],
     };
-    g.querySelectorAll("rect.handle").forEach((h) => {
-      const key = Array.from(h.classList).find((c) =>
-        ["nw", "n", "ne", "w", "e", "sw", "s", "se"].includes(c)
+    packageGroupElement.querySelectorAll("rect.handle").forEach((handleElement) => {
+      const key = Array.from(handleElement.classList).find((className) =>
+        ["nw", "n", "ne", "w", "e", "sw", "s", "se"].includes(className)
       );
       if (!key) return;
-      const [hx, hy] = map[key];
-      h.setAttribute("x", hx - 5);
-      h.setAttribute("y", hy - 5);
+      const [handleX, handleY] = handlePositionMap[key];
+      handleElement.setAttribute("x", handleX - 5);
+      handleElement.setAttribute("y", handleY - 5);
     });
   }
-  render(step) {
+
+  render(gridStep) {
     // clear (keep gridRect)
     while (
-      this.viewport.lastChild &&
-      this.viewport.lastChild !== this.gridRect
+      this.viewportGroupElement.lastChild &&
+      this.viewportGroupElement.lastChild !== this.gridRectElement
     ) {
-      this.viewport.removeChild(this.viewport.lastChild);
+      this.viewportGroupElement.removeChild(this.viewportGroupElement.lastChild);
     }
     // packages
-    const pkgLayer = document.createElementNS(
+    const packageLayer = document.createElementNS(
       "http://www.w3.org/2000/svg",
       "g"
     );
-    this.viewport.appendChild(pkgLayer);
-    this.state.packages.forEach((p) => {
-      const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
-      g.setAttribute("class", "package");
-      g.dataset.id = p.id;
-      g.setAttribute("transform", `translate(${p.x},${p.y})`);
+    this.viewportGroupElement.appendChild(packageLayer);
+    this.diagramState.packageList.forEach((packageElement) => {
+      const groupElement = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      groupElement.setAttribute("class", "package");
+      groupElement.dataset.id = packageElement.id;
+      groupElement.setAttribute("transform", `translate(${packageElement.x},${packageElement.y})`);
 
-      const body = document.createElementNS(
+      const bodyRect = document.createElementNS(
         "http://www.w3.org/2000/svg",
         "rect"
       );
-      body.setAttribute("x", 0);
-      body.setAttribute("y", 16);
-      body.setAttribute("width", p.w);
-      body.setAttribute("height", p.h);
-      body.setAttribute("class", "body");
-      body.setAttribute("pointer-events", "none");
-      g.appendChild(body);
+      bodyRect.setAttribute("x", 0);
+      bodyRect.setAttribute("y", 16);
+      bodyRect.setAttribute("width", packageElement.w);
+      bodyRect.setAttribute("height", packageElement.h);
+      bodyRect.setAttribute("class", "body");
+      bodyRect.setAttribute("pointer-events", "none");
+      groupElement.appendChild(bodyRect);
 
-      const header = document.createElementNS(
+      const headerRect = document.createElementNS(
         "http://www.w3.org/2000/svg",
         "rect"
       );
-      header.setAttribute("x", 0);
-      header.setAttribute("y", 0);
-      header.setAttribute("width", Math.max(120, p.w * 0.4));
-      header.setAttribute("height", 24);
-      header.setAttribute("class", "header");
-      g.appendChild(header);
+      headerRect.setAttribute("x", 0);
+      headerRect.setAttribute("y", 0);
+      headerRect.setAttribute("width", Math.max(120, packageElement.w * 0.4));
+      headerRect.setAttribute("height", 24);
+      headerRect.setAttribute("class", "header");
+      groupElement.appendChild(headerRect);
 
-      const label = document.createElementNS(
+      const labelText = document.createElementNS(
         "http://www.w3.org/2000/svg",
         "text"
       );
-      label.setAttribute("x", 8);
-      label.setAttribute("y", 16);
-      label.textContent = p.name;
-      label.setAttribute("class", "pkg-label");
-      g.appendChild(label);
+      labelText.setAttribute("x", 8);
+      labelText.setAttribute("y", 16);
+      labelText.textContent = packageElement.name;
+      labelText.setAttribute("class", "pkg-label");
+      groupElement.appendChild(labelText);
 
-      const defs = [
+      const handleDefs = [
         { k: "nw", x: 0, y: 16, cls: "handle nw" },
-        { k: "n", x: p.w / 2, y: 16, cls: "handle n" },
-        { k: "ne", x: p.w, y: 16, cls: "handle ne" },
-        { k: "w", x: 0, y: 16 + p.h / 2, cls: "handle w" },
-        { k: "e", x: p.w, y: 16 + p.h / 2, cls: "handle e" },
-        { k: "sw", x: 0, y: 16 + p.h, cls: "handle sw" },
-        { k: "s", x: p.w / 2, y: 16 + p.h, cls: "handle s" },
-        { k: "se", x: p.w, y: 16 + p.h, cls: "handle se" },
+        { k: "n", x: packageElement.w / 2, y: 16, cls: "handle n" },
+        { k: "ne", x: packageElement.w, y: 16, cls: "handle ne" },
+        { k: "w", x: 0, y: 16 + packageElement.h / 2, cls: "handle w" },
+        { k: "e", x: packageElement.w, y: 16 + packageElement.h / 2, cls: "handle e" },
+        { k: "sw", x: 0, y: 16 + packageElement.h, cls: "handle sw" },
+        { k: "s", x: packageElement.w / 2, y: 16 + packageElement.h, cls: "handle s" },
+        { k: "se", x: packageElement.w, y: 16 + packageElement.h, cls: "handle se" },
       ];
-      defs.forEach((h) => {
-        const r = document.createElementNS(
+      handleDefs.forEach((handleDef) => {
+        const handleRect = document.createElementNS(
           "http://www.w3.org/2000/svg",
           "rect"
         );
-        r.setAttribute("x", h.x - 5);
-        r.setAttribute("y", h.y - 5);
-        r.setAttribute("width", 10);
-        r.setAttribute("height", 10);
-        r.setAttribute("class", h.cls);
-        r.dataset.dir = h.k;
-        r.style.touchAction = "none";
-        r.addEventListener("pointerdown", (e) =>
-          this.onResizeHandle?.(e, p.id, h.k)
+        handleRect.setAttribute("x", handleDef.x - 5);
+        handleRect.setAttribute("y", handleDef.y - 5);
+        handleRect.setAttribute("width", 10);
+        handleRect.setAttribute("height", 10);
+        handleRect.setAttribute("class", handleDef.cls);
+        handleRect.dataset.dir = handleDef.k;
+        handleRect.style.touchAction = "none";
+        handleRect.addEventListener("pointerdown", (event) =>
+          this.onResizeHandle?.(event, packageElement.id, handleDef.k)
         );
-        g.appendChild(r);
+        groupElement.appendChild(handleRect);
       });
 
-      pkgLayer.appendChild(g);
+      packageLayer.appendChild(groupElement);
     });
 
     // edges
@@ -147,33 +152,43 @@ export default class SvgRenderer {
       "http://www.w3.org/2000/svg",
       "g"
     );
-    this.viewport.appendChild(edgeLayer);
-    this.state.relations.forEach((r) => {
-      const a = this.state.classById(r.source),
-        b = this.state.classById(r.target);
-      if (!a || !b) return;
-      const [x1, y1] = Geometry.center(a),
-        [x2, y2] = Geometry.center(b);
-      const [sx, sy] = Geometry.intersectRect(a, x2, y2);
-      const [tx, ty] = Geometry.intersectRect(b, x1, y1);
+    this.viewportGroupElement.appendChild(edgeLayer);
+    this.diagramState.relationList.forEach((relationElement) => {
+      const sourceClass = this.diagramState.getClassById(relationElement.source),
+        targetClass = this.diagramState.getClassById(relationElement.target);
+      if (!sourceClass || !targetClass) return;
+      const [sourceX, sourceY] = Geometry.center(sourceClass),
+        [targetX, targetY] = Geometry.center(targetClass);
+      const [startX, startY] = Geometry.intersectRect(sourceClass, targetX, targetY);
+      let [endX, endY] = Geometry.intersectRect(targetClass, sourceX, sourceY);
 
-      const line = document.createElementNS(
+      // Shorten the link by a few pixels so the marker is fully visible
+      const shorten = 8; // px
+      const dx = endX - startX;
+      const dy = endY - startY;
+      const length = Math.sqrt(dx * dx + dy * dy);
+      if (length > shorten) {
+        endX = endX - (dx / length) * shorten;
+        endY = endY - (dy / length) * shorten;
+      }
+
+      const lineElement = document.createElementNS(
         "http://www.w3.org/2000/svg",
         "line"
       );
-      line.setAttribute("x1", sx);
-      line.setAttribute("y1", sy);
-      line.setAttribute("x2", tx);
-      line.setAttribute("y2", ty);
-      let cls = "edge ";
-      if (r.type === "association") cls += "association";
-      if (r.type === "generalization") cls += "generalization";
-      if (r.type === "dependency") cls += "dependency dashed";
-      if (r.type === "realization") cls += "realization dashed";
-      if (r.type === "aggregation") cls += "aggregation";
-      if (r.type === "composition") cls += "composition";
-      line.setAttribute("class", cls);
-      edgeLayer.appendChild(line);
+      lineElement.setAttribute("x1", startX);
+      lineElement.setAttribute("y1", startY);
+      lineElement.setAttribute("x2", endX);
+      lineElement.setAttribute("y2", endY);
+      let className = "edge ";
+      if (relationElement.type === "association") className += "association";
+      if (relationElement.type === "generalization") className += "generalization";
+      if (relationElement.type === "dependency") className += "dependency dashed";
+      if (relationElement.type === "realization") className += "realization dashed";
+      if (relationElement.type === "aggregation") className += "aggregation";
+      if (relationElement.type === "composition") className += "composition";
+      lineElement.setAttribute("class", className);
+      edgeLayer.appendChild(lineElement);
     });
 
     // nodes
@@ -181,40 +196,40 @@ export default class SvgRenderer {
       "http://www.w3.org/2000/svg",
       "g"
     );
-    this.viewport.appendChild(nodeLayer);
-    this.state.classes.forEach((c) => {
-      const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
-      const isSel =
-        this.state.selected?.type === "class" &&
-        this.state.selected.id === c.id;
-      g.setAttribute("class", "node" + (isSel ? " selected" : ""));
-      g.dataset.id = c.id;
-      g.setAttribute("transform", `translate(${c.x},${c.y})`);
+    this.viewportGroupElement.appendChild(nodeLayer);
+    this.diagramState.classList.forEach((classElement) => {
+      const groupElement = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      const isSelected =
+        this.diagramState.selectedElement?.type === "class" &&
+        this.diagramState.selectedElement.id === classElement.id;
+      groupElement.setAttribute("class", "node" + (isSelected ? " selected" : ""));
+      groupElement.dataset.id = classElement.id;
+      groupElement.setAttribute("transform", `translate(${classElement.x},${classElement.y})`);
 
-      const rect = this.svgRect(0, 0, c.w, c.h);
-      g.appendChild(rect);
+      const rect = this.svgRect(0, 0, classElement.w, classElement.h);
+      groupElement.appendChild(rect);
 
       let y = 10;
-      const title = this.svgText(10, y + 16, c.name, "title");
-      g.appendChild(title);
+      const title = this.svgText(10, y + 16, classElement.name, "title");
+      groupElement.appendChild(title);
       y += 28;
 
-      c.attributes.forEach((a) => {
-        g.appendChild(this.svgText(10, y, a));
+      classElement.attributes.forEach((attribute) => {
+        groupElement.appendChild(this.svgText(10, y, attribute));
         y += 18;
       });
-      if (c.attributes.length === 0) y += 8;
+      if (classElement.attributes.length === 0) y += 8;
 
-      c.operations.forEach((o) => {
-        g.appendChild(this.svgText(10, y, o));
+      classElement.operations.forEach((operation) => {
+        groupElement.appendChild(this.svgText(10, y, operation));
         y += 18;
       });
-      nodeLayer.appendChild(g);
+      nodeLayer.appendChild(groupElement);
     });
 
-    this.viewport.setAttribute(
+    this.viewportGroupElement.setAttribute(
       "transform",
-      `translate(${this.state.pan.x},${this.state.pan.y})`
+      `translate(${this.diagramState.panOffset.x},${this.diagramState.panOffset.y})`
     );
   }
 }

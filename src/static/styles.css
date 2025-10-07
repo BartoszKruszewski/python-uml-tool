@@ -170,11 +170,11 @@ svg text {
 }
 
 .edge.aggregation {
-    marker-start: url(#diamondOpen);
+    marker-end: url(#diamondOpen);
 }
 
 .edge.composition {
-    marker-start: url(#diamondSolid);
+    marker-end: url(#diamondSolid);
 }
 
 /* Cursors */

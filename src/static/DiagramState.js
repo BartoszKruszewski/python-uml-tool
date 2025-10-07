@@ -1,35 +1,41 @@
 export default class DiagramState {
   constructor() {
-    this.classes = [];
-    this.packages = [];
-    this.relations = [];
-    this.selected = null;
-    this.linkMode = false;
-    this.tempEdge = null; // <line> SVG during linking
-    this.nextId = 1;
-    this.pan = { x: 0, y: 0 };
-    this.interaction = null; // {mode, pointerId, start, ...}
+    this.classList = [];
+    this.packageList = [];
+    this.relationList = [];
+    this.selectedElement = null;
+    this.isLinkModeActive = false;
+    this.temporaryEdgeElement = null; // <line> SVG during linking
+    this.nextElementId = 1;
+    this.panOffset = { x: 0, y: 0 };
+    this.interactionState = null; // {mode, pointerId, start, ...}
   }
-  uid(prefix) {
-    return prefix + this.nextId++;
+
+  generateUniqueId(prefix) {
+    return prefix + this.nextElementId++;
   }
-  classById(id) {
-    return this.classes.find((c) => c.id === id);
+
+  getClassById(classId) {
+    return this.classList.find((classElement) => classElement.id === classId);
   }
-  packageById(id) {
-    return this.packages.find((p) => p.id === id);
+
+  getPackageById(packageId) {
+    return this.packageList.find((packageElement) => packageElement.id === packageId);
   }
-  setSelected(type, id) {
-    this.selected = { type, id };
+
+  setSelected(elementType, elementId) {
+    this.selectedElement = { type: elementType, id: elementId };
   }
+
   clearSelection() {
-    this.selected = null;
+    this.selectedElement = null;
   }
+
   addClass(x, y) {
-    const id = this.uid("C");
-    const c = {
-      id,
-      name: "Class" + this.nextId,
+    const classId = this.generateUniqueId("C");
+    const classElement = {
+      id: classId,
+      name: "Class" + this.nextElementId,
       x,
       y,
       w: 200,
@@ -38,34 +44,38 @@ export default class DiagramState {
       operations: [],
       packageId: null,
     };
-    this.classes.push(c);
-    return c;
+    this.classList.push(classElement);
+    return classElement;
   }
+
   addPackage(x, y) {
-    const id = this.uid("P");
-    const p = { id, name: "Module" + this.nextId, x, y, w: 360, h: 240 };
-    this.packages.push(p);
-    return p;
+    const packageId = this.generateUniqueId("P");
+    const packageElement = { id: packageId, name: "Module" + this.nextElementId, x, y, w: 360, h: 240 };
+    this.packageList.push(packageElement);
+    return packageElement;
   }
-  removeClass(id) {
-    const i = this.classes.findIndex((c) => c.id === id);
-    if (i >= 0) this.classes.splice(i, 1);
-    this.relations = this.relations.filter(
-      (r) => r.source !== id && r.target !== id
+
+  removeClass(classId) {
+    const classIndex = this.classList.findIndex((classElement) => classElement.id === classId);
+    if (classIndex >= 0) this.classList.splice(classIndex, 1);
+    this.relationList = this.relationList.filter(
+      (relation) => relation.source !== classId && relation.target !== classId
     );
   }
-  removePackage(id) {
-    const i = this.packages.findIndex((p) => p.id === id);
-    if (i >= 0) this.packages.splice(i, 1);
-    this.classes.forEach((c) => {
-      if (c.packageId === id) c.packageId = null;
+
+  removePackage(packageId) {
+    const packageIndex = this.packageList.findIndex((packageElement) => packageElement.id === packageId);
+    if (packageIndex >= 0) this.packageList.splice(packageIndex, 1);
+    this.classList.forEach((classElement) => {
+      if (classElement.packageId === packageId) classElement.packageId = null;
     });
   }
-  addRelation(type, source, target) {
-    if (!source || !target || source === target) return null;
-    const id = this.uid("R");
-    const r = { id, type, source, target };
-    this.relations.push(r);
-    return r;
+
+  addRelation(relationType, sourceId, targetId) {
+    if (!sourceId || !targetId || sourceId === targetId) return null;
+    const relationId = this.generateUniqueId("R");
+    const relationElement = { id: relationId, type: relationType, source: sourceId, target: targetId };
+    this.relationList.push(relationElement);
+    return relationElement;
   }
 }

@@ -9,138 +9,142 @@ import InteractionController from "./InteractionController.js";
 import Coordinate from "./Coordinate.js";
 
 export default class App {
-  constructor(refs) {
-    this.refs = refs;
-    this.state = new DiagramState();
-    this.renderer = new SvgRenderer(
-      refs.svg,
-      refs.viewport,
-      refs.gridRect,
-      this.state
+  constructor(references) {
+    this.references = references;
+    this.diagramState = new DiagramState();
+    this.svgRenderer = new SvgRenderer(
+      references.svg,
+      references.viewport,
+      references.gridRect,
+      this.diagramState
     );
-    this.linkService = new LinkService(this.state, refs.viewport);
+    this.linkService = new LinkService(this.diagramState, references.viewport);
     this.exporter = new Exporter();
-    this.generator = new GenerateService(refs.btnGenerate);
+    this.generateService = new GenerateService(references.btnGenerate);
 
-    this._rafId = null;
+    this.animationFrameId = null;
 
     // Editors and Tree
-    this.editors = new EditorsUI(
-      this.state,
+    this.editorsUI = new EditorsUI(
+      this.diagramState,
       {
-        noSel: refs.noSel,
-        classEditor: refs.classEditor,
-        packageEditor: refs.packageEditor,
-        inClsName: refs.inClsName,
-        inAttrs: refs.inAttrs,
-        inOps: refs.inOps,
-        inClsPkg: refs.inClsPkg,
-        btnUpdate: refs.btnUpdate,
-        btnDelete: refs.btnDelete,
-        inPkgName: refs.inPkgName,
-        btnPkgUpdate: refs.btnPkgUpdate,
-        btnPkgDelete: refs.btnPkgDelete,
+        noSelectionPanel: references.noSel,
+        classEditorPanel: references.classEditor,
+        packageEditorPanel: references.packageEditor,
+        inputClassName: references.inClsName,
+        inputClassAttributes: references.inAttrs,
+        inputClassOperations: references.inOps,
+        inputClassPackage: references.inClsPkg,
+        buttonUpdateClass: references.btnUpdate,
+        buttonDeleteClass: references.btnDelete,
+        inputPackageName: references.inPkgName,
+        buttonUpdatePackage: references.btnPkgUpdate,
+        buttonDeletePackage: references.btnPkgDelete,
       },
       () => this.scheduleRender()
     );
 
-    this.tree = new TreeUI(refs.tree, this.state, (type, id) => {
-      this.state.setSelected(type, id);
-      this.scheduleRender();
-    });
+    this.treeUI = new TreeUI(
+      references.tree,
+      this.diagramState,
+      (elementType, elementId) => {
+        this.diagramState.setSelected(elementType, elementId);
+        this.scheduleRender();
+      }
+    );
 
     // Interaction controller
-    this.interaction = new InteractionController(
-      refs.svg,
-      refs.viewport,
-      this.state,
-      this.renderer,
+    this.interactionController = new InteractionController(
+      references.svg,
+      references.viewport,
+      this.diagramState,
+      this.svgRenderer,
       this.linkService,
-      () => Math.max(4, parseInt(refs.inGridSize.value || "16", 10)),
-      (type, id) => {
-        this.state.setSelected(type, id);
+      () => Math.max(4, parseInt(references.inGridSize.value || "16", 10)),
+      (elementType, elementId) => {
+        this.diagramState.setSelected(elementType, elementId);
         this.scheduleRender();
       },
       () => this.scheduleRender()
     );
 
     // Link type select exposure (used in InteractionController via property)
-    this.interaction.linkTypeSel = refs.linkTypeSel;
+    this.interactionController.linkTypeSelect = references.linkTypeSel;
 
     // Wire UI buttons
-    refs.btnAddClass.addEventListener("click", () => {
-      const { x, y } = Coordinate.screenToWorld(
-        refs.svg,
-        refs.viewport,
+    references.btnAddClass.addEventListener("click", () => {
+      const { x: worldX, y: worldY } = Coordinate.screenToWorld(
+        references.svg,
+        references.viewport,
         window.innerWidth / 2,
         window.innerHeight / 2
       );
-      const c = this.state.addClass(x + 40, y + 40);
-      this.state.setSelected("class", c.id);
+      const newClass = this.diagramState.addClass(worldX + 40, worldY + 40);
+      this.diagramState.setSelected("class", newClass.id);
       this.scheduleRender();
     });
-    refs.btnAddPackage.addEventListener("click", () => {
-      const { x, y } = Coordinate.screenToWorld(
-        refs.svg,
-        refs.viewport,
+    references.btnAddPackage.addEventListener("click", () => {
+      const { x: worldX, y: worldY } = Coordinate.screenToWorld(
+        references.svg,
+        references.viewport,
         window.innerWidth / 2,
         window.innerHeight / 2
       );
-      const p = this.state.addPackage(x - 60, y - 60);
-      this.state.setSelected("package", p.id);
-      this.editors.refreshPackageSelect();
+      const newPackage = this.diagramState.addPackage(worldX - 60, worldY - 60);
+      this.diagramState.setSelected("package", newPackage.id);
+      this.editorsUI.refreshPackageSelect();
       this.scheduleRender();
     });
-    refs.btnLinkMode.addEventListener("click", () => {
-      this.linkService.toggle(refs.btnLinkMode);
+    references.btnLinkMode.addEventListener("click", () => {
+      this.linkService.toggle(references.btnLinkMode);
     });
-    refs.btnClear.addEventListener("click", () => {
+    references.btnClear.addEventListener("click", () => {
       if (confirm("Clear the diagram?")) {
-        this.state.classes = [];
-        this.state.packages = [];
-        this.state.relations = [];
-        this.state.selected = null;
-        this.editors.refreshPackageSelect();
+        this.diagramState.classes = [];
+        this.diagramState.packages = [];
+        this.diagramState.relations = [];
+        this.diagramState.selected = null;
+        this.editorsUI.refreshPackageSelect();
         this.scheduleRender();
       }
     });
-    refs.inGridSize.addEventListener("change", () => {
-      const step = Math.max(4, parseInt(refs.inGridSize.value || "16", 10));
-      refs.gridPattern.setAttribute("width", step);
-      refs.gridPattern.setAttribute("height", step);
+    references.inGridSize.addEventListener("change", () => {
+      const gridStep = Math.max(4, parseInt(references.inGridSize.value || "16", 10));
+      references.gridPattern.setAttribute("width", gridStep);
+      references.gridPattern.setAttribute("height", gridStep);
       this.scheduleRender();
     });
-    refs.btnGenerate.addEventListener("click", async () => {
-      const xml = this.exporter.buildXMI(this.state);
-      await this.generator.generate(xml);
+    references.btnGenerate.addEventListener("click", async () => {
+      const xmiXml = this.exporter.buildXMI(this.diagramState);
+      await this.generateService.generate(xmiXml);
     });
 
     // Init grid
-    const step = Math.max(4, parseInt(refs.inGridSize.value || "16", 10));
-    refs.gridPattern.setAttribute("width", step);
-    refs.gridPattern.setAttribute("height", step);
+    const gridStep = Math.max(4, parseInt(references.inGridSize.value || "16", 10));
+    references.gridPattern.setAttribute("width", gridStep);
+    references.gridPattern.setAttribute("height", gridStep);
 
     // Seed initial content
-    const p = this.state.addPackage(80, 80);
-    const c1 = this.state.addClass(140, 160);
-    const c2 = this.state.addClass(380, 240);
-    this.state.setSelected("package", p.id);
+    const initialPackage = this.diagramState.addPackage(80, 80);
+    const initialClass1 = this.diagramState.addClass(140, 160);
+    const initialClass2 = this.diagramState.addClass(380, 240);
+    this.diagramState.setSelected("package", initialPackage.id);
 
     // First render
     this.scheduleRender();
   }
 
   scheduleRender() {
-    if (this._rafId !== null) return;
-    this._rafId = requestAnimationFrame(() => {
-      this._rafId = null;
-      const step = Math.max(
+    if (this.animationFrameId !== null) return;
+    this.animationFrameId = requestAnimationFrame(() => {
+      this.animationFrameId = null;
+      const gridStep = Math.max(
         4,
-        parseInt(this.refs.inGridSize.value || "16", 10)
+        parseInt(this.references.inGridSize.value || "16", 10)
       );
-      this.renderer.render(step);
-      this.editors.updateEditors();
-      this.tree.render();
+      this.svgRenderer.render(gridStep);
+      this.editorsUI.updateEditors();
+      this.treeUI.render();
     });
   }
 }

@@ -1,55 +1,55 @@
 import App from "./App.js";
 
-const svg = document.getElementById("svg");
-const viewport = document.getElementById("viewport");
-const gridPattern = document.getElementById("gridPattern");
-const gridRect = document.getElementById("gridRect");
-const tree = document.getElementById("tree");
+const svgElement = document.getElementById("svg");
+const viewportGroupElement = document.getElementById("viewport");
+const gridPatternElement = document.getElementById("gridPattern");
+const gridRectElement = document.getElementById("gridRect");
+const treeElement = document.getElementById("tree");
 
-const btnAddClass = document.getElementById("btnAddClass");
-const btnAddPackage = document.getElementById("btnAddPackage");
-const btnLinkMode = document.getElementById("btnLinkMode");
-const linkTypeSel = document.getElementById("linkType");
-const btnGenerate = document.getElementById("btnGenerate");
-const btnClear = document.getElementById("btnClear");
+const addClassButton = document.getElementById("btnAddClass");
+const addPackageButton = document.getElementById("btnAddPackage");
+const linkModeButton = document.getElementById("btnLinkMode");
+const linkTypeSelect = document.getElementById("linkType");
+const generateButton = document.getElementById("btnGenerate");
+const clearButton = document.getElementById("btnClear");
 
-const noSel = document.getElementById("noSelection");
-const classEditor = document.getElementById("classEditor");
-const packageEditor = document.getElementById("packageEditor");
-const inClsName = document.getElementById("clsName");
-const inAttrs = document.getElementById("clsAttrs");
-const inOps = document.getElementById("clsOps");
-const inClsPkg = document.getElementById("clsPackage");
-const btnUpdate = document.getElementById("btnUpdate");
-const btnDelete = document.getElementById("btnDelete");
-const inPkgName = document.getElementById("pkgName");
-const btnPkgUpdate = document.getElementById("btnPkgUpdate");
-const btnPkgDelete = document.getElementById("btnPkgDelete");
-const inGridSize = document.getElementById("gridSize");
+const noSelectionPanel = document.getElementById("noSelection");
+const classEditorPanel = document.getElementById("classEditor");
+const packageEditorPanel = document.getElementById("packageEditor");
+const inputClassName = document.getElementById("clsName");
+const inputClassAttributes = document.getElementById("clsAttrs");
+const inputClassOperations = document.getElementById("clsOps");
+const inputClassPackage = document.getElementById("clsPackage");
+const buttonUpdateClass = document.getElementById("btnUpdate");
+const buttonDeleteClass = document.getElementById("btnDelete");
+const inputPackageName = document.getElementById("pkgName");
+const buttonUpdatePackage = document.getElementById("btnPkgUpdate");
+const buttonDeletePackage = document.getElementById("btnPkgDelete");
+const inputGridSize = document.getElementById("gridSize");
 
 const app = new App({
-  svg,
-  viewport,
-  gridPattern,
-  gridRect,
-  tree,
-  btnAddClass,
-  btnAddPackage,
-  btnLinkMode,
-  linkTypeSel,
-  btnGenerate,
-  btnClear,
-  noSel,
-  classEditor,
-  packageEditor,
-  inClsName,
-  inAttrs,
-  inOps,
-  inClsPkg,
-  btnUpdate,
-  btnDelete,
-  inPkgName,
-  btnPkgUpdate,
-  btnPkgDelete,
-  inGridSize,
+  svg: svgElement,
+  viewport: viewportGroupElement,
+  gridPattern: gridPatternElement,
+  gridRect: gridRectElement,
+  tree: treeElement,
+  btnAddClass: addClassButton,
+  btnAddPackage: addPackageButton,
+  btnLinkMode: linkModeButton,
+  linkTypeSel: linkTypeSelect,
+  btnGenerate: generateButton,
+  btnClear: clearButton,
+  noSel: noSelectionPanel,
+  classEditor: classEditorPanel,
+  packageEditor: packageEditorPanel,
+  inClsName: inputClassName,
+  inAttrs: inputClassAttributes,
+  inOps: inputClassOperations,
+  inClsPkg: inputClassPackage,
+  btnUpdate: buttonUpdateClass,
+  btnDelete: buttonDeleteClass,
+  inPkgName: inputPackageName,
+  btnPkgUpdate: buttonUpdatePackage,
+  btnPkgDelete: buttonDeletePackage,
+  inGridSize: inputGridSize,
 });

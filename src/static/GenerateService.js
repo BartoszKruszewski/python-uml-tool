@@ -1,47 +1,50 @@
 export default class GenerateService {
-  constructor(btnGenerate) {
-    this.btnGenerate = btnGenerate;
+  constructor(generateButtonElement) {
+    this.generateButtonElement = generateButtonElement;
   }
-  setBusy(b) {
-    this.btnGenerate.disabled = b;
-    this.btnGenerate.textContent = b ? "Generating…" : "Generate";
+
+  setBusy(isBusy) {
+    this.generateButtonElement.disabled = isBusy;
+    this.generateButtonElement.textContent = isBusy ? "Generating…" : "Generate";
   }
-  getFilenameFromDisposition(cd) {
-    if (!cd) return null;
-    const mStar = cd.match(/filename\\*=(?:UTF-8''|)([^;]+)/i);
-    if (mStar)
-      return decodeURIComponent(mStar[1].trim().replace(/(^\"|\"$)/g, ""));
-    const m = cd.match(/filename=\"?([^\";]+)\"?/i);
-    return m ? m[1] : null;
+
+  getFilenameFromDisposition(contentDispositionHeader) {
+    if (!contentDispositionHeader) return null;
+    const matchStar = contentDispositionHeader.match(/filename\*=(?:UTF-8''|)([^;]+)/i);
+    if (matchStar)
+      return decodeURIComponent(matchStar[1].trim().replace(/(^\"|\"$)/g, ""));
+    const match = contentDispositionHeader.match(/filename=\"?([^\";]+)\"?/i);
+    return match ? match[1] : null;
   }
-  async generate(xml) {
+
+  async generate(xmiXml) {
     try {
-      console.log(xml);
+      console.log(xmiXml);
       this.setBusy(true);
-      const xmlBlob = new Blob([xml], { type: "application/xml" });
+      const xmlBlob = new Blob([xmiXml], { type: "application/xml" });
       const xmlFile = new File([xmlBlob], "diagram.xmi", {
         type: "application/xml",
       });
       const formData = new FormData();
       formData.append("file", xmlFile);
-      const resp = await fetch("/generate", {
+      const response = await fetch("/generate", {
         method: "POST",
         body: formData,
       });
-      if (!resp.ok) throw new Error("Server error: " + resp.status);
-      const suggested =
+      if (!response.ok) throw new Error("Server error: " + response.status);
+      const suggestedFilename =
         this.getFilenameFromDisposition(
-          resp.headers.get("Content-Disposition")
+          response.headers.get("Content-Disposition")
         ) || "generated.zip";
-      const blob = await resp.blob();
+      const blob = await response.blob();
       const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = suggested;
-      document.body.appendChild(a);
-      a.click();
+      const anchorElement = document.createElement("a");
+      anchorElement.href = url;
+      anchorElement.download = suggestedFilename;
+      document.body.appendChild(anchorElement);
+      anchorElement.click();
       URL.revokeObjectURL(url);
-      a.remove();
+      anchorElement.remove();
     } finally {
       this.setBusy(false);
     }

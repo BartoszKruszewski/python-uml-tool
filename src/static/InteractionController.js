@@ -3,223 +3,228 @@ import Geometry from "./Geometry.js";
 
 export default class InteractionController {
   constructor(
-    svg,
-    viewport,
-    state,
-    renderer,
+    svgElement,
+    viewportGroupElement,
+    diagramState,
+    svgRenderer,
     linkService,
     gridStepProvider,
-    selectCb,
-    scheduleRenderCb
+    onSelectCallback,
+    scheduleRenderCallback
   ) {
-    this.svg = svg;
-    this.viewport = viewport;
-    this.state = state;
-    this.renderer = renderer;
+    this.svgElement = svgElement;
+    this.viewportGroupElement = viewportGroupElement;
+    this.diagramState = diagramState;
+    this.svgRenderer = svgRenderer;
     this.linkService = linkService;
-    this.getStep = gridStepProvider;
-    this.onSelect = selectCb;
-    this.scheduleRender = scheduleRenderCb;
+    this.getGridStep = gridStepProvider;
+    this.onSelect = onSelectCallback;
+    this.scheduleRender = scheduleRenderCallback;
 
     this._onPointerDown = this._onPointerDown.bind(this);
     this._onPointerMove = this._onPointerMove.bind(this);
     this._onPointerUp = this._onPointerUp.bind(this);
 
-    svg.addEventListener("pointerdown", this._onPointerDown);
-    svg.addEventListener("pointermove", this._onPointerMove);
-    svg.addEventListener("pointerup", this._onPointerUp);
+    svgElement.addEventListener("pointerdown", this._onPointerDown);
+    svgElement.addEventListener("pointermove", this._onPointerMove);
+    svgElement.addEventListener("pointerup", this._onPointerUp);
 
     // allow renderer to delegate resize-handle mousedown back here
-    this.renderer.onResizeHandle = (e, pkgId, dirKey) =>
-      this.beginResizePackage(e, pkgId, dirKey);
+    this.svgRenderer.onResizeHandle = (event, packageId, directionKey) =>
+      this.beginResizePackage(event, packageId, directionKey);
   }
 
-  beginPan(e) {
-    this.state.interaction = {
+  beginPan(event) {
+    this.diagramState.interactionState = {
       mode: "pan",
-      pointerId: e.pointerId,
+      pointerId: event.pointerId,
       start: {
-        x: e.clientX,
-        y: e.clientY,
-        panX: this.state.pan.x,
-        panY: this.state.pan.y,
+        x: event.clientX,
+        y: event.clientY,
+        panX: this.diagramState.panOffset.x,
+        panY: this.diagramState.panOffset.y,
       },
     };
-    this.svg.setPointerCapture(e.pointerId);
+    this.svgElement.setPointerCapture(event.pointerId);
     document.body.classList.add("panning");
   }
-  beginDragClass(e, c) {
-    const pt = Coordinate.screenToWorld(
-      this.svg,
-      this.viewport,
-      e.clientX,
-      e.clientY
+
+  beginDragClass(event, classElement) {
+    const worldPoint = Coordinate.screenToWorld(
+      this.svgElement,
+      this.viewportGroupElement,
+      event.clientX,
+      event.clientY
     );
-    this.state.interaction = {
+    this.diagramState.interactionState = {
       mode: "drag-class",
-      pointerId: e.pointerId,
-      start: { px: pt.x, py: pt.y, x: c.x, y: c.y, id: c.id },
+      pointerId: event.pointerId,
+      start: { px: worldPoint.x, py: worldPoint.y, x: classElement.x, y: classElement.y, id: classElement.id },
     };
-    this.svg.setPointerCapture(e.pointerId);
+    this.svgElement.setPointerCapture(event.pointerId);
   }
-  beginDragPackage(e, p) {
-    const pt = Coordinate.screenToWorld(
-      this.svg,
-      this.viewport,
-      e.clientX,
-      e.clientY
+
+  beginDragPackage(event, packageElement) {
+    const worldPoint = Coordinate.screenToWorld(
+      this.svgElement,
+      this.viewportGroupElement,
+      event.clientX,
+      event.clientY
     );
-    this.state.interaction = {
+    this.diagramState.interactionState = {
       mode: "drag-package",
-      pointerId: e.pointerId,
-      start: { px: pt.x, py: pt.y, x: p.x, y: p.y, id: p.id },
+      pointerId: event.pointerId,
+      start: { px: worldPoint.x, py: worldPoint.y, x: packageElement.x, y: packageElement.y, id: packageElement.id },
     };
-    this.svg.setPointerCapture(e.pointerId);
+    this.svgElement.setPointerCapture(event.pointerId);
   }
-  beginResizePackage(e, pkgId, dirKey) {
-    const p = this.state.packageById(pkgId);
-    const dir = { n: false, e: false, s: false, w: false };
-    if (dirKey.includes("n")) dir.n = true;
-    if (dirKey.includes("e")) dir.e = true;
-    if (dirKey.includes("s")) dir.s = true;
-    if (dirKey.includes("w")) dir.w = true;
-    const pt = Coordinate.screenToWorld(
-      this.svg,
-      this.viewport,
-      e.clientX,
-      e.clientY
+
+  beginResizePackage(event, packageId, directionKey) {
+    const packageElement = this.diagramState.getPackageById(packageId);
+    const direction = { n: false, e: false, s: false, w: false };
+    if (directionKey.includes("n")) direction.n = true;
+    if (directionKey.includes("e")) direction.e = true;
+    if (directionKey.includes("s")) direction.s = true;
+    if (directionKey.includes("w")) direction.w = true;
+    const worldPoint = Coordinate.screenToWorld(
+      this.svgElement,
+      this.viewportGroupElement,
+      event.clientX,
+      event.clientY
     );
-    this.state.interaction = {
+    this.diagramState.interactionState = {
       mode: "resize-package",
-      pointerId: e.pointerId,
+      pointerId: event.pointerId,
       start: {
-        px: pt.x,
-        py: pt.y,
-        x: p.x,
-        y: p.y,
-        w: p.w,
-        h: p.h,
-        id: p.id,
-        dir,
+        px: worldPoint.x,
+        py: worldPoint.y,
+        x: packageElement.x,
+        y: packageElement.y,
+        w: packageElement.w,
+        h: packageElement.h,
+        id: packageElement.id,
+        dir: direction,
       },
     };
-    e.target.setPointerCapture(e.pointerId);
+    event.target.setPointerCapture(event.pointerId);
   }
 
-  _onPointerDown(e) {
-    const handle = e.target.closest?.("rect.handle");
-    const nodeG = e.target.closest?.("g.node");
-    const pkgLbl = e.target.closest?.("text.pkg-label");
-    const pkgHeader = e.target.closest?.("rect.header");
-    const pkgG = e.target.closest?.("g.package");
+  _onPointerDown(event) {
+    const handleElement = event.target.closest?.("rect.handle");
+    const nodeGroupElement = event.target.closest?.("g.node");
+    const packageLabelElement = event.target.closest?.("text.pkg-label");
+    const packageHeaderElement = event.target.closest?.("rect.header");
+    const packageGroupElement = event.target.closest?.("g.package");
 
-    if (handle && pkgG) {
-      this.beginResizePackage(e, pkgG.dataset.id, handle.dataset.dir);
-      e.preventDefault();
+    if (handleElement && packageGroupElement) {
+      this.beginResizePackage(event, packageGroupElement.dataset.id, handleElement.dataset.dir);
+      event.preventDefault();
       return;
     }
-    if (nodeG) {
-      const c = this.state.classById(nodeG.dataset.id);
-      if (this.state.linkMode) {
+    if (nodeGroupElement) {
+      const classElement = this.diagramState.getClassById(nodeGroupElement.dataset.id);
+      if (this.diagramState.isLinkModeActive || this.diagramState.temporaryEdgeElement) {
         this.linkService.beginLinkOnClass(
-          c,
-          this.linkTypeSel?.value || "association",
-          (t, s, d) => {
-            this.state.addRelation(t, s, d);
+          classElement,
+          this.linkTypeSelect?.value || "association",
+          (relationType, sourceId, targetId) => {
+            this.diagramState.addRelation(relationType, sourceId, targetId);
             this.scheduleRender();
-          }
+          },
+          document.getElementById("btnLinkMode")
         );
-        e.preventDefault();
+        this.onSelect?.("class", classElement.id);
+        event.preventDefault();
         return;
       }
-      this.onSelect("class", c.id);
-      this.beginDragClass(e, c);
-      e.preventDefault();
+      this.onSelect("class", classElement.id);
+      this.beginDragClass(event, classElement);
+      event.preventDefault();
       return;
     }
-    if ((pkgHeader || pkgLbl) && pkgG) {
-      const p = this.state.packageById(pkgG.dataset.id);
-      if (this.state.linkMode) {
-        e.preventDefault();
+    if ((packageHeaderElement || packageLabelElement) && packageGroupElement) {
+      const packageElement = this.diagramState.getPackageById(packageGroupElement.dataset.id);
+      if (this.diagramState.isLinkModeActive) {
+        event.preventDefault();
         return;
       }
-      this.onSelect("package", p.id);
-      this.beginDragPackage(e, p);
-      e.preventDefault();
+      this.onSelect("package", packageElement.id);
+      this.beginDragPackage(event, packageElement);
+      event.preventDefault();
       return;
     }
-    this.beginPan(e);
-    e.preventDefault();
+    this.beginPan(event);
+    event.preventDefault();
   }
 
-  _onPointerMove(e) {
-    if (!this.state.interaction) {
-      if (this.state.tempEdge)
+  _onPointerMove(event) {
+    if (!this.diagramState.interactionState) {
+      if (this.diagramState.temporaryEdgeElement)
         this.linkService.updatePreview(
-          this.svg,
-          this.viewport,
-          e.clientX,
-          e.clientY
+          this.svgElement,
+          this.viewportGroupElement,
+          event.clientX,
+          event.clientY
         );
       return;
     }
-    const step = this.getStep();
-    const mode = this.state.interaction.mode;
+    const gridStep = this.getGridStep();
+    const mode = this.diagramState.interactionState.mode;
 
     if (mode === "pan") {
-      const dx = e.clientX - this.state.interaction.start.x;
-      const dy = e.clientY - this.state.interaction.start.y;
-      this.state.pan = {
-        x: this.state.interaction.start.panX + dx,
-        y: this.state.interaction.start.panY + dy,
+      const deltaX = event.clientX - this.diagramState.interactionState.start.x;
+      const deltaY = event.clientY - this.diagramState.interactionState.start.y;
+      this.diagramState.panOffset = {
+        x: this.diagramState.interactionState.start.panX + deltaX,
+        y: this.diagramState.interactionState.start.panY + deltaY,
       };
-      this.viewport.setAttribute(
+      this.viewportGroupElement.setAttribute(
         "transform",
-        `translate(${this.state.pan.x},${this.state.pan.y})`
+        `translate(${this.diagramState.panOffset.x},${this.diagramState.panOffset.y})`
       );
       return;
     }
 
     if (mode === "drag-class") {
-      const s = this.state.interaction.start;
-      const pt = Coordinate.screenToWorld(
-        this.svg,
-        this.viewport,
-        e.clientX,
-        e.clientY
+      const start = this.diagramState.interactionState.start;
+      const worldPoint = Coordinate.screenToWorld(
+        this.svgElement,
+        this.viewportGroupElement,
+        event.clientX,
+        event.clientY
       );
-      const c = this.state.classById(s.id);
-      if (!c) return;
-      c.x = Coordinate.snap(s.x + (pt.x - s.px), step);
-      c.y = Coordinate.snap(s.y + (pt.y - s.py), step);
-      const containing = this.state.packages.find((p) =>
-        Geometry.isClassInsidePackage(c, p)
+      const classElement = this.diagramState.getClassById(start.id);
+      if (!classElement) return;
+      classElement.x = Coordinate.snap(start.x + (worldPoint.x - start.px), gridStep);
+      classElement.y = Coordinate.snap(start.y + (worldPoint.y - start.py), gridStep);
+      const containingPackage = this.diagramState.packageList.find((packageElement) =>
+        Geometry.isClassInsidePackage(classElement, packageElement)
       );
-      c.packageId = containing?.id || null;
+      classElement.packageId = containingPackage?.id || null;
       this.scheduleRender();
       return;
     }
 
     if (mode === "drag-package") {
-      const s = this.state.interaction.start;
-      const pt = Coordinate.screenToWorld(
-        this.svg,
-        this.viewport,
-        e.clientX,
-        e.clientY
+      const start = this.diagramState.interactionState.start;
+      const worldPoint = Coordinate.screenToWorld(
+        this.svgElement,
+        this.viewportGroupElement,
+        event.clientX,
+        event.clientY
       );
-      const p = this.state.packageById(s.id);
-      if (!p) return;
-      const nx = Coordinate.snap(s.x + (pt.x - s.px), step);
-      const ny = Coordinate.snap(s.y + (pt.y - s.py), step);
-      const dx = nx - p.x,
-        dy = ny - p.y;
-      p.x = nx;
-      p.y = ny;
-      this.state.classes.forEach((c) => {
-        if (Geometry.isClassInsidePackage(c, p, true)) {
-          c.x += dx;
-          c.y += dy;
+      const packageElement = this.diagramState.getPackageById(start.id);
+      if (!packageElement) return;
+      const newX = Coordinate.snap(start.x + (worldPoint.x - start.px), gridStep);
+      const newY = Coordinate.snap(start.y + (worldPoint.y - start.py), gridStep);
+      const deltaX = newX - packageElement.x,
+        deltaY = newY - packageElement.y;
+      packageElement.x = newX;
+      packageElement.y = newY;
+      this.diagramState.classList.forEach((classElement) => {
+        if (Geometry.isClassInsidePackage(classElement, packageElement, true)) {
+          classElement.x += deltaX;
+          classElement.y += deltaY;
         }
       });
       this.scheduleRender();
@@ -227,66 +232,66 @@ export default class InteractionController {
     }
 
     if (mode === "resize-package") {
-      const s = this.state.interaction.start;
-      const pt = Coordinate.screenToWorld(
-        this.svg,
-        this.viewport,
-        e.clientX,
-        e.clientY
+      const start = this.diagramState.interactionState.start;
+      const worldPoint = Coordinate.screenToWorld(
+        this.svgElement,
+        this.viewportGroupElement,
+        event.clientX,
+        event.clientY
       );
-      const p = this.state.packageById(s.id);
-      if (!p) return;
-      const d = s.dir;
-      let x = s.x,
-        y = s.y,
-        w = s.w,
-        h = s.h;
-      const dx = pt.x - s.px,
-        dy = pt.y - s.py;
-      if (d.w) {
-        x = Coordinate.snap(s.x + dx, step);
-        w = Coordinate.snap(s.w - dx, step);
+      const packageElement = this.diagramState.getPackageById(start.id);
+      if (!packageElement) return;
+      const direction = start.dir;
+      let x = start.x,
+        y = start.y,
+        w = start.w,
+        h = start.h;
+      const deltaX = worldPoint.x - start.px,
+        deltaY = worldPoint.y - start.py;
+      if (direction.w) {
+        x = Coordinate.snap(start.x + deltaX, gridStep);
+        w = Coordinate.snap(start.w - deltaX, gridStep);
       }
-      if (d.e) {
-        w = Coordinate.snap(s.w + dx, step);
+      if (direction.e) {
+        w = Coordinate.snap(start.w + deltaX, gridStep);
       }
-      if (d.n) {
-        y = Coordinate.snap(s.y + dy, step);
-        h = Coordinate.snap(s.h - dy, step);
+      if (direction.n) {
+        y = Coordinate.snap(start.y + deltaY, gridStep);
+        h = Coordinate.snap(start.h - deltaY, gridStep);
       }
-      if (d.s) {
-        h = Coordinate.snap(s.h + dy, step);
+      if (direction.s) {
+        h = Coordinate.snap(start.h + deltaY, gridStep);
       }
       w = Math.max(160, w);
       h = Math.max(120, h);
-      if (d.w) x = Math.min(x, s.x + s.w - 160);
-      if (d.n) y = Math.min(y, s.y + s.h - 120);
-      p.x = x;
-      p.y = y;
-      p.w = w;
-      p.h = h;
-      const g = this.svg.querySelector(`g.package[data-id="${p.id}"]`);
-      if (g) this.renderer.updatePackageDom(g, p);
+      if (direction.w) x = Math.min(x, start.x + start.w - 160);
+      if (direction.n) y = Math.min(y, start.y + start.h - 120);
+      packageElement.x = x;
+      packageElement.y = y;
+      packageElement.w = w;
+      packageElement.h = h;
+      const groupElement = this.svgElement.querySelector(`g.package[data-id="${packageElement.id}"]`);
+      if (groupElement) this.svgRenderer.updatePackageDom(groupElement, packageElement);
       return;
     }
   }
 
-  _onPointerUp(e) {
+  _onPointerUp(event) {
     if (
-      this.state.interaction &&
-      e.pointerId === this.state.interaction.pointerId
+      this.diagramState.interactionState &&
+      event.pointerId === this.diagramState.interactionState.pointerId
     ) {
       try {
         if (
-          e.target.hasPointerCapture &&
-          e.target.hasPointerCapture(e.pointerId)
+          event.target.hasPointerCapture &&
+          event.target.hasPointerCapture(event.pointerId)
         )
-          e.target.releasePointerCapture(e.pointerId);
+          event.target.releasePointerCapture(event.pointerId);
       } catch (_) {}
       try {
-        this.svg.releasePointerCapture?.(e.pointerId);
+        this.svgElement.releasePointerCapture?.(event.pointerId);
       } catch (_) {}
-      this.state.interaction = null;
+      this.diagramState.interactionState = null;
       document.body.classList.remove("panning");
       this.scheduleRender();
     }
