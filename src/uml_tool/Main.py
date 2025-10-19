@@ -32,11 +32,17 @@ templates = Jinja2Templates(directory=Config.templates_path)
 
 @app.get("/")
 async def root(request: Request) -> HTMLResponse:
+    """Root endpoint serving the main HTML page.
+
+    Returns:
+        Rendered HTML response.
+    """
     return templates.TemplateResponse(request=request, name="index.html", context={})
 
 
 @app.post("/generate")
 def generate(file: UploadFile = File(...)):
+    """Generates a project from the uploaded XMI file."""
     if not file.filename or not file.filename.lower().endswith(".xmi"):
         raise HTTPException(status_code=400, detail="Expected .xmi file!")
 

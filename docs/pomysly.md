@@ -1,2 +1,0 @@
-- wysokopoziomowy schemat powiązań pomiędzy częsciami projektu
-- opis
