@@ -1,12 +1,24 @@
 import Geometry from "./Geometry.js";
 import Coordinate from "./Coordinate.js";
 
+/**
+ * Handles interactive creation of links between classes, including preview edges.
+ */
 export default class LinkService {
+  /**
+   * @param {import("./DiagramState.js").default} diagramState - Diagram state to mutate.
+   * @param {SVGGElement} viewportGroupElement - The SVG viewport group for adding preview edges.
+   */
   constructor(diagramState, viewportGroupElement) {
     this.diagramState = diagramState;
     this.viewportGroupElement = viewportGroupElement;
   }
 
+  /**
+   * Toggle link mode and update button label.
+   * @param {HTMLButtonElement} [linkButtonElement] - Optional UI button to update.
+   * @returns {void}
+   */
   toggle(linkButtonElement) {
     this.diagramState.isLinkModeActive = !this.diagramState.isLinkModeActive;
     if (linkButtonElement) {
@@ -14,6 +26,13 @@ export default class LinkService {
     }
   }
 
+  /**
+   * Start or finish linking on a class node; on first click starts preview, on second creates relation.
+   * @param {{id:string,x:number,y:number,w:number,h:number}} classElement - Target class element.
+   * @param {string} linkType - Relation type to create.
+   * @param {(type:string, sourceId:string, targetId:string) => void} onAddRelationCallback - Invoked to add relation.
+   * @param {HTMLButtonElement} [linkButtonElement] - Optional button to update label when finishing.
+   */
   beginLinkOnClass(classElement, linkType, onAddRelationCallback, linkButtonElement) {
     if (!this.diagramState.isLinkModeActive) return;
     if (!this.diagramState.temporaryEdgeElement) {
@@ -37,6 +56,14 @@ export default class LinkService {
     }
   }
 
+  /**
+   * Update the live preview edge while the pointer moves.
+   * @param {SVGSVGElement} svgElement - Root SVG element.
+   * @param {SVGGElement} viewportGroupElement - Viewport group for transform reference.
+   * @param {number} clientX - Pointer clientX.
+   * @param {number} clientY - Pointer clientY.
+   * @returns {void}
+   */
   updatePreview(svgElement, viewportGroupElement, clientX, clientY) {
     if (!this.diagramState.temporaryEdgeElement) return;
     const sourceClassElement = this.diagramState.temporaryEdgeElement.dataset?.source
@@ -51,6 +78,10 @@ export default class LinkService {
     this.diagramState.temporaryEdgeElement.setAttribute("y2", worldPoint.y);
   }
 
+  /**
+   * Cancel link mode and remove any preview edge.
+   * @param {HTMLButtonElement} [linkButtonElement] - Optional button to reset label.
+   */
   cancel(linkButtonElement) {
     if (this.diagramState.temporaryEdgeElement) {
       this.diagramState.temporaryEdgeElement.remove();

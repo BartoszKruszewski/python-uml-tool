@@ -1,3 +1,6 @@
+/**
+ * Entry point: wires DOM elements to the App and starts the UI.
+ */
 import App from "./App.js";
 
 const svgElement = document.getElementById("svg");

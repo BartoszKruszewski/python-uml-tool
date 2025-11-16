@@ -1,6 +1,15 @@
 import Geometry from "./Geometry.js";
 
+/**
+ * Renders the UML diagram to SVG: packages, classes and relations.
+ */
 export default class SvgRenderer {
+  /**
+   * @param {SVGSVGElement} svgElement - Root SVG element.
+   * @param {SVGGElement} viewportGroupElement - Translated/zoomed viewport group.
+   * @param {SVGRectElement} gridRectElement - Background grid rectangle to preserve when clearing.
+   * @param {import("./DiagramState.js").default} diagramState - Diagram state source.
+   */
   constructor(svgElement, viewportGroupElement, gridRectElement, diagramState) {
     this.svgElement = svgElement;
     this.viewportGroupElement = viewportGroupElement;
@@ -8,6 +17,14 @@ export default class SvgRenderer {
     this.diagramState = diagramState;
   }
 
+  /**
+   * Create a rect element.
+   * @param {number} x
+   * @param {number} y
+   * @param {number} width
+   * @param {number} height
+   * @returns {SVGRectElement}
+   */
   svgRect(x, y, width, height) {
     const rectElement = document.createElementNS("http://www.w3.org/2000/svg", "rect");
     rectElement.setAttribute("x", x);
@@ -17,6 +34,14 @@ export default class SvgRenderer {
     return rectElement;
   }
 
+  /**
+   * Create a line element.
+   * @param {number} x1
+   * @param {number} y1
+   * @param {number} x2
+   * @param {number} y2
+   * @returns {SVGLineElement}
+   */
   svgLine(x1, y1, x2, y2) {
     const lineElement = document.createElementNS("http://www.w3.org/2000/svg", "line");
     lineElement.setAttribute("x1", x1);
@@ -26,6 +51,14 @@ export default class SvgRenderer {
     return lineElement;
   }
 
+  /**
+   * Create a text element.
+   * @param {number} x
+   * @param {number} y
+   * @param {string} text
+   * @param {string|null} [className=null]
+   * @returns {SVGTextElement}
+   */
   svgText(x, y, text, className = null) {
     const textElement = document.createElementNS("http://www.w3.org/2000/svg", "text");
     textElement.setAttribute("x", x);
@@ -35,6 +68,11 @@ export default class SvgRenderer {
     return textElement;
   }
 
+  /**
+   * Update an existing package group DOM node to reflect new geometry.
+   * @param {SVGGElement} packageGroupElement - Group with package graphics and handles.
+   * @param {{x:number,y:number,w:number,h:number,name?:string,id:string}} packageElement - Package data.
+   */
   updatePackageDom(packageGroupElement, packageElement) {
     packageGroupElement.setAttribute("transform", `translate(${packageElement.x},${packageElement.y})`);
     const bodyRect = packageGroupElement.querySelector("rect.body");
@@ -63,6 +101,11 @@ export default class SvgRenderer {
     });
   }
 
+  /**
+   * Render the entire diagram into the SVG viewport.
+   * @param {number} gridStep - Grid step for layout decisions.
+   * @returns {void}
+   */
   render(gridStep) {
     // clear (keep gridRect)
     while (

@@ -1,4 +1,25 @@
+/**
+ * Side-panel editors for classes and packages.
+ * @typedef {Object} EditorsReferences
+ * @property {HTMLElement} noSelectionPanel
+ * @property {HTMLElement} classEditorPanel
+ * @property {HTMLElement} packageEditorPanel
+ * @property {HTMLInputElement|HTMLTextAreaElement} inputClassName
+ * @property {HTMLTextAreaElement} inputClassAttributes
+ * @property {HTMLTextAreaElement} inputClassOperations
+ * @property {HTMLSelectElement} inputClassPackage
+ * @property {HTMLButtonElement} buttonUpdateClass
+ * @property {HTMLButtonElement} buttonDeleteClass
+ * @property {HTMLInputElement|HTMLTextAreaElement} inputPackageName
+ * @property {HTMLButtonElement} buttonUpdatePackage
+ * @property {HTMLButtonElement} buttonDeletePackage
+ */
 export default class EditorsUI {
+  /**
+   * @param {import("./DiagramState.js").default} diagramState - Shared diagram state.
+   * @param {EditorsReferences} references - DOM references for editor widgets.
+   * @param {() => void} onChangeCallback - Called after state changes.
+   */
   constructor(diagramState, references, onChangeCallback) {
     this.diagramState = diagramState;
     this.references = references; // {noSelectionPanel, classEditorPanel, packageEditorPanel, inputClassName, inputClassAttributes, inputClassOperations, inputClassPackage, buttonUpdateClass, buttonDeleteClass, inputPackageName, buttonUpdatePackage, buttonDeletePackage}
@@ -27,6 +48,10 @@ export default class EditorsUI {
     });
   }
 
+  /**
+   * Rebuild the package select options based on current packages.
+   * @returns {void}
+   */
   refreshPackageSelect() {
     const { inputClassPackage } = this.references;
     const previousValue = inputClassPackage.value;
@@ -44,6 +69,10 @@ export default class EditorsUI {
     if (previousValue) inputClassPackage.value = previousValue;
   }
 
+  /**
+   * Apply form inputs to the selected class and recompute its height.
+   * @returns {void}
+   */
   applyClassEditor() {
     const selected = this.diagramState.selectedElement;
     if (!selected || selected.type !== "class") return;
@@ -68,6 +97,10 @@ export default class EditorsUI {
     this.onChangeCallback();
   }
 
+  /**
+   * Apply form inputs to the selected package.
+   * @returns {void}
+   */
   applyPackageEditor() {
     const selected = this.diagramState.selectedElement;
     if (!selected || selected.type !== "package") return;
@@ -78,6 +111,10 @@ export default class EditorsUI {
     this.refreshPackageSelect();
   }
 
+  /**
+   * Sync editor panels with the current selection and state.
+   * @returns {void}
+   */
   updateEditors() {
     const {
       noSelectionPanel,

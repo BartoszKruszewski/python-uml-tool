@@ -1,4 +1,12 @@
+/**
+ * Build XMI XML from the in-memory diagram state (packages, classes, relations).
+ */
 export default class Exporter {
+  /**
+   * Create an XMI string representing the current diagram.
+   * @param {import("./DiagramState.js").default} diagramState - Source diagram state.
+   * @returns {string} Serialized XMI document.
+   */
   buildXMI(diagramState) {
     const xmiNamespace = 'http://schema.omg.org/spec/XMI/2.1';
     const umlNamespace = 'http://schema.omg.org/spec/UML/2.1';
@@ -35,8 +43,8 @@ export default class Exporter {
       parentNode.appendChild(classNode);
     });
 
-    // Relations - wszystkie typy obsługiwane tak samo
-    this.createRelations(xmlDocument, diagramState.relationList, umlModelElement);
+    // Relations: nest into package if both endpoints are in the same package; otherwise keep at model root
+    this.createRelations(xmlDocument, diagramState, umlModelElement, packageElementNodeById);
 
     xmiRootElement.appendChild(umlModelElement);
     xmlDocument.appendChild(xmiRootElement);
@@ -45,6 +53,12 @@ export default class Exporter {
     return '<?xml version="1.0" encoding="UTF-8"?>\n' + xmlSerializer.serializeToString(xmlDocument);
   }
 
+  /**
+   * Create a generic UML packagedElement node.
+   * @param {XMLDocument} xmlDocument - Target XML document.
+   * @param {{type:string,id:string,name:string}} param1 - Element descriptor.
+   * @returns {Element} The created element.
+   */
   createPackagedElement(xmlDocument, { type, id, name }) {
     const element = xmlDocument.createElement('packagedElement');
     element.setAttribute('xmi:type', type);
@@ -53,6 +67,12 @@ export default class Exporter {
     return element;
   }
 
+  /**
+   * Create UML class element with owned attributes and operations.
+   * @param {XMLDocument} xmlDocument - Target XML document.
+   * @param {{id:string,name:string,attributes:string[],operations:string[]}} classElement - Class data.
+   * @returns {Element} Class element node.
+   */
   createClassElement(xmlDocument, classElement) {
     const classNode = this.createPackagedElement(xmlDocument, {
       type: 'uml:Class',
@@ -80,6 +100,14 @@ export default class Exporter {
     return classNode;
   }
 
+  /**
+   * Create UML operation node with parameters and optional return type.
+   * @param {XMLDocument} xmlDocument - Target XML document.
+   * @param {string} classId - Owning class ID.
+   * @param {string} operationSignature - Signature like "foo(a:int, b:str): bool".
+   * @param {number} index - Operation index (0-based).
+   * @returns {Element} Operation element node.
+   */
   createOperation(xmlDocument, classId, operationSignature, index) {
     const parsed = this.parseOperationSignature(operationSignature);
     const operationNode = xmlDocument.createElement('ownedOperation');
@@ -111,6 +139,11 @@ export default class Exporter {
     return operationNode;
   }
 
+  /**
+   * Parse an operation signature into name, parameters and return type.
+   * @param {string} signature - Raw signature e.g. "do(x:int, y): str".
+   * @returns {{name:string, params:Array<{name:string,type:string}>, returnType:string}} Parsed shape.
+   */
   parseOperationSignature(signature) {
     const result = { name: '', params: [], returnType: '' };
     if (!signature || typeof signature !== 'string') return result;
@@ -142,7 +175,16 @@ export default class Exporter {
     return result;
   }
 
-  createRelations(xmlDocument, relationList, parentNode) {
+  /**
+   * Create UML relation elements under appropriate parent nodes. If both source and target
+   * classes belong to the same package, the relation is nested inside that package; otherwise
+   * it is attached directly to the model root.
+   * @param {XMLDocument} xmlDocument - Target XML document.
+   * @param {import("./DiagramState.js").default} diagramState - Full diagram state.
+   * @param {Element} modelRootNode - UML model root element.
+   * @param {Map<string, Element>} packageElementNodeById - Map of packageId -> package XML node.
+   */
+  createRelations(xmlDocument, diagramState, modelRootNode, packageElementNodeById) {
     const relationTypeMap = {
       association: 'uml:Association',
       aggregation: 'uml:Aggregation',
@@ -152,17 +194,27 @@ export default class Exporter {
       generalization: 'uml:Generalization'
     };
 
-    relationList.forEach(rel => {
+    diagramState.relationList.forEach(rel => {
       const xmiType = relationTypeMap[rel.type];
       if (xmiType) {
+        // choose parent: package if both endpoints share the same package
+        const source = diagramState.getClassById?.(rel.source);
+        const target = diagramState.getClassById?.(rel.target);
+        const samePkg = source?.packageId && source.packageId === target?.packageId
+          ? source.packageId
+          : null;
+        const parent = samePkg && packageElementNodeById.has(samePkg)
+          ? packageElementNodeById.get(samePkg)
+          : modelRootNode;
+
         const element = xmlDocument.createElement('packagedElement');
         element.setAttribute('xmi:type', xmiType);
         element.setAttribute('xmi:id', rel.id);
         element.setAttribute('name', rel.name || rel.type);
-        element.setAttribute('client', rel.source);
-        element.setAttribute('supplier', rel.target);
-        
-        parentNode.appendChild(element);
+        element.setAttribute('client', source?.name || rel.source);
+        element.setAttribute('supplier', target?.name || rel.target);
+
+        parent.appendChild(element);
       }
     });
   }

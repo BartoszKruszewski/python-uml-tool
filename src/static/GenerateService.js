@@ -1,13 +1,28 @@
+/**
+ * Handles POSTing XMI to the backend and triggering the download of generated artifacts.
+ */
 export default class GenerateService {
+  /**
+   * @param {HTMLButtonElement} generateButtonElement - The "Generate" button to show busy state.
+   */
   constructor(generateButtonElement) {
     this.generateButtonElement = generateButtonElement;
   }
 
+  /**
+   * Toggle busy UI state on the generate button.
+   * @param {boolean} isBusy - Whether generation is in progress.
+   */
   setBusy(isBusy) {
     this.generateButtonElement.disabled = isBusy;
     this.generateButtonElement.textContent = isBusy ? "Generating…" : "Generate";
   }
 
+  /**
+   * Extract a filename from a Content-Disposition header, supporting RFC 5987.
+   * @param {string|null} contentDispositionHeader - Header value.
+   * @returns {string|null} Suggested filename or null if not present.
+   */
   getFilenameFromDisposition(contentDispositionHeader) {
     if (!contentDispositionHeader) return null;
     const matchStar = contentDispositionHeader.match(/filename\*=(?:UTF-8''|)([^;]+)/i);
@@ -17,6 +32,11 @@ export default class GenerateService {
     return match ? match[1] : null;
   }
 
+  /**
+   * Send the XMI to the backend and download the resulting archive.
+   * @param {string} xmiXml - XMI document content.
+   * @returns {Promise<void>} Resolves when the download is triggered.
+   */
   async generate(xmiXml) {
     try {
       this.setBusy(true);

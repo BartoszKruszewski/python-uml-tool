@@ -8,7 +8,38 @@ import TreeUI from "./TreeUI.js";
 import InteractionController from "./InteractionController.js";
 import Coordinate from "./Coordinate.js";
 
+/**
+ * Top-level application wire-up: state, renderer, UI, and interactions.
+ * @typedef {Object} AppReferences
+ * @property {SVGSVGElement} svg
+ * @property {SVGGElement} viewport
+ * @property {SVGPatternElement} gridPattern
+ * @property {SVGRectElement} gridRect
+ * @property {HTMLElement} tree
+ * @property {HTMLButtonElement} btnAddClass
+ * @property {HTMLButtonElement} btnAddPackage
+ * @property {HTMLButtonElement} btnLinkMode
+ * @property {HTMLSelectElement} linkTypeSel
+ * @property {HTMLButtonElement} btnGenerate
+ * @property {HTMLButtonElement} btnClear
+ * @property {HTMLElement} noSel
+ * @property {HTMLElement} classEditor
+ * @property {HTMLElement} packageEditor
+ * @property {HTMLInputElement|HTMLTextAreaElement} inClsName
+ * @property {HTMLTextAreaElement} inAttrs
+ * @property {HTMLTextAreaElement} inOps
+ * @property {HTMLSelectElement} inClsPkg
+ * @property {HTMLButtonElement} btnUpdate
+ * @property {HTMLButtonElement} btnDelete
+ * @property {HTMLInputElement|HTMLTextAreaElement} inPkgName
+ * @property {HTMLButtonElement} btnPkgUpdate
+ * @property {HTMLButtonElement} btnPkgDelete
+ * @property {HTMLInputElement} inGridSize
+ */
 export default class App {
+  /**
+   * @param {AppReferences} references - DOM references used across modules.
+   */
   constructor(references) {
     this.references = references;
     this.diagramState = new DiagramState();
@@ -134,6 +165,10 @@ export default class App {
     this.scheduleRender();
   }
 
+  /**
+   * Schedule a render on the next animation frame and update UI panels.
+   * @returns {void}
+   */
   scheduleRender() {
     if (this.animationFrameId !== null) return;
     this.animationFrameId = requestAnimationFrame(() => {

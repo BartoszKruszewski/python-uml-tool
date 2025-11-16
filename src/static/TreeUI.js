@@ -1,4 +1,12 @@
+/**
+ * Renders and manages the package/class tree in the sidebar.
+ */
 export default class TreeUI {
+  /**
+   * @param {HTMLElement} treeElement - Container element for the tree.
+   * @param {import("./DiagramState.js").default} diagramState - Shared diagram state.
+   * @param {(id:string|null) => void} onChangeCallback - Called when selection changes.
+   */
   constructor(treeElement, diagramState, onChangeCallback) {
     this.treeElement = treeElement;
     this.diagramState = diagramState;
@@ -10,6 +18,10 @@ export default class TreeUI {
     this.editingPackageId = null;
   }
 
+  /**
+   * Render the entire tree based on current state.
+   * @returns {void}
+   */
   render() {
     this.treeElement.innerHTML = "";
     const unorderedListElement = document.createElement("ul");
@@ -19,6 +31,11 @@ export default class TreeUI {
     this.treeElement.appendChild(unorderedListElement);
   }
 
+  /**
+   * Render a single package list item with its classes.
+   * @param {{id:string,name:string}} packageElement - Package to render.
+   * @returns {HTMLLIElement} Created list item element.
+   */
   renderPackage(packageElement) {
     const listItemElement = document.createElement("li");
     listItemElement.textContent = packageElement.name;
@@ -52,6 +69,10 @@ export default class TreeUI {
     return listItemElement;
   }
 
+    /**
+     * Handle single-click selection.
+     * @param {MouseEvent} event
+     */
     onClick(event) {
       const listItemElement = event.target.closest("li");
       if (!listItemElement) return;
@@ -60,6 +81,10 @@ export default class TreeUI {
       this.render();
     }
 
+    /**
+     * Enter inline edit mode for a package name.
+     * @param {MouseEvent} event
+     */
     onDoubleClick(event) {
       const listItemElement = event.target.closest("li");
       if (!listItemElement) return;
@@ -81,6 +106,10 @@ export default class TreeUI {
       });
     }
 
+    /**
+     * Handle key events (Delete removes selected package).
+     * @param {KeyboardEvent} event
+     */
     onKeyDown(event) {
       if (event.key === "Delete" && this.selectedPackageId) {
         const packageIndex = this.diagramState.packageList.findIndex((packageElement) => packageElement.id === this.selectedPackageId);

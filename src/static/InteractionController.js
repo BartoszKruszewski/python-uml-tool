@@ -1,7 +1,20 @@
 import Coordinate from "./Coordinate.js";
 import Geometry from "./Geometry.js";
 
+/**
+ * Handles pointer interactions: panning, dragging classes/packages, and resizing packages.
+ */
 export default class InteractionController {
+  /**
+   * @param {SVGSVGElement} svgElement - Root SVG element.
+   * @param {SVGGElement} viewportGroupElement - Viewport group for world transforms.
+   * @param {import("./DiagramState.js").default} diagramState - Shared diagram state.
+   * @param {import("./SvgRenderer.js").default} svgRenderer - SVG renderer instance.
+   * @param {import("./LinkService.js").default} linkService - Link service for edge creation.
+   * @param {() => number} gridStepProvider - Returns current grid step.
+   * @param {(type:"class"|"package", id:string) => void} onSelectCallback - Selection handler.
+   * @param {() => void} scheduleRenderCallback - Schedule a render on state changes.
+   */
   constructor(
     svgElement,
     viewportGroupElement,
@@ -34,6 +47,10 @@ export default class InteractionController {
       this.beginResizePackage(event, packageId, directionKey);
   }
 
+  /**
+   * Begin viewport panning.
+   * @param {PointerEvent} event
+   */
   beginPan(event) {
     this.diagramState.interactionState = {
       mode: "pan",
@@ -49,6 +66,11 @@ export default class InteractionController {
     document.body.classList.add("panning");
   }
 
+  /**
+   * Begin dragging a class node.
+   * @param {PointerEvent} event
+   * @param {{id:string,x:number,y:number,w:number,h:number}} classElement
+   */
   beginDragClass(event, classElement) {
     const worldPoint = Coordinate.screenToWorld(
       this.svgElement,
@@ -64,6 +86,11 @@ export default class InteractionController {
     this.svgElement.setPointerCapture(event.pointerId);
   }
 
+  /**
+   * Begin dragging a package box.
+   * @param {PointerEvent} event
+   * @param {{id:string,x:number,y:number,w:number,h:number}} packageElement
+   */
   beginDragPackage(event, packageElement) {
     const worldPoint = Coordinate.screenToWorld(
       this.svgElement,
@@ -79,6 +106,12 @@ export default class InteractionController {
     this.svgElement.setPointerCapture(event.pointerId);
   }
 
+  /**
+   * Begin resizing a package via a handle direction key (n,e,s,w, combinations like "ne").
+   * @param {PointerEvent} event
+   * @param {string} packageId
+   * @param {string} directionKey
+   */
   beginResizePackage(event, packageId, directionKey) {
     const packageElement = this.diagramState.getPackageById(packageId);
     const direction = { n: false, e: false, s: false, w: false };
@@ -109,6 +142,10 @@ export default class InteractionController {
     event.target.setPointerCapture(event.pointerId);
   }
 
+  /**
+   * Pointer down dispatcher for selection, dragging, resizing and panning.
+   * @param {PointerEvent} event
+   */
   _onPointerDown(event) {
     const handleElement = event.target.closest?.("rect.handle");
     const nodeGroupElement = event.target.closest?.("g.node");
@@ -157,6 +194,10 @@ export default class InteractionController {
     event.preventDefault();
   }
 
+  /**
+   * Pointer move handler for live interactions.
+   * @param {PointerEvent} event
+   */
   _onPointerMove(event) {
     if (!this.diagramState.interactionState) {
       if (this.diagramState.temporaryEdgeElement)
@@ -276,6 +317,10 @@ export default class InteractionController {
     }
   }
 
+  /**
+   * Finish the current interaction if matching pointerId.
+   * @param {PointerEvent} event
+   */
   _onPointerUp(event) {
     if (
       this.diagramState.interactionState &&
