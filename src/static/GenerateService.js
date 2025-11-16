@@ -19,7 +19,6 @@ export default class GenerateService {
 
   async generate(xmiXml) {
     try {
-      console.log(xmiXml);
       this.setBusy(true);
       const xmlBlob = new Blob([xmiXml], { type: "application/xml" });
       const xmlFile = new File([xmlBlob], "diagram.xmi", {
