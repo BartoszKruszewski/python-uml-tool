@@ -37,14 +37,19 @@ export default class InteractionController {
     this._onPointerDown = this._onPointerDown.bind(this);
     this._onPointerMove = this._onPointerMove.bind(this);
     this._onPointerUp = this._onPointerUp.bind(this);
+    this._onWheel = this._onWheel.bind(this);
 
     svgElement.addEventListener("pointerdown", this._onPointerDown);
     svgElement.addEventListener("pointermove", this._onPointerMove);
     svgElement.addEventListener("pointerup", this._onPointerUp);
+    svgElement.addEventListener("wheel", this._onWheel, { passive: false });
 
     // allow renderer to delegate resize-handle mousedown back here
     this.svgRenderer.onResizeHandle = (event, packageId, directionKey) =>
       this.beginResizePackage(event, packageId, directionKey);
+    
+    // Initialize viewport transform
+    this._updateViewportTransform();
   }
 
   /**
@@ -219,10 +224,7 @@ export default class InteractionController {
         x: this.diagramState.interactionState.start.panX + deltaX,
         y: this.diagramState.interactionState.start.panY + deltaY,
       };
-      this.viewportGroupElement.setAttribute(
-        "transform",
-        `translate(${this.diagramState.panOffset.x},${this.diagramState.panOffset.y})`
-      );
+      this._updateViewportTransform();
       return;
     }
 
@@ -238,10 +240,43 @@ export default class InteractionController {
       if (!classElement) return;
       classElement.x = Coordinate.snap(start.x + (worldPoint.x - start.px), gridStep);
       classElement.y = Coordinate.snap(start.y + (worldPoint.y - start.py), gridStep);
-      const containingPackage = this.diagramState.packageList.find((packageElement) =>
+      
+      // Find all packages containing the class
+      const containingPackages = this.diagramState.packageList.filter((packageElement) =>
         Geometry.isClassInsidePackage(classElement, packageElement)
       );
-      classElement.packageId = containingPackage?.id || null;
+      
+      if (containingPackages.length > 0) {
+        // Calculate nesting depth for each package
+        const getNestingDepth = (packageId) => {
+          let depth = 0;
+          let currentId = packageId;
+          while (currentId) {
+            const pkg = this.diagramState.getPackageById(currentId);
+            if (!pkg || !pkg.parentId) break;
+            depth++;
+            currentId = pkg.parentId;
+          }
+          return depth;
+        };
+        
+        // Find the most deeply nested package
+        let mostNestedPackage = containingPackages[0];
+        let maxDepth = getNestingDepth(mostNestedPackage.id);
+        
+        for (let i = 1; i < containingPackages.length; i++) {
+          const depth = getNestingDepth(containingPackages[i].id);
+          if (depth > maxDepth) {
+            maxDepth = depth;
+            mostNestedPackage = containingPackages[i];
+          }
+        }
+        
+        classElement.packageId = mostNestedPackage.id;
+      } else {
+        classElement.packageId = null;
+      }
+      
       this.scheduleRender();
       return;
     }
@@ -262,12 +297,63 @@ export default class InteractionController {
         deltaY = newY - packageElement.y;
       packageElement.x = newX;
       packageElement.y = newY;
+      
+      // Check if package is being dragged into another package (for nesting)
+      const containingPackage = this.diagramState.packageList.find((pkg) => {
+        if (pkg.id === packageElement.id) return false;
+        // Check if package center is inside another package
+        const centerX = packageElement.x + packageElement.w / 2;
+        const centerY = packageElement.y + packageElement.h / 2;
+        return centerX >= pkg.x && centerX <= pkg.x + pkg.w &&
+               centerY >= pkg.y && centerY <= pkg.y + pkg.h;
+      });
+      
+      // Prevent circular nesting (package cannot be parent of itself or its ancestors)
+      if (containingPackage && containingPackage.id !== packageElement.id) {
+        let isCircular = false;
+        let currentParentId = containingPackage.parentId;
+        while (currentParentId) {
+          if (currentParentId === packageElement.id) {
+            isCircular = true;
+            break;
+          }
+          const parent = this.diagramState.getPackageById(currentParentId);
+          currentParentId = parent?.parentId || null;
+        }
+        
+        if (!isCircular) {
+          packageElement.parentId = containingPackage.id;
+        }
+      } else {
+        // Check if package is dragged outside any package (remove nesting)
+        const stillInside = this.diagramState.packageList.find((pkg) => {
+          if (pkg.id === packageElement.id) return false;
+          const centerX = packageElement.x + packageElement.w / 2;
+          const centerY = packageElement.y + packageElement.h / 2;
+          return centerX >= pkg.x && centerX <= pkg.x + pkg.w &&
+                 centerY >= pkg.y && centerY <= pkg.y + pkg.h;
+        });
+        if (!stillInside) {
+          packageElement.parentId = null;
+        }
+      }
+      
+      // Move classes inside this package
       this.diagramState.classList.forEach((classElement) => {
         if (Geometry.isClassInsidePackage(classElement, packageElement, true)) {
           classElement.x += deltaX;
           classElement.y += deltaY;
         }
       });
+      
+      // Move nested packages
+      this.diagramState.packageList.forEach((nestedPackage) => {
+        if (nestedPackage.parentId === packageElement.id) {
+          nestedPackage.x += deltaX;
+          nestedPackage.y += deltaY;
+        }
+      });
+      
       this.scheduleRender();
       return;
     }
@@ -340,5 +426,87 @@ export default class InteractionController {
       document.body.classList.remove("panning");
       this.scheduleRender();
     }
+  }
+
+  /**
+   * Handle wheel event for zooming.
+   * Uses logarithmic scaling for smooth zoom at all levels.
+   * @param {WheelEvent} event
+   */
+  _onWheel(event) {
+    event.preventDefault();
+    
+    // Zoom configuration
+    const minZoom = 0.1;
+    const maxZoom = 5.0;
+    const zoomSensitivity = 0.02; // Controls how fast zoom changes (reduced for less sensitivity)
+    
+    // Get current zoom
+    const oldZoom = this.diagramState.zoomLevel;
+    
+    // Convert to logarithmic scale for smooth zooming
+    // Map zoom range [minZoom, maxZoom] to log scale
+    const logMin = Math.log(minZoom);
+    const logMax = Math.log(maxZoom);
+    const logRange = logMax - logMin;
+    
+    // Current zoom in log scale
+    const oldLogZoom = Math.log(oldZoom);
+    const normalizedLogZoom = (oldLogZoom - logMin) / logRange; // 0 to 1
+    
+    // Calculate delta in normalized log space
+    const delta = event.deltaY > 0 ? -zoomSensitivity : zoomSensitivity;
+    const newNormalizedLogZoom = Math.max(0, Math.min(1, normalizedLogZoom + delta));
+    
+    // Convert back to linear zoom
+    const newLogZoom = logMin + newNormalizedLogZoom * logRange;
+    const newZoom = Math.exp(newLogZoom);
+    
+    if (Math.abs(newZoom - oldZoom) < 0.001) return;
+    
+    // Get mouse position in screen coordinates relative to SVG
+    const svgRect = this.svgElement.getBoundingClientRect();
+    const mouseScreenX = event.clientX - svgRect.left;
+    const mouseScreenY = event.clientY - svgRect.top;
+    
+    // Get world coordinates of the point under the mouse (before zoom change)
+    const worldPoint = Coordinate.screenToWorld(
+      this.svgElement,
+      this.viewportGroupElement,
+      event.clientX,
+      event.clientY
+    );
+    
+    // Update zoom level
+    this.diagramState.zoomLevel = newZoom;
+    
+    // Calculate new pan offset so the same world point stays under the mouse
+    // After zoom, the transform is: translate(panX, panY) scale(zoom)
+    // Screen to world: worldX = (screenX - panX) / zoom
+    // We want: (mouseScreenX - newPanX) / newZoom = worldX
+    // So: newPanX = mouseScreenX - worldX * newZoom
+    this.diagramState.panOffset.x = mouseScreenX - worldPoint.x * newZoom;
+    this.diagramState.panOffset.y = mouseScreenY - worldPoint.y * newZoom;
+    
+    this._updateViewportTransform();
+  }
+
+  /**
+   * Update the viewport transform attribute with current pan and zoom.
+   * Public method to ensure transform is preserved after rendering.
+   */
+  updateViewportTransform() {
+    this.viewportGroupElement.setAttribute(
+      "transform",
+      `translate(${this.diagramState.panOffset.x},${this.diagramState.panOffset.y}) scale(${this.diagramState.zoomLevel})`
+    );
+  }
+
+  /**
+   * Update the viewport transform attribute with current pan and zoom.
+   * @private
+   */
+  _updateViewportTransform() {
+    this.updateViewportTransform();
   }
 }

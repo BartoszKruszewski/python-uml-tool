@@ -20,16 +20,32 @@ export default class Exporter {
     umlModelElement.setAttribute('xmi:id', 'model1');
     umlModelElement.setAttribute('name', 'Project');
 
-    // Packages
+    // Packages - first top-level, then nested
     const packageElementNodeById = new Map();
-    diagramState.packageList.forEach(packageElement => {
+    
+    // Helper to recursively add packages
+    const addPackage = (packageElement, parentNode) => {
       const node = this.createPackagedElement(xmlDocument, {
         type: 'uml:Package',
         id: packageElement.id,
         name: packageElement.name || 'Module'
       });
-      umlModelElement.appendChild(node);
+      parentNode.appendChild(node);
       packageElementNodeById.set(packageElement.id, node);
+      
+      // Add nested packages
+      diagramState.packageList.forEach(childPackage => {
+        if (childPackage.parentId === packageElement.id) {
+          addPackage(childPackage, node);
+        }
+      });
+    };
+    
+    // Add top-level packages first
+    diagramState.packageList.forEach(packageElement => {
+      if (!packageElement.parentId) {
+        addPackage(packageElement, umlModelElement);
+      }
     });
 
     // Classes

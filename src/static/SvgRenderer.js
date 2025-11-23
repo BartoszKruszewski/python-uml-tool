@@ -270,9 +270,7 @@ export default class SvgRenderer {
       nodeLayer.appendChild(groupElement);
     });
 
-    this.viewportGroupElement.setAttribute(
-      "transform",
-      `translate(${this.diagramState.panOffset.x},${this.diagramState.panOffset.y})`
-    );
+    // Note: Transform is managed by InteractionController, not here
+    // This ensures zoom level is preserved during rendering
   }
 }

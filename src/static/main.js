@@ -14,6 +14,9 @@ const addPackageButton = document.getElementById("btnAddPackage");
 const linkModeButton = document.getElementById("btnLinkMode");
 const linkTypeSelect = document.getElementById("linkType");
 const generateButton = document.getElementById("btnGenerate");
+const saveXMIButton = document.getElementById("btnSaveXMI");
+const loadXMIButton = document.getElementById("btnLoadXMI");
+const fileInputXMI = document.getElementById("fileInputXMI");
 const clearButton = document.getElementById("btnClear");
 
 const noSelectionPanel = document.getElementById("noSelection");
@@ -30,6 +33,38 @@ const buttonUpdatePackage = document.getElementById("btnPkgUpdate");
 const buttonDeletePackage = document.getElementById("btnPkgDelete");
 const inputGridSize = document.getElementById("gridSize");
 
+// Position toolbar within middle column
+function positionToolbar() {
+  const toolbar = document.getElementById("toolbar");
+  const mainGrid = document.querySelector(".main-grid");
+  const canvas = document.getElementById("canvas");
+  
+  if (!toolbar || !mainGrid || !canvas) return;
+
+  // Use actual canvas element position and width (middle column)
+  const canvasRect = canvas.getBoundingClientRect();
+  const mainGridRect = mainGrid.getBoundingClientRect();
+  
+  // Calculate position relative to viewport
+  const leftOffset = canvasRect.left;
+  const middleWidth = canvasRect.width;
+  
+  // Add some padding to avoid edges (1rem = 16px typically)
+  const padding = 16;
+  
+  toolbar.style.left = `${leftOffset + padding}px`;
+  toolbar.style.width = `${middleWidth - (padding * 2)}px`;
+  toolbar.style.maxWidth = `${middleWidth - (padding * 2)}px`;
+}
+
+// Position toolbar on load and resize
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', positionToolbar);
+} else {
+  positionToolbar();
+}
+window.addEventListener("resize", positionToolbar);
+
 const app = new App({
   svg: svgElement,
   viewport: viewportGroupElement,
@@ -41,6 +76,9 @@ const app = new App({
   btnLinkMode: linkModeButton,
   linkTypeSel: linkTypeSelect,
   btnGenerate: generateButton,
+  btnSaveXMI: saveXMIButton,
+  btnLoadXMI: loadXMIButton,
+  fileInputXMI: fileInputXMI,
   btnClear: clearButton,
   noSel: noSelectionPanel,
   classEditor: classEditorPanel,

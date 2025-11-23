@@ -5,7 +5,7 @@ export default class TreeUI {
   /**
    * @param {HTMLElement} treeElement - Container element for the tree.
    * @param {import("./DiagramState.js").default} diagramState - Shared diagram state.
-   * @param {(id:string|null) => void} onChangeCallback - Called when selection changes.
+   * @param {(elementType:"class"|"package"|"relation", elementId:string) => void} onChangeCallback - Called when selection changes.
    */
   constructor(treeElement, diagramState, onChangeCallback) {
     this.treeElement = treeElement;
@@ -25,15 +25,64 @@ export default class TreeUI {
   render() {
     this.treeElement.innerHTML = "";
     const unorderedListElement = document.createElement("ul");
+    // Render only top-level packages (those without parentId)
     this.diagramState.packageList.forEach((packageElement) => {
-      unorderedListElement.appendChild(this.renderPackage(packageElement));
+      if (!packageElement.parentId) {
+        unorderedListElement.appendChild(this.renderPackage(packageElement));
+      }
     });
+    
+    // Render relations section
+    if (this.diagramState.relationList.length > 0) {
+      const relationsLi = document.createElement("li");
+      relationsLi.textContent = "Relations";
+      relationsLi.className = "relations-header";
+      relationsLi.style.fontWeight = "600";
+      relationsLi.style.marginTop = "0.5rem";
+      relationsLi.style.paddingTop = "0.5rem";
+      relationsLi.style.borderTop = "1px solid var(--border)";
+      
+      const relationsUl = document.createElement("ul");
+      this.diagramState.relationList.forEach((relation) => {
+        const sourceClass = this.diagramState.getClassById(relation.source);
+        const targetClass = this.diagramState.getClassById(relation.target);
+        
+        if (sourceClass && targetClass) {
+          const relationLi = document.createElement("li");
+          relationLi.className = "relation";
+          relationLi.tabIndex = 0;
+          relationLi.dataset.id = relation.id;
+          relationLi.dataset.type = "relation";
+          
+          // Format: SourceClass --[type]--> TargetClass
+          const typeLabel = relation.type.charAt(0).toUpperCase() + relation.type.slice(1);
+          relationLi.textContent = `${sourceClass.name} --[${typeLabel}]--> ${targetClass.name}`;
+          relationLi.style.fontSize = "0.85rem";
+          relationLi.style.color = "var(--muted)";
+          
+          if (
+            this.diagramState.selectedElement?.type === "relation" &&
+            this.diagramState.selectedElement.id === relation.id
+          ) {
+            relationLi.classList.add("selected");
+          }
+          
+          relationsUl.appendChild(relationLi);
+        }
+      });
+      
+      if (relationsUl.children.length > 0) {
+        relationsLi.appendChild(relationsUl);
+        unorderedListElement.appendChild(relationsLi);
+      }
+    }
+    
     this.treeElement.appendChild(unorderedListElement);
   }
 
   /**
-   * Render a single package list item with its classes.
-   * @param {{id:string,name:string}} packageElement - Package to render.
+   * Render a single package list item with its classes and nested packages.
+   * @param {{id:string,name:string,parentId:(string|null)}} packageElement - Package to render.
    * @returns {HTMLLIElement} Created list item element.
    */
   renderPackage(packageElement) {
@@ -44,27 +93,37 @@ export default class TreeUI {
     listItemElement.className = "package";
     if (this.selectedPackageId === packageElement.id) listItemElement.classList.add("selected");
 
+    const childrenUl = document.createElement("ul");
+
+    // Render nested packages
+    const nestedPackages = this.diagramState.packageList.filter(
+      (pkg) => pkg.parentId === packageElement.id
+    );
+    nestedPackages.forEach((nestedPackage) => {
+      childrenUl.appendChild(this.renderPackage(nestedPackage));
+    });
+
     // Render classes belonging to this package
     const classList = this.diagramState.classList.filter(
       (classElement) => classElement.packageId === packageElement.id
     );
-    if (classList.length > 0) {
-      const classUl = document.createElement("ul");
-      classList.forEach((classElement) => {
-        const classLi = document.createElement("li");
-        classLi.textContent = classElement.name;
-        classLi.tabIndex = 0;
-        classLi.dataset.id = classElement.id;
-        classLi.className = "class";
-        if (
-          this.diagramState.selectedElement?.type === "class" &&
-          this.diagramState.selectedElement.id === classElement.id
-        ) {
-          classLi.classList.add("selected");
-        }
-        classUl.appendChild(classLi);
-      });
-      listItemElement.appendChild(classUl);
+    classList.forEach((classElement) => {
+      const classLi = document.createElement("li");
+      classLi.textContent = classElement.name;
+      classLi.tabIndex = 0;
+      classLi.dataset.id = classElement.id;
+      classLi.className = "class";
+      if (
+        this.diagramState.selectedElement?.type === "class" &&
+        this.diagramState.selectedElement.id === classElement.id
+      ) {
+        classLi.classList.add("selected");
+      }
+      childrenUl.appendChild(classLi);
+    });
+
+    if (childrenUl.children.length > 0) {
+      listItemElement.appendChild(childrenUl);
     }
     return listItemElement;
   }
@@ -76,8 +135,24 @@ export default class TreeUI {
     onClick(event) {
       const listItemElement = event.target.closest("li");
       if (!listItemElement) return;
+      
+      // Check if it's a relation
+      if (listItemElement.dataset.type === "relation") {
+        this.onChangeCallback?.("relation", listItemElement.dataset.id);
+        this.render();
+        return;
+      }
+      
+      // Check if it's a class
+      if (listItemElement.classList.contains("class")) {
+        this.onChangeCallback?.("class", listItemElement.dataset.id);
+        this.render();
+        return;
+      }
+      
+      // Otherwise it's a package
       this.selectedPackageId = listItemElement.dataset.id;
-      this.onChangeCallback?.(this.selectedPackageId);
+      this.onChangeCallback?.("package", this.selectedPackageId);
       this.render();
     }
 

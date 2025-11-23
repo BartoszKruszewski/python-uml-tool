@@ -1,7 +1,7 @@
 /**
  * Central mutable diagram state: packages, classes, relations, selection and interaction.
  * @typedef {{id:string,name:string,x:number,y:number,w:number,h:number,attributes:string[],operations:string[],packageId:(string|null)}} ClassElement
- * @typedef {{id:string,name:string,x:number,y:number,w:number,h:number}} PackageElement
+ * @typedef {{id:string,name:string,x:number,y:number,w:number,h:number,parentId:(string|null)}} PackageElement
  * @typedef {{id:string,type:string,source:string,target:string}} RelationElement
  */
 export default class DiagramState {
@@ -17,6 +17,7 @@ export default class DiagramState {
     this.temporaryEdgeElement = null; // <line> SVG during linking
     this.nextElementId = 1;
     this.panOffset = { x: 0, y: 0 };
+    this.zoomLevel = 1.0; // Zoom level (1.0 = 100%)
     this.interactionState = null; // {mode, pointerId, start, ...}
   }
 
@@ -49,7 +50,7 @@ export default class DiagramState {
 
   /**
    * Set the current selection.
-   * @param {"class"|"package"} elementType - Selected element type.
+   * @param {"class"|"package"|"relation"} elementType - Selected element type.
    * @param {string} elementId - Selected element ID.
    * @returns {void}
    */
@@ -91,11 +92,12 @@ export default class DiagramState {
    * Create and add a new package box.
    * @param {number} x - World X.
    * @param {number} y - World Y.
+   * @param {string|null} parentId - Parent package ID (for nesting).
    * @returns {PackageElement} The created package element.
    */
-  addPackage(x, y) {
+  addPackage(x, y, parentId = null) {
     const packageId = this.generateUniqueId("P");
-    const packageElement = { id: packageId, name: "Module" + this.nextElementId, x, y, w: 360, h: 240 };
+    const packageElement = { id: packageId, name: "Module" + this.nextElementId, x, y, w: 360, h: 240, parentId };
     this.packageList.push(packageElement);
     return packageElement;
   }
@@ -122,6 +124,10 @@ export default class DiagramState {
     if (packageIndex >= 0) this.packageList.splice(packageIndex, 1);
     this.classList.forEach((classElement) => {
       if (classElement.packageId === packageId) classElement.packageId = null;
+    });
+    // Detach child packages
+    this.packageList.forEach((packageElement) => {
+      if (packageElement.parentId === packageId) packageElement.parentId = null;
     });
   }
 
