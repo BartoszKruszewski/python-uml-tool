@@ -33,6 +33,14 @@
     </div>
   </main>
 
+  <!-- Restore buttons (shown when panels are collapsed) -->
+  <button class="restore-panel-btn restore-left-btn" id="restoreLeftBtn" title="Show Properties Panel">
+    <i class="fas fa-sliders-h"></i>
+  </button>
+  <button class="restore-panel-btn restore-right-btn" id="restoreRightBtn" title="Show Model Tree Panel">
+    <i class="fas fa-sitemap"></i>
+  </button>
+
   {% include "toolbar.html" %}
 
   <!-- Clear Diagram Modal -->
@@ -71,8 +79,57 @@
 
   <script type="module" src="/static/main.js"></script>
   
-  <!-- Mobile sidebar toggle script -->
+  <!-- Sidebar toggle script -->
   <script>
+    // Desktop toggle buttons
+    const sidebarLeft = document.getElementById('sidebarLeft');
+    const sidebarRight = document.getElementById('sidebarRight');
+    const collapseLeftBtn = document.getElementById('collapseLeftBtn');
+    const collapseRightBtn = document.getElementById('collapseRightBtn');
+    const restoreLeftBtn = document.getElementById('restoreLeftBtn');
+    const restoreRightBtn = document.getElementById('restoreRightBtn');
+    
+    // State tracking
+    let leftCollapsed = false;
+    let rightCollapsed = false;
+    
+    function updateRestoreButtons() {
+      // Show/hide restore buttons
+      restoreLeftBtn.classList.toggle('show', leftCollapsed);
+      restoreRightBtn.classList.toggle('show', rightCollapsed);
+    }
+    
+    // Collapse left panel
+    collapseLeftBtn.addEventListener('click', () => {
+      leftCollapsed = true;
+      sidebarLeft.classList.add('collapsed');
+      updateRestoreButtons();
+    });
+    
+    // Collapse right panel
+    collapseRightBtn.addEventListener('click', () => {
+      rightCollapsed = true;
+      sidebarRight.classList.add('collapsed');
+      updateRestoreButtons();
+    });
+    
+    // Restore left panel
+    restoreLeftBtn.addEventListener('click', () => {
+      leftCollapsed = false;
+      sidebarLeft.classList.remove('collapsed');
+      updateRestoreButtons();
+      // Toolbar stays in fixed position - no repositioning needed
+    });
+    
+    // Restore right panel
+    restoreRightBtn.addEventListener('click', () => {
+      rightCollapsed = false;
+      sidebarRight.classList.remove('collapsed');
+      updateRestoreButtons();
+      // Toolbar stays in fixed position - no repositioning needed
+    });
+    
+    // Mobile toggle buttons
     document.getElementById('toggleProperties').addEventListener('click', () => {
       document.getElementById('sidebarLeft').classList.toggle('open');
       document.getElementById('sidebarRight').classList.remove('open');

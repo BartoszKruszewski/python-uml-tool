@@ -140,9 +140,23 @@ export default class XmiImporter {
       const attributeElements = classElement.querySelectorAll("ownedAttribute");
       attributeElements.forEach(attrElement => {
         const attrName = getAttr(attrElement, "name");
-        const attrType = getAttr(attrElement, "type");
+        // Get type attribute directly (without namespace) to avoid confusion with xmi:type="uml:Property"
+        let attrType = attrElement.getAttribute("type");
+        // Filter out meta-types and empty types
+        if (!attrType || 
+            attrType.trim() === "" || 
+            attrType.startsWith("uml:") || 
+            attrType === "uml:Property" ||
+            attrType.toLowerCase() === "uml:property") {
+          attrType = "";
+        }
+        const visibility = getAttr(attrElement, "visibility") || "public";
         if (attrName) {
-          attributes.push(attrType ? `${attrName}: ${attrType}` : attrName);
+          attributes.push({
+            name: attrName,
+            type: attrType || "",
+            isPrivate: visibility === "private"
+          });
         }
       });
 
@@ -150,6 +164,7 @@ export default class XmiImporter {
       const operationElements = classElement.querySelectorAll("ownedOperation");
       operationElements.forEach(opElement => {
         const opName = getAttr(opElement, "name");
+        const visibility = getAttr(opElement, "visibility") || "public";
         if (opName) {
           const params = [];
           const paramElements = opElement.querySelectorAll("ownedParameter");
@@ -159,7 +174,7 @@ export default class XmiImporter {
               const paramName = getAttr(paramElement, "name");
               const paramType = getAttr(paramElement, "type");
               if (paramName) {
-                params.push(paramType ? `${paramName}: ${paramType}` : paramName);
+                params.push({ name: paramName, type: paramType || "" });
               }
             }
           });
@@ -171,9 +186,12 @@ export default class XmiImporter {
             }
           });
 
-          const paramStr = params.length > 0 ? `(${params.join(", ")})` : "()";
-          const returnStr = returnType ? `: ${returnType}` : "";
-          operations.push(`${opName}${paramStr}${returnStr}`);
+          operations.push({
+            name: opName,
+            params: params,
+            returnType: returnType,
+            isPrivate: visibility === "private"
+          });
         }
       });
 

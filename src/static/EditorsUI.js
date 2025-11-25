@@ -56,7 +56,7 @@ export default class EditorsUI {
 
     // Bind add buttons
     references.buttonAddAttr.addEventListener("click", () => {
-      this.addAttributeRow(references.attrsContainer, "", "String");
+      this.addAttributeRow(references.attrsContainer, "", "String", false);
       const rows = references.attrsContainer.querySelectorAll(".attr-row");
       if (rows.length > 0) {
         rows[rows.length - 1].querySelector(".attr-name")?.focus();
@@ -65,7 +65,7 @@ export default class EditorsUI {
     });
 
     references.buttonAddOp.addEventListener("click", () => {
-      this.addOperationCard(references.opsContainer, "", [], "");
+      this.addOperationCard(references.opsContainer, "", [], "", false);
       const cards = references.opsContainer.querySelectorAll(".op-card");
       if (cards.length > 0) {
         cards[cards.length - 1].querySelector(".op-name")?.focus();
@@ -137,14 +137,36 @@ export default class EditorsUI {
   }
 
   /**
-   * Create an attribute row with name input and type select.
+   * Create an attribute row with name input, type select, and visibility checkbox.
    * @param {HTMLElement} container
    * @param {string} name
    * @param {string} type
+   * @param {boolean} isPrivate
    */
-  addAttributeRow(container, name, type) {
+  addAttributeRow(container, name, type, isPrivate = false) {
     const row = document.createElement("div");
     row.className = "attr-row d-flex gap-2 align-items-center mb-2";
+
+    // Visibility checkbox with icon
+    const visibilityWrapper = document.createElement("div");
+    visibilityWrapper.className = "visibility-wrapper d-flex align-items-center";
+    visibilityWrapper.title = isPrivate ? "Private (-)" : "Public (+)";
+    
+    const visibilityCheckbox = document.createElement("input");
+    visibilityCheckbox.type = "checkbox";
+    visibilityCheckbox.checked = isPrivate;
+    visibilityCheckbox.className = "form-check-input attr-private";
+    visibilityCheckbox.addEventListener("change", (e) => {
+      visibilityWrapper.title = e.target.checked ? "Private (-)" : "Public (+)";
+      this.scheduleAutoSave();
+    });
+    
+    const visibilityIcon = document.createElement("span");
+    visibilityIcon.className = "visibility-icon";
+    visibilityIcon.innerHTML = '<i class="fas fa-lock"></i>';
+    
+    visibilityWrapper.appendChild(visibilityCheckbox);
+    visibilityWrapper.appendChild(visibilityIcon);
 
     const nameInput = document.createElement("input");
     nameInput.type = "text";
@@ -159,7 +181,7 @@ export default class EditorsUI {
     nameInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         e.preventDefault();
-        this.addAttributeRow(container, "", "String");
+        this.addAttributeRow(container, "", "String", false);
         const rows = container.querySelectorAll(".attr-row");
         if (rows.length > 0) {
           rows[rows.length - 1].querySelector(".attr-name")?.focus();
@@ -193,6 +215,7 @@ export default class EditorsUI {
       this.scheduleAutoSave();
     });
 
+    row.appendChild(visibilityWrapper);
     row.appendChild(nameInput);
     row.appendChild(typeSelect);
     row.appendChild(removeBtn);
@@ -263,19 +286,41 @@ export default class EditorsUI {
   }
 
   /**
-   * Create an operation card with name, return type, and parameters list.
+   * Create an operation card with name, return type, parameters list, and visibility checkbox.
    * @param {HTMLElement} container
    * @param {string} name
    * @param {{name: string, type: string}[]} params
    * @param {string} returnType
+   * @param {boolean} isPrivate
    */
-  addOperationCard(container, name, params, returnType) {
+  addOperationCard(container, name, params, returnType, isPrivate = false) {
     const card = document.createElement("div");
     card.className = "op-card";
 
-    // Header row: name + return type + remove button
+    // Header row: visibility checkbox + name + return type + remove button
     const headerRow = document.createElement("div");
     headerRow.className = "op-header-row d-flex gap-2 align-items-center mb-2";
+
+    // Visibility checkbox with icon
+    const visibilityWrapper = document.createElement("div");
+    visibilityWrapper.className = "visibility-wrapper d-flex align-items-center";
+    visibilityWrapper.title = isPrivate ? "Private (-)" : "Public (+)";
+    
+    const visibilityCheckbox = document.createElement("input");
+    visibilityCheckbox.type = "checkbox";
+    visibilityCheckbox.checked = isPrivate;
+    visibilityCheckbox.className = "form-check-input op-private";
+    visibilityCheckbox.addEventListener("change", (e) => {
+      visibilityWrapper.title = e.target.checked ? "Private (-)" : "Public (+)";
+      this.scheduleAutoSave();
+    });
+    
+    const visibilityIcon = document.createElement("span");
+    visibilityIcon.className = "visibility-icon";
+    visibilityIcon.innerHTML = '<i class="fas fa-lock"></i>';
+    
+    visibilityWrapper.appendChild(visibilityCheckbox);
+    visibilityWrapper.appendChild(visibilityIcon);
 
     const nameInput = document.createElement("input");
     nameInput.type = "text";
@@ -300,6 +345,7 @@ export default class EditorsUI {
       this.scheduleAutoSave();
     });
 
+    headerRow.appendChild(visibilityWrapper);
     headerRow.appendChild(nameInput);
     headerRow.appendChild(returnLabel);
     headerRow.appendChild(returnSelect);
@@ -330,7 +376,7 @@ export default class EditorsUI {
 
     // Add parameter button handler
     addParamBtn.addEventListener("click", () => {
-      this.addParameterRow(paramsContainer, "", "String");
+      this.addParameterRow(paramsContainer, "", "");
       const rows = paramsContainer.querySelectorAll(".param-row");
       if (rows.length > 0) {
         rows[rows.length - 1].querySelector(".param-name")?.focus();
@@ -370,7 +416,7 @@ export default class EditorsUI {
   /**
    * Get all attribute values from the container.
    * @param {HTMLElement} container
-   * @returns {string[]}
+   * @returns {{name:string,type:string,isPrivate:boolean}[]}
    */
   getAttributeValues(container) {
     const rows = container.querySelectorAll(".attr-row");
@@ -378,8 +424,9 @@ export default class EditorsUI {
     rows.forEach((row) => {
       const name = row.querySelector(".attr-name")?.value.trim() || "";
       const type = row.querySelector(".attr-type")?.value || "";
+      const isPrivate = row.querySelector(".attr-private")?.checked || false;
       if (name) {
-        values.push(type ? `${name}: ${type}` : name);
+        values.push({ name, type, isPrivate });
       }
     });
     return values;
@@ -388,7 +435,7 @@ export default class EditorsUI {
   /**
    * Get all operation values from the container.
    * @param {HTMLElement} container
-   * @returns {string[]}
+   * @returns {{name:string,params:{name:string,type:string}[],returnType:string,isPrivate:boolean}[]}
    */
   getOperationValues(container) {
     const cards = container.querySelectorAll(".op-card");
@@ -396,6 +443,7 @@ export default class EditorsUI {
     cards.forEach((card) => {
       const name = card.querySelector(".op-name")?.value.trim() || "";
       const returnType = card.querySelector(".op-return")?.value || "";
+      const isPrivate = card.querySelector(".op-private")?.checked || false;
       
       // Get parameters
       const paramRows = card.querySelectorAll(".param-row");
@@ -404,60 +452,80 @@ export default class EditorsUI {
         const paramName = row.querySelector(".param-name")?.value.trim() || "";
         const paramType = row.querySelector(".param-type")?.value || "";
         if (paramName) {
-          params.push(paramType ? `${paramName}: ${paramType}` : paramName);
+          params.push({ name: paramName, type: paramType });
         }
       });
 
       if (name) {
-        let op = `${name}(${params.join(", ")})`;
-        if (returnType) {
-          op += `: ${returnType}`;
-        }
-        values.push(op);
+        values.push({ name, params, returnType, isPrivate });
       }
     });
     return values;
   }
 
   /**
-   * Parse an attribute string into name and type.
-   * @param {string} attr
-   * @returns {{name: string, type: string}}
+   * Parse an attribute (string or object) into name, type, and isPrivate.
+   * @param {string|{name:string,type:string,isPrivate:boolean}} attr
+   * @returns {{name: string, type: string, isPrivate: boolean}}
    */
   parseAttribute(attr) {
-    const colonIndex = attr.indexOf(":");
+    // If it's already an object with the new structure, return it
+    if (typeof attr === "object" && attr !== null && "name" in attr) {
+      return {
+        name: attr.name || "",
+        type: attr.type || "",
+        isPrivate: attr.isPrivate || false
+      };
+    }
+    // Otherwise parse as string (legacy format)
+    const attrStr = String(attr);
+    const colonIndex = attrStr.indexOf(":");
     if (colonIndex === -1) {
-      return { name: attr.trim(), type: "" };
+      return { name: attrStr.trim(), type: "", isPrivate: false };
     }
     return {
-      name: attr.substring(0, colonIndex).trim(),
-      type: attr.substring(colonIndex + 1).trim()
+      name: attrStr.substring(0, colonIndex).trim(),
+      type: attrStr.substring(colonIndex + 1).trim(),
+      isPrivate: false
     };
   }
 
   /**
-   * Parse an operation string into name, params array, and return type.
-   * @param {string} op
-   * @returns {{name: string, params: {name: string, type: string}[], returnType: string}}
+   * Parse an operation (string or object) into name, params array, return type, and isPrivate.
+   * @param {string|{name:string,params:{name:string,type:string}[],returnType:string,isPrivate:boolean}} op
+   * @returns {{name: string, params: {name: string, type: string}[], returnType: string, isPrivate: boolean}}
    */
   parseOperation(op) {
-    const parenOpen = op.indexOf("(");
-    const parenClose = op.indexOf(")");
+    // If it's already an object with the new structure, return it
+    if (typeof op === "object" && op !== null && "name" in op && "params" in op) {
+      return {
+        name: op.name || "",
+        params: op.params || [],
+        returnType: op.returnType || "",
+        isPrivate: op.isPrivate || false
+      };
+    }
+    
+    // Otherwise parse as string (legacy format)
+    const opStr = String(op);
+    const parenOpen = opStr.indexOf("(");
+    const parenClose = opStr.indexOf(")");
     
     if (parenOpen === -1) {
-      const colonIndex = op.indexOf(":");
+      const colonIndex = opStr.indexOf(":");
       if (colonIndex === -1) {
-        return { name: op.trim(), params: [], returnType: "" };
+        return { name: opStr.trim(), params: [], returnType: "", isPrivate: false };
       }
       return {
-        name: op.substring(0, colonIndex).trim(),
+        name: opStr.substring(0, colonIndex).trim(),
         params: [],
-        returnType: op.substring(colonIndex + 1).trim()
+        returnType: opStr.substring(colonIndex + 1).trim(),
+        isPrivate: false
       };
     }
 
-    const name = op.substring(0, parenOpen).trim();
-    const paramsStr = parenClose > parenOpen ? op.substring(parenOpen + 1, parenClose).trim() : "";
+    const name = opStr.substring(0, parenOpen).trim();
+    const paramsStr = parenClose > parenOpen ? opStr.substring(parenOpen + 1, parenClose).trim() : "";
     
     // Parse parameters
     const params = [];
@@ -480,7 +548,7 @@ export default class EditorsUI {
     }
 
     // Check for return type after closing paren
-    const afterParen = op.substring(parenClose + 1).trim();
+    const afterParen = opStr.substring(parenClose + 1).trim();
     let returnType = "";
     if (afterParen.startsWith(":")) {
       returnType = afterParen.substring(1).trim();
@@ -488,22 +556,22 @@ export default class EditorsUI {
       returnType = afterParen.substring(2).trim();
     }
 
-    return { name, params, returnType };
+    return { name, params, returnType, isPrivate: false };
   }
 
   /**
    * Populate attributes container.
    * @param {HTMLElement} container
-   * @param {string[]} attributes
+   * @param {(string|{name:string,type:string,isPrivate:boolean})[]} attributes
    */
   populateAttributes(container, attributes) {
     container.innerHTML = "";
     if (attributes.length === 0) {
-      this.addAttributeRow(container, "", "");
+      this.addAttributeRow(container, "", "", false);
     } else {
       attributes.forEach((attr) => {
-        const { name, type } = this.parseAttribute(attr);
-        this.addAttributeRow(container, name, type);
+        const { name, type, isPrivate } = this.parseAttribute(attr);
+        this.addAttributeRow(container, name, type, isPrivate);
       });
     }
   }
@@ -511,16 +579,16 @@ export default class EditorsUI {
   /**
    * Populate operations container.
    * @param {HTMLElement} container
-   * @param {string[]} operations
+   * @param {(string|{name:string,params:{name:string,type:string}[],returnType:string,isPrivate:boolean})[]} operations
    */
   populateOperations(container, operations) {
     container.innerHTML = "";
     if (operations.length === 0) {
-      this.addOperationCard(container, "", [], "");
+      this.addOperationCard(container, "", [], "", false);
     } else {
       operations.forEach((op) => {
-        const { name, params, returnType } = this.parseOperation(op);
-        this.addOperationCard(container, name, params, returnType);
+        const { name, params, returnType, isPrivate } = this.parseOperation(op);
+        this.addOperationCard(container, name, params, returnType, isPrivate);
       });
     }
   }

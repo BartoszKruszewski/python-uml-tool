@@ -34,11 +34,11 @@ const buttonDeletePackage = document.getElementById("btnPkgDelete");
 const inputGridSize = document.getElementById("gridSize");
 
 // Position toolbar within middle column (responsive)
+// Toolbar has fixed position - doesn't move when panels collapse
 function positionToolbar() {
   const toolbar = document.getElementById("toolbar");
-  const canvas = document.getElementById("canvas");
   
-  if (!toolbar || !canvas) return;
+  if (!toolbar) return;
 
   // Check if we're on mobile (viewport <= 768px)
   if (window.innerWidth <= 768) {
@@ -46,23 +46,33 @@ function positionToolbar() {
     toolbar.style.left = '';
     toolbar.style.width = '';
     toolbar.style.maxWidth = '';
+    toolbar.style.transform = '';
     return;
   }
 
-  // Use actual canvas element position and width (middle column)
-  const canvasRect = canvas.getBoundingClientRect();
+  // Fixed panel widths (always calculate as if panels are visible)
+  // This ensures toolbar doesn't move when panels are collapsed
+  const leftPanelWidth = 350;
+  const rightPanelWidth = 300;
+  const availableWidth = window.innerWidth - leftPanelWidth - rightPanelWidth;
   
-  // Calculate position relative to viewport
-  const leftOffset = canvasRect.left;
-  const middleWidth = canvasRect.width;
+  // Toolbar should be smaller than available width (80% max, with min/max constraints)
+  const toolbarWidth = Math.min(
+    Math.max(availableWidth * 0.8, 400), // 80% of available, min 400px
+    1200 // max 1200px
+  );
   
-  // Add some padding to avoid edges
-  const padding = 16;
+  // Center toolbar in middle section (always at same position regardless of panel state)
+  const leftOffset = leftPanelWidth + (availableWidth - toolbarWidth) / 2;
   
-  toolbar.style.left = `${leftOffset + padding}px`;
-  toolbar.style.width = `${middleWidth - (padding * 2)}px`;
-  toolbar.style.maxWidth = `${middleWidth - (padding * 2)}px`;
+  toolbar.style.left = `${leftOffset}px`;
+  toolbar.style.width = `${toolbarWidth}px`;
+  toolbar.style.maxWidth = `${toolbarWidth}px`;
+  toolbar.style.transform = 'translateX(0)'; // Override CSS centering
 }
+
+// Make positionToolbar available globally for sidebar toggle handlers
+window.positionToolbar = positionToolbar;
 
 // Position toolbar on load and resize
 if (document.readyState === 'loading') {

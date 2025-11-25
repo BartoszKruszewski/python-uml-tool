@@ -1,6 +1,8 @@
 /**
  * Central mutable diagram state: packages, classes, relations, selection and interaction.
- * @typedef {{id:string,name:string,x:number,y:number,w:number,h:number,attributes:string[],operations:string[],packageId:(string|null)}} ClassElement
+ * @typedef {{name:string,type:string,isPrivate:boolean}} AttributeElement
+ * @typedef {{name:string,params:{name:string,type:string}[],returnType:string,isPrivate:boolean}} OperationElement
+ * @typedef {{id:string,name:string,x:number,y:number,w:number,h:number,attributes:AttributeElement[],operations:OperationElement[],packageId:(string|null)}} ClassElement
  * @typedef {{id:string,name:string,x:number,y:number,w:number,h:number,parentId:(string|null)}} PackageElement
  * @typedef {{id:string,type:string,source:string,target:string}} RelationElement
  */

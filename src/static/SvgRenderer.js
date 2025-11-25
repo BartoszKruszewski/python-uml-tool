@@ -273,13 +273,32 @@ export default class SvgRenderer {
       y += 28;
 
       classElement.attributes.forEach((attribute) => {
-        groupElement.appendChild(this.svgText(10, y, attribute));
+        let attrText = "";
+        if (typeof attribute === "object" && attribute !== null) {
+          const visibility = attribute.isPrivate ? "- " : "+ ";
+          const typeStr = attribute.type ? `: ${attribute.type}` : "";
+          attrText = `${visibility}${attribute.name}${typeStr}`;
+        } else {
+          attrText = String(attribute);
+        }
+        groupElement.appendChild(this.svgText(10, y, attrText));
         y += 18;
       });
       if (classElement.attributes.length === 0) y += 8;
 
       classElement.operations.forEach((operation) => {
-        groupElement.appendChild(this.svgText(10, y, operation));
+        let opText = "";
+        if (typeof operation === "object" && operation !== null) {
+          const visibility = operation.isPrivate ? "- " : "+ ";
+          const params = operation.params || [];
+          const paramStrs = params.map(p => p.type ? `${p.name}: ${p.type}` : p.name);
+          const paramStr = `(${paramStrs.join(", ")})`;
+          const returnStr = operation.returnType ? `: ${operation.returnType}` : "";
+          opText = `${visibility}${operation.name}${paramStr}${returnStr}`;
+        } else {
+          opText = String(operation);
+        }
+        groupElement.appendChild(this.svgText(10, y, opText));
         y += 18;
       });
       nodeLayer.appendChild(groupElement);

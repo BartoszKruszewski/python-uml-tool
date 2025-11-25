@@ -1,14 +1,23 @@
 :root {
-    --canvas: #0b1020;
-    --panel: #0f172a;
-    --card: #0b1220;
-    --muted: #94a3b8;
-    --primary: #38bdf8;
-    --selected: #22c55e;
+    /* Base colors - unified dark theme */
+    --canvas: #0a0e1a;
+    --panel: #121826;
+    --card: #0f1520;
+    --muted: #7c8899;
+    --primary: #3b82f6;
+    --primary-light: #60a5fa;
+    --selected: #10b981;
     --alpha: 70%;
-    --border: #1f2937;
-    --text: #e2e8f0;
+    --border: #1e293b;
+    --border-light: #334155;
+    --text: #e1e7ef;
+    --text-dim: #94a3b8;
     --font-mono: "Consolas", "Monaco", "Courier New", "Courier", monospace;
+    
+    /* Glass effect colors */
+    --glass-bg: rgba(18, 24, 38, 0.65);
+    --glass-border: rgba(59, 130, 246, 0.15);
+    --glass-shadow: rgba(0, 0, 0, 0.4);
 }
 
 /* Font - Apply monospace font consistently across all browsers and OS */
@@ -59,20 +68,134 @@ section {
 
 .main-grid {
     display: grid;
-    grid-template-columns: 280px 1fr 250px;
+    grid-template-columns: 1fr;
     height: 100vh;
     overflow: hidden;
+}
+
+#canvas {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    z-index: 1;
 }
 
 .sidebar-left,
 .sidebar-right {
+    position: fixed;
+    top: 0;
     height: 100vh;
-    overflow: hidden;
+    width: 350px;
+    z-index: 50;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    pointer-events: none;
 }
 
-.sidebar-left > aside,
-.sidebar-right > aside {
+.sidebar-left {
+    left: 0;
+}
+
+.sidebar-right {
+    right: 0;
+    width: 300px;
+}
+
+.sidebar-left > aside.border.bg-card,
+.sidebar-right > aside.border.bg-card {
     height: 100%;
+    width: 100%;
+    pointer-events: all;
+    /* Liquid glass effect - increased transparency */
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border-right: 1px solid var(--glass-border) !important;
+    box-shadow: 2px 0 24px var(--glass-shadow);
+}
+
+.sidebar-right > aside.border.bg-card {
+    border-right: none !important;
+    border-left: 1px solid var(--glass-border) !important;
+    box-shadow: -2px 0 24px var(--glass-shadow);
+}
+
+.sidebar-left.collapsed {
+    transform: translateX(-100%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.sidebar-right.collapsed {
+    transform: translateX(100%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Panel collapse buttons (inside headers) */
+.panel-collapse-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    font-size: 12px;
+    padding: 0;
+}
+
+.panel-collapse-btn:hover {
+    background: var(--primary);
+    color: var(--canvas);
+    border-color: var(--primary);
+}
+
+
+/* Restore panel buttons (shown when collapsed) */
+.restore-panel-btn {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 80px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--primary);
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 60;
+    transition: all 0.2s ease;
+    font-size: 16px;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
+}
+
+.restore-panel-btn:hover {
+    background: var(--primary);
+    color: var(--canvas);
+    border-color: var(--primary);
+    box-shadow: 2px 0 12px rgba(56, 189, 248, 0.4);
+}
+
+.restore-left-btn {
+    left: 0;
+    border-radius: 0 8px 8px 0;
+    border-left: none;
+}
+
+.restore-right-btn {
+    right: 0;
+    border-radius: 8px 0 0 8px;
+    border-right: none;
+}
+
+.restore-panel-btn.show {
+    display: flex;
 }
 
 /* Mobile toggle buttons - hidden on desktop */
@@ -123,15 +246,23 @@ section {
 
 /* Tablet breakpoint */
 @media (max-width: 1200px) {
-    .main-grid {
-        grid-template-columns: 250px 1fr 220px;
+    .sidebar-left {
+        width: 300px;
+    }
+    
+    .sidebar-right {
+        width: 260px;
     }
 }
 
 /* Small tablet / large phone breakpoint */
 @media (max-width: 992px) {
-    .main-grid {
-        grid-template-columns: 220px 1fr 200px;
+    .sidebar-left {
+        width: 280px;
+    }
+    
+    .sidebar-right {
+        width: 240px;
     }
     
     .toolbar-btn span {
@@ -150,12 +281,18 @@ section {
 
 /* Mobile breakpoint */
 @media (max-width: 768px) {
-    .main-grid {
-        grid-template-columns: 1fr;
-    }
-    
     .mobile-toggles {
         display: flex;
+    }
+    
+    /* Hide desktop collapse/restore buttons on mobile */
+    .panel-collapse-btn,
+    .restore-panel-btn {
+        display: none !important;
+    }
+    
+    #canvas {
+        padding: 0;
     }
     
     .sidebar-left,
@@ -167,7 +304,13 @@ section {
         height: 100vh;
         z-index: 95;
         transition: transform 0.3s ease;
-        background: var(--card);
+        opacity: 1 !important;
+        pointer-events: none;
+    }
+    
+    .sidebar-left > aside,
+    .sidebar-right > aside {
+        pointer-events: all;
     }
     
     .sidebar-left {
@@ -264,6 +407,11 @@ section {
         max-width: 100%;
     }
     
+    /* Ensure restore buttons are hidden on very small screens */
+    .restore-panel-btn {
+        display: none !important;
+    }
+    
     .mobile-toggle-btn {
         width: 36px;
         height: 36px;
@@ -285,16 +433,18 @@ section {
 
 /* Toolbar */
 
-#toolbar {
+#toolbar.bg-panel {
     position: fixed;
     bottom: 0.75rem;
-    left: 0;
-    width: auto;
-    max-width: 100%;
-    transform: none;
-    backdrop-filter: blur(10px);
-    background: rgba(15, 23, 42, 0.9) !important;
-    border-color: rgba(56, 189, 248, 0.2) !important;
+    /* Position will be set by JavaScript - fixed position regardless of panel state */
+    min-width: 400px;
+    /* Liquid glass effect */
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid var(--glass-border) !important;
+    box-shadow: 0 4px 32px var(--glass-shadow);
+    /* No transition - toolbar stays in fixed position */
 }
 
 .toolbar-content {
@@ -310,9 +460,10 @@ section {
     display: flex;
     align-items: center;
     gap: 0.25rem;
-    background: rgba(11, 18, 32, 0.6);
+    background: rgba(15, 24, 38, 0.5);
     padding: 0.25rem;
     border-radius: 8px;
+    border: 1px solid var(--border-light);
 }
 
 .toolbar-group-compact {
@@ -323,8 +474,8 @@ section {
 .toolbar-separator {
     width: 1px;
     height: 1.5rem;
-    background: var(--border);
-    opacity: 0.5;
+    background: var(--border-light);
+    opacity: 0.6;
     margin: 0 0.25rem;
 }
 
@@ -344,8 +495,8 @@ section {
 }
 
 .toolbar-btn:hover {
-    background: rgba(56, 189, 248, 0.15);
-    border-color: rgba(56, 189, 248, 0.3);
+    background: rgba(59, 130, 246, 0.15);
+    border-color: rgba(59, 130, 246, 0.3);
     color: var(--primary);
 }
 
@@ -358,7 +509,7 @@ section {
 }
 
 .toolbar-btn-accent:hover {
-    background: rgba(56, 189, 248, 0.2);
+    background: rgba(59, 130, 246, 0.2);
 }
 
 .toolbar-btn-success {
@@ -385,11 +536,12 @@ section {
     padding: 0.35rem 0.5rem;
     font-size: 0.7rem;
     color: var(--text);
-    background: var(--card);
-    border: 1px solid var(--border);
+    background: rgba(15, 24, 38, 0.7);
+    border: 1px solid var(--border-light);
     border-radius: 6px;
     cursor: pointer;
     min-width: 100px;
+    transition: all 0.15s ease;
 }
 
 .toolbar-select:focus {
@@ -402,10 +554,11 @@ section {
     padding: 0.25rem 0.4rem;
     font-size: 0.7rem;
     color: var(--text);
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 4px;
+    background: rgba(15, 24, 38, 0.7);
+    border: 1px solid var(--border-light);
+    border-radius: 6px;
     text-align: center;
+    transition: all 0.15s ease;
 }
 
 .toolbar-input:focus {
@@ -557,11 +710,12 @@ svg text {
 .panel-header,
 .tree-header {
     display: flex;
+    justify-content: space-between;
     align-items: center;
     gap: 0.5rem;
     margin-bottom: 0.75rem;
     padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--border-light);
     color: var(--primary);
     font-size: 0.8rem;
     font-weight: 600;
@@ -569,7 +723,13 @@ svg text {
     text-transform: uppercase;
 }
 
-.panel-header i,
+.panel-header-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.panel-header-title i,
 .tree-header i {
     font-size: 0.85rem;
     opacity: 0.8;
@@ -657,7 +817,7 @@ aside.border.bg-card::-webkit-scrollbar-thumb:hover {
 .editor-section {
     padding-bottom: 0.5rem;
     margin-bottom: 0.5rem;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--border-light);
 }
 
 .editor-section:last-of-type {
@@ -674,7 +834,7 @@ aside.border.bg-card::-webkit-scrollbar-thumb:hover {
     align-items: center;
     margin-bottom: 0.75rem;
     padding-bottom: 0.5rem;
-    border-bottom: 1px dashed var(--border);
+    border-bottom: 1px dashed var(--border-light);
 }
 
 .section-title {
@@ -693,7 +853,7 @@ aside.border.bg-card::-webkit-scrollbar-thumb:hover {
     color: var(--primary);
     background: transparent;
     border: 1px solid var(--primary);
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
     transition: all 0.15s ease;
 }
@@ -701,6 +861,7 @@ aside.border.bg-card::-webkit-scrollbar-thumb:hover {
 .section-add-btn:hover {
     background: var(--primary);
     color: var(--canvas);
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
 }
 
 .section-add-btn i {
@@ -727,6 +888,12 @@ aside.border.bg-card::-webkit-scrollbar-thumb:hover {
 .attr-header {
     font-size: 0.7rem;
     opacity: 0.7;
+}
+
+.attr-header .visibility-header {
+    width: 70px;
+    text-align: center;
+    font-size: 0.65rem;
 }
 
 .attr-header .attr-name-header {
@@ -763,6 +930,82 @@ aside.border.bg-card::-webkit-scrollbar-thumb:hover {
 .attr-type {
     flex: 0.8;
     font-size: 0.75rem !important;
+}
+
+/* Visibility checkboxes */
+
+.visibility-wrapper {
+    position: relative;
+    gap: 6px;
+    padding: 4px 8px;
+    background: rgba(56, 189, 248, 0.05);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    width: 70px;
+    min-width: 70px;
+    justify-content: center;
+}
+
+.visibility-wrapper:hover {
+    background: rgba(56, 189, 248, 0.1);
+    border-color: var(--primary);
+}
+
+.visibility-icon {
+    font-size: 10px;
+    color: var(--muted);
+    pointer-events: none;
+    transition: color 0.2s ease;
+}
+
+.form-check-input:checked + .visibility-icon {
+    color: var(--primary);
+}
+
+.form-check-input {
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    background-color: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    appearance: none;
+    -webkit-appearance: none;
+    position: relative;
+    margin: 0;
+}
+
+.form-check-input:hover {
+    border-color: var(--primary);
+}
+
+.form-check-input:checked {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.form-check-input:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--canvas);
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.form-check-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+}
+
+.attr-private,
+.op-private {
+    margin-right: 4px;
 }
 
 /* Operations container uses panel scroll, no individual scroll needed */

@@ -98,12 +98,23 @@ export default class Exporter {
 
     // Attributes
     classElement.attributes.forEach((attr, index) => {
-      const [name, type] = (attr || '').split(':').map(s => s.trim());
+      let name, type, isPrivate = false;
+      if (typeof attr === 'object' && attr !== null) {
+        name = attr.name;
+        type = attr.type;
+        isPrivate = attr.isPrivate || false;
+      } else {
+        const parts = (attr || '').split(':').map(s => s.trim());
+        name = parts[0];
+        type = parts[1];
+      }
       const attrNode = xmlDocument.createElement('ownedAttribute');
       attrNode.setAttribute('xmi:id', `${classElement.id}_attr_${index + 1}`);
       attrNode.setAttribute('xmi:type', 'uml:Property');
       attrNode.setAttribute('name', name || `attr${index + 1}`);
-      if (type) attrNode.setAttribute('type', type);
+      attrNode.setAttribute('visibility', isPrivate ? 'private' : 'public');
+      // Always set type attribute, even if empty, to avoid confusion with xmi:type
+      attrNode.setAttribute('type', type || '');
       classNode.appendChild(attrNode);
     });
 
@@ -120,7 +131,7 @@ export default class Exporter {
    * Create UML operation node with parameters and optional return type.
    * @param {XMLDocument} xmlDocument - Target XML document.
    * @param {string} classId - Owning class ID.
-   * @param {string} operationSignature - Signature like "foo(a:int, b:str): bool".
+   * @param {string|{name:string,params:{name:string,type:string}[],returnType:string,isPrivate:boolean}} operationSignature - Signature like "foo(a:int, b:str): bool" or object.
    * @param {number} index - Operation index (0-based).
    * @returns {Element} Operation element node.
    */
@@ -130,6 +141,7 @@ export default class Exporter {
     operationNode.setAttribute('xmi:type', 'uml:Operation');
     operationNode.setAttribute('xmi:id', `${classId}_op_${index + 1}`);
     operationNode.setAttribute('name', parsed.name || `op${index + 1}`);
+    operationNode.setAttribute('visibility', parsed.isPrivate ? 'private' : 'public');
 
     // Parameters (input)
     parsed.params.forEach((param, paramIndex) => {
@@ -156,12 +168,23 @@ export default class Exporter {
   }
 
   /**
-   * Parse an operation signature into name, parameters and return type.
-   * @param {string} signature - Raw signature e.g. "do(x:int, y): str".
-   * @returns {{name:string, params:Array<{name:string,type:string}>, returnType:string}} Parsed shape.
+   * Parse an operation signature into name, parameters, return type, and visibility.
+   * @param {string|{name:string,params:{name:string,type:string}[],returnType:string,isPrivate:boolean}} signature - Raw signature e.g. "do(x:int, y): str" or object.
+   * @returns {{name:string, params:Array<{name:string,type:string}>, returnType:string, isPrivate:boolean}} Parsed shape.
    */
   parseOperationSignature(signature) {
-    const result = { name: '', params: [], returnType: '' };
+    const result = { name: '', params: [], returnType: '', isPrivate: false };
+    
+    // If it's already an object, return it
+    if (typeof signature === 'object' && signature !== null) {
+      return {
+        name: signature.name || '',
+        params: signature.params || [],
+        returnType: signature.returnType || '',
+        isPrivate: signature.isPrivate || false
+      };
+    }
+    
     if (!signature || typeof signature !== 'string') return result;
 
     const trimmed = signature.trim();

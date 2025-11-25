@@ -1,7 +1,12 @@
 <aside class="border bg-card p-3">
     <div class="panel-header">
-        <i class="fas fa-sliders-h"></i>
-        <span>Properties</span>
+        <div class="panel-header-title">
+            <i class="fas fa-sliders-h"></i>
+            <span>Properties</span>
+        </div>
+        <button class="panel-collapse-btn" id="collapseLeftBtn" title="Hide panel">
+            <i class="fas fa-chevron-left"></i>
+        </button>
     </div>
 
     <div id="noSelection" class="small text-muted py-3 text-center">
@@ -38,6 +43,9 @@
                 </button>
             </div>
             <div class="attr-header d-flex gap-2 mb-1 small text-muted px-1">
+                <span class="visibility-header" title="Visibility: check for private, uncheck for public">
+                    <i class="fas fa-lock"></i>
+                </span>
                 <span class="attr-name-header">Name</span>
                 <span class="attr-type-header">Type</span>
             </div>
