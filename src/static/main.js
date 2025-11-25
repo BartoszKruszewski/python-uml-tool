@@ -23,33 +23,40 @@ const noSelectionPanel = document.getElementById("noSelection");
 const classEditorPanel = document.getElementById("classEditor");
 const packageEditorPanel = document.getElementById("packageEditor");
 const inputClassName = document.getElementById("clsName");
-const inputClassAttributes = document.getElementById("clsAttrs");
-const inputClassOperations = document.getElementById("clsOps");
+const attrsContainer = document.getElementById("clsAttrsContainer");
+const opsContainer = document.getElementById("clsOpsContainer");
+const buttonAddAttr = document.getElementById("btnAddAttr");
+const buttonAddOp = document.getElementById("btnAddOp");
 const inputClassPackage = document.getElementById("clsPackage");
-const buttonUpdateClass = document.getElementById("btnUpdate");
 const buttonDeleteClass = document.getElementById("btnDelete");
 const inputPackageName = document.getElementById("pkgName");
-const buttonUpdatePackage = document.getElementById("btnPkgUpdate");
 const buttonDeletePackage = document.getElementById("btnPkgDelete");
 const inputGridSize = document.getElementById("gridSize");
 
-// Position toolbar within middle column
+// Position toolbar within middle column (responsive)
 function positionToolbar() {
   const toolbar = document.getElementById("toolbar");
-  const mainGrid = document.querySelector(".main-grid");
   const canvas = document.getElementById("canvas");
   
-  if (!toolbar || !mainGrid || !canvas) return;
+  if (!toolbar || !canvas) return;
+
+  // Check if we're on mobile (viewport <= 768px)
+  if (window.innerWidth <= 768) {
+    // On mobile, toolbar is centered via CSS
+    toolbar.style.left = '';
+    toolbar.style.width = '';
+    toolbar.style.maxWidth = '';
+    return;
+  }
 
   // Use actual canvas element position and width (middle column)
   const canvasRect = canvas.getBoundingClientRect();
-  const mainGridRect = mainGrid.getBoundingClientRect();
   
   // Calculate position relative to viewport
   const leftOffset = canvasRect.left;
   const middleWidth = canvasRect.width;
   
-  // Add some padding to avoid edges (1rem = 16px typically)
+  // Add some padding to avoid edges
   const padding = 16;
   
   toolbar.style.left = `${leftOffset + padding}px`;
@@ -84,13 +91,13 @@ const app = new App({
   classEditor: classEditorPanel,
   packageEditor: packageEditorPanel,
   inClsName: inputClassName,
-  inAttrs: inputClassAttributes,
-  inOps: inputClassOperations,
+  attrsContainer: attrsContainer,
+  opsContainer: opsContainer,
+  btnAddAttr: buttonAddAttr,
+  btnAddOp: buttonAddOp,
   inClsPkg: inputClassPackage,
-  btnUpdate: buttonUpdateClass,
   btnDelete: buttonDeleteClass,
   inPkgName: inputPackageName,
-  btnPkgUpdate: buttonUpdatePackage,
   btnPkgDelete: buttonDeletePackage,
   inGridSize: inputGridSize,
 });

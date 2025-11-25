@@ -1,26 +1,23 @@
-<div id="toolbar" class="fixed-bottom mb-4 d-flex justify-content-center align-items-center px-4 py-3 rounded-4 border bg-panel shadow-lg"
+<div id="toolbar" class="fixed-bottom mb-3 d-flex justify-content-center align-items-center px-3 py-2 rounded-4 border bg-panel"
     style="z-index:20;">
-    <div class="toolbar-content d-flex align-items-center gap-3 flex-wrap justify-content-center">
+    <div class="toolbar-content d-flex align-items-center gap-2 flex-wrap justify-content-center">
         <!-- Add Elements Group -->
-        <div class="d-flex align-items-center gap-2">
-            <button id="btnAddClass" type="button"
-                class="btn btn-outline-secondary d-inline-flex align-items-center gap-2 px-3 py-2 rounded-3">
-                <i class="fas fa-code"></i>
-                Class
+        <div class="toolbar-group">
+            <button id="btnAddClass" type="button" class="toolbar-btn" title="Add Class">
+                <i class="fas fa-cube"></i>
+                <span>Class</span>
             </button>
-            <button id="btnAddPackage" type="button"
-                class="btn btn-outline-secondary d-inline-flex align-items-center gap-2 px-3 py-2 rounded-3">
-                <i class="fas fa-folder"></i>
-                Module
+            <button id="btnAddPackage" type="button" class="toolbar-btn" title="Add Module">
+                <i class="fas fa-folder-open"></i>
+                <span>Module</span>
             </button>
         </div>
 
-        <div class="vr" style="height: 2rem; opacity: 0.3;"></div>
+        <div class="toolbar-separator"></div>
 
         <!-- Link Group -->
-        <div class="d-flex align-items-center gap-2">
-            <label class="form-label small text-muted mb-0">Link</label>
-            <select id="linkType" class="form-select form-select-sm bg-card border text-light" style="width:auto; min-width: 120px;">
+        <div class="toolbar-group">
+            <select id="linkType" class="toolbar-select" title="Link Type">
                 <option value="association">Association</option>
                 <option value="aggregation">Aggregation</option>
                 <option value="composition">Composition</option>
@@ -28,59 +25,46 @@
                 <option value="realization">Realization</option>
                 <option value="generalization">Generalization</option>
             </select>
-            <button id="btnLinkMode" type="button"
-                class="btn btn-outline-secondary d-inline-flex align-items-center gap-2 px-3 py-2 rounded-3">
-                <i class="fas fa-plus"></i>
-                Start Link
+            <button id="btnLinkMode" type="button" class="toolbar-btn" title="Start Link">
+                <i class="fas fa-link"></i>
+                <span>Link</span>
             </button>
         </div>
 
-        <div class="vr" style="height: 2rem; opacity: 0.3;"></div>
-
-        <!-- Generate Group -->
-        <div class="d-flex align-items-center gap-2">
-            <button id="btnGenerate" type="button"
-                class="btn btn-success d-inline-flex align-items-center gap-2 px-3 py-2 rounded-3">
-                <i class="fas fa-microchip"></i>
-                Generate
-            </button>
-        </div>
-
-        <div class="vr" style="height: 2rem; opacity: 0.3;"></div>
+        <div class="toolbar-separator"></div>
 
         <!-- File Operations Group -->
-        <div class="d-flex align-items-center gap-2">
-            <button id="btnSaveXMI" type="button"
-                class="btn btn-outline-primary d-inline-flex align-items-center gap-2 px-3 py-2 rounded-3">
+        <div class="toolbar-group">
+            <button id="btnSaveXMI" type="button" class="toolbar-btn toolbar-btn-accent" title="Save XMI">
                 <i class="fas fa-download"></i>
-                Save XMI
+                <span>Save</span>
             </button>
-            <button id="btnLoadXMI" type="button"
-                class="btn btn-outline-primary d-inline-flex align-items-center gap-2 px-3 py-2 rounded-3">
+            <button id="btnLoadXMI" type="button" class="toolbar-btn toolbar-btn-accent" title="Load XMI">
                 <i class="fas fa-upload"></i>
-                Load XMI
+                <span>Load</span>
             </button>
             <input type="file" id="fileInputXMI" accept=".xmi,.xml" style="display: none;">
         </div>
 
-        <div class="vr" style="height: 2rem; opacity: 0.3;"></div>
+        <div class="toolbar-separator"></div>
 
-        <!-- Clear Group -->
-        <div class="d-flex align-items-center gap-2">
-            <button id="btnClear" type="button"
-                class="btn btn-danger d-inline-flex align-items-center gap-2 px-3 py-2 rounded-3">
-                <i class="fas fa-trash"></i>
-                Clear
+        <!-- Generate & Clear Group -->
+        <div class="toolbar-group">
+            <button id="btnGenerate" type="button" class="toolbar-btn toolbar-btn-success" title="Generate Python Code">
+                <i class="fas fa-bolt"></i>
+                <span>Generate</span>
+            </button>
+            <button id="btnClear" type="button" class="toolbar-btn toolbar-btn-danger" title="Clear Diagram">
+                <i class="fas fa-trash-alt"></i>
             </button>
         </div>
 
-        <div class="vr" style="height: 2rem; opacity: 0.3;"></div>
+        <div class="toolbar-separator"></div>
 
-        <!-- Settings Group -->
-        <div class="d-flex align-items-center gap-2">
-            <label class="form-label small text-muted mb-0">Grid size (px)</label>
-            <input id="gridSize" type="number" value="16" min="4" step="2"
-                class="form-control form-control-sm bg-card border border-secondary text-light" style="width:5rem;">
+        <!-- Grid Settings -->
+        <div class="toolbar-group toolbar-group-compact">
+            <i class="fas fa-th text-muted" style="font-size: 0.7rem;"></i>
+            <input id="gridSize" type="number" value="16" min="4" step="2" class="toolbar-input" title="Grid Size">
         </div>
     </div>
 </div>

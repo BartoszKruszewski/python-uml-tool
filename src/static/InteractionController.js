@@ -431,64 +431,71 @@ export default class InteractionController {
   /**
    * Handle wheel event for zooming.
    * Uses logarithmic scaling for smooth zoom at all levels.
+   * Optimized with requestAnimationFrame for smooth performance.
    * @param {WheelEvent} event
    */
   _onWheel(event) {
     event.preventDefault();
     
-    // Zoom configuration
-    const minZoom = 0.1;
-    const maxZoom = 5.0;
-    const zoomSensitivity = 0.02; // Controls how fast zoom changes (reduced for less sensitivity)
+    // Store wheel data for RAF processing
+    if (!this._pendingZoom) {
+      this._pendingZoom = { deltaY: 0, clientX: event.clientX, clientY: event.clientY };
+    }
+    this._pendingZoom.deltaY += event.deltaY;
+    this._pendingZoom.clientX = event.clientX;
+    this._pendingZoom.clientY = event.clientY;
     
-    // Get current zoom
-    const oldZoom = this.diagramState.zoomLevel;
+    // Throttle with RAF
+    if (this._zoomRAF) return;
     
-    // Convert to logarithmic scale for smooth zooming
-    // Map zoom range [minZoom, maxZoom] to log scale
-    const logMin = Math.log(minZoom);
-    const logMax = Math.log(maxZoom);
-    const logRange = logMax - logMin;
-    
-    // Current zoom in log scale
-    const oldLogZoom = Math.log(oldZoom);
-    const normalizedLogZoom = (oldLogZoom - logMin) / logRange; // 0 to 1
-    
-    // Calculate delta in normalized log space
-    const delta = event.deltaY > 0 ? -zoomSensitivity : zoomSensitivity;
-    const newNormalizedLogZoom = Math.max(0, Math.min(1, normalizedLogZoom + delta));
-    
-    // Convert back to linear zoom
-    const newLogZoom = logMin + newNormalizedLogZoom * logRange;
-    const newZoom = Math.exp(newLogZoom);
-    
-    if (Math.abs(newZoom - oldZoom) < 0.001) return;
-    
-    // Get mouse position in screen coordinates relative to SVG
-    const svgRect = this.svgElement.getBoundingClientRect();
-    const mouseScreenX = event.clientX - svgRect.left;
-    const mouseScreenY = event.clientY - svgRect.top;
-    
-    // Get world coordinates of the point under the mouse (before zoom change)
-    const worldPoint = Coordinate.screenToWorld(
-      this.svgElement,
-      this.viewportGroupElement,
-      event.clientX,
-      event.clientY
-    );
-    
-    // Update zoom level
-    this.diagramState.zoomLevel = newZoom;
-    
-    // Calculate new pan offset so the same world point stays under the mouse
-    // After zoom, the transform is: translate(panX, panY) scale(zoom)
-    // Screen to world: worldX = (screenX - panX) / zoom
-    // We want: (mouseScreenX - newPanX) / newZoom = worldX
-    // So: newPanX = mouseScreenX - worldX * newZoom
-    this.diagramState.panOffset.x = mouseScreenX - worldPoint.x * newZoom;
-    this.diagramState.panOffset.y = mouseScreenY - worldPoint.y * newZoom;
-    
-    this._updateViewportTransform();
+    this._zoomRAF = requestAnimationFrame(() => {
+      this._zoomRAF = null;
+      if (!this._pendingZoom) return;
+      
+      const { deltaY, clientX, clientY } = this._pendingZoom;
+      this._pendingZoom = null;
+      
+      // Zoom configuration
+      const minZoom = 0.1;
+      const maxZoom = 5.0;
+      const zoomSensitivity = 0.015;
+      
+      const oldZoom = this.diagramState.zoomLevel;
+      
+      // Logarithmic scaling
+      const logMin = Math.log(minZoom);
+      const logMax = Math.log(maxZoom);
+      const logRange = logMax - logMin;
+      
+      const oldLogZoom = Math.log(oldZoom);
+      const normalizedLogZoom = (oldLogZoom - logMin) / logRange;
+      
+      const delta = deltaY > 0 ? -zoomSensitivity : zoomSensitivity;
+      const newNormalizedLogZoom = Math.max(0, Math.min(1, normalizedLogZoom + delta));
+      
+      const newLogZoom = logMin + newNormalizedLogZoom * logRange;
+      const newZoom = Math.exp(newLogZoom);
+      
+      if (Math.abs(newZoom - oldZoom) < 0.001) return;
+      
+      // Get mouse position in screen coordinates relative to SVG
+      const svgRect = this.svgElement.getBoundingClientRect();
+      const mouseScreenX = clientX - svgRect.left;
+      const mouseScreenY = clientY - svgRect.top;
+      
+      // Calculate world point under mouse before zoom
+      const worldX = (mouseScreenX - this.diagramState.panOffset.x) / oldZoom;
+      const worldY = (mouseScreenY - this.diagramState.panOffset.y) / oldZoom;
+      
+      // Update zoom level
+      this.diagramState.zoomLevel = newZoom;
+      
+      // Calculate new pan offset to keep same world point under mouse
+      this.diagramState.panOffset.x = mouseScreenX - worldX * newZoom;
+      this.diagramState.panOffset.y = mouseScreenY - worldY * newZoom;
+      
+      this._updateViewportTransform();
+    });
   }
 
   /**

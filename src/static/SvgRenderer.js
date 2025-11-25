@@ -78,11 +78,22 @@ export default class SvgRenderer {
     const bodyRect = packageGroupElement.querySelector("rect.body");
     bodyRect.setAttribute("width", packageElement.w);
     bodyRect.setAttribute("height", packageElement.h);
+    
+    // Center the header
+    const headerWidth = Math.max(120, packageElement.w * 0.4);
+    const headerX = (packageElement.w - headerWidth) / 2;
     const headerRect = packageGroupElement.querySelector("rect.header");
-    headerRect.setAttribute("width", Math.max(120, packageElement.w * 0.4));
+    headerRect.setAttribute("x", headerX);
+    headerRect.setAttribute("width", headerWidth);
+    
+    // Update label position (centered)
+    const labelText = packageGroupElement.querySelector("text.pkg-label");
+    if (labelText) {
+      labelText.setAttribute("x", packageElement.w / 2);
+    }
+    
     const handlePositionMap = {
       nw: [0, 16],
-      n: [packageElement.w / 2, 16],
       ne: [packageElement.w, 16],
       w: [0, 16 + packageElement.h / 2],
       e: [packageElement.w, 16 + packageElement.h / 2],
@@ -92,7 +103,7 @@ export default class SvgRenderer {
     };
     packageGroupElement.querySelectorAll("rect.handle").forEach((handleElement) => {
       const key = Array.from(handleElement.classList).find((className) =>
-        ["nw", "n", "ne", "w", "e", "sw", "s", "se"].includes(className)
+        ["nw", "ne", "w", "e", "sw", "s", "se"].includes(className)
       );
       if (!key) return;
       const [handleX, handleY] = handlePositionMap[key];
@@ -138,13 +149,16 @@ export default class SvgRenderer {
       bodyRect.setAttribute("pointer-events", "none");
       groupElement.appendChild(bodyRect);
 
+      const headerWidth = Math.max(120, packageElement.w * 0.4);
+      const headerX = (packageElement.w - headerWidth) / 2; // Center the header
+      
       const headerRect = document.createElementNS(
         "http://www.w3.org/2000/svg",
         "rect"
       );
-      headerRect.setAttribute("x", 0);
+      headerRect.setAttribute("x", headerX);
       headerRect.setAttribute("y", 0);
-      headerRect.setAttribute("width", Math.max(120, packageElement.w * 0.4));
+      headerRect.setAttribute("width", headerWidth);
       headerRect.setAttribute("height", 24);
       headerRect.setAttribute("class", "header");
       groupElement.appendChild(headerRect);
@@ -153,15 +167,16 @@ export default class SvgRenderer {
         "http://www.w3.org/2000/svg",
         "text"
       );
-      labelText.setAttribute("x", 8);
+      labelText.setAttribute("x", packageElement.w / 2);
       labelText.setAttribute("y", 16);
+      labelText.setAttribute("text-anchor", "middle");
       labelText.textContent = packageElement.name;
       labelText.setAttribute("class", "pkg-label");
       groupElement.appendChild(labelText);
 
+      // Handles - excluding top center "n" handle
       const handleDefs = [
         { k: "nw", x: 0, y: 16, cls: "handle nw" },
-        { k: "n", x: packageElement.w / 2, y: 16, cls: "handle n" },
         { k: "ne", x: packageElement.w, y: 16, cls: "handle ne" },
         { k: "w", x: 0, y: 16 + packageElement.h / 2, cls: "handle w" },
         { k: "e", x: packageElement.w, y: 16 + packageElement.h / 2, cls: "handle e" },

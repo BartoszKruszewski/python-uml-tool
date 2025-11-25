@@ -30,13 +30,13 @@ import Coordinate from "./Coordinate.js";
  * @property {HTMLElement} classEditor
  * @property {HTMLElement} packageEditor
  * @property {HTMLInputElement|HTMLTextAreaElement} inClsName
- * @property {HTMLTextAreaElement} inAttrs
- * @property {HTMLTextAreaElement} inOps
+ * @property {HTMLElement} attrsContainer
+ * @property {HTMLElement} opsContainer
+ * @property {HTMLButtonElement} btnAddAttr
+ * @property {HTMLButtonElement} btnAddOp
  * @property {HTMLSelectElement} inClsPkg
- * @property {HTMLButtonElement} btnUpdate
  * @property {HTMLButtonElement} btnDelete
  * @property {HTMLInputElement|HTMLTextAreaElement} inPkgName
- * @property {HTMLButtonElement} btnPkgUpdate
  * @property {HTMLButtonElement} btnPkgDelete
  * @property {HTMLInputElement} inGridSize
  */
@@ -68,13 +68,13 @@ export default class App {
         classEditorPanel: references.classEditor,
         packageEditorPanel: references.packageEditor,
         inputClassName: references.inClsName,
-        inputClassAttributes: references.inAttrs,
-        inputClassOperations: references.inOps,
+        attrsContainer: references.attrsContainer,
+        opsContainer: references.opsContainer,
+        buttonAddAttr: references.btnAddAttr,
+        buttonAddOp: references.btnAddOp,
         inputClassPackage: references.inClsPkg,
-        buttonUpdateClass: references.btnUpdate,
         buttonDeleteClass: references.btnDelete,
         inputPackageName: references.inPkgName,
-        buttonUpdatePackage: references.btnPkgUpdate,
         buttonDeletePackage: references.btnPkgDelete,
       },
       () => this.scheduleRender()
@@ -134,15 +134,22 @@ export default class App {
     references.btnLinkMode.addEventListener("click", () => {
       this.linkService.toggle(references.btnLinkMode);
     });
+    // Clear modal setup
+    const clearModal = new bootstrap.Modal(document.getElementById("clearModal"));
+    const confirmClearBtn = document.getElementById("btnConfirmClear");
+    
     references.btnClear.addEventListener("click", () => {
-      if (confirm("Clear the diagram?")) {
-        this.diagramState.classes = [];
-        this.diagramState.packages = [];
-        this.diagramState.relations = [];
-        this.diagramState.selected = null;
-        this.editorsUI.refreshPackageSelect();
-        this.scheduleRender();
-      }
+      clearModal.show();
+    });
+    
+    confirmClearBtn.addEventListener("click", () => {
+      this.diagramState.classList = [];
+      this.diagramState.packageList = [];
+      this.diagramState.relationList = [];
+      this.diagramState.selectedElement = null;
+      this.editorsUI.refreshPackageSelect();
+      this.scheduleRender();
+      clearModal.hide();
     });
     references.inGridSize.addEventListener("change", () => {
       const gridStep = Math.max(4, parseInt(references.inGridSize.value || "16", 10));

@@ -1,51 +1,73 @@
 <aside class="border bg-card p-3">
-    <div id="noSelection" class="small text-muted">Nothing selected.</div>
+    <div class="panel-header">
+        <i class="fas fa-sliders-h"></i>
+        <span>Properties</span>
+    </div>
+
+    <div id="noSelection" class="small text-muted py-3 text-center">
+        <i class="fas fa-mouse-pointer me-1"></i>
+        Select an element
+    </div>
 
     <div id="classEditor" class="d-flex flex-column gap-2">
-        <label class="form-label text-muted">Class name</label>
-        <input id="clsName" type="text"
-            class="form-control form-control-sm text-light bg-card border rounded-3" />
+        <!-- Class name with delete button -->
+        <div class="editor-section">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+                <label class="form-label text-muted mb-0">Class name</label>
+                <button id="btnDelete" type="button" class="btn btn-sm btn-outline-danger delete-element-btn"
+                    title="Delete class">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+            <input id="clsName" type="text" class="form-control form-control-sm text-light bg-card border rounded-3" />
+        </div>
 
-        <label class="form-label text-muted">Attributes (one per line)</label>
-        <textarea id="clsAttrs" class="form-control form-control-sm text-light bg-card border rounded-3"
-            style="min-height:80px;" placeholder="name: String&#10;age: Integer"></textarea>
+        <!-- Module selection -->
+        <div class="editor-section">
+            <label class="form-label text-muted mb-1">Module</label>
+            <select id="clsPackage"
+                class="form-select form-select-sm text-light bg-card border rounded-3 w-100"></select>
+        </div>
 
-        <label class="form-label text-muted">Operations (one per line)</label>
-        <textarea id="clsOps" class="form-control form-control-sm text-light bg-card border rounded-3"
-            style="min-height:80px;" placeholder="toString(): String&#10;save(): void"></textarea>
+        <!-- Attributes section -->
+        <div class="editor-section">
+            <div class="section-header">
+                <span class="section-title text-muted">Attributes</span>
+                <button id="btnAddAttr" type="button" class="section-add-btn" title="Add attribute">
+                    <i class="fas fa-plus"></i> Add
+                </button>
+            </div>
+            <div class="attr-header d-flex gap-2 mb-1 small text-muted px-1">
+                <span class="attr-name-header">Name</span>
+                <span class="attr-type-header">Type</span>
+            </div>
+            <div id="clsAttrsContainer" class="fields-container">
+                <!-- Dynamic attribute rows will be added here -->
+            </div>
+        </div>
 
-        <label class="form-label text-muted">Module</label>
-        <select id="clsPackage"
-            class="form-select form-select-sm text-light bg-card border rounded-3 w-100"></select>
-
-        <div class="d-flex gap-3 pt-2">
-            <button id="btnUpdate"
-                class="btn btn-outline-secondary d-inline-flex align-items-center gap-2 px-3 py-2 rounded-3">
-                <i class="fas fa-floppy-disk"></i>
-                Save
-            </button>
-            <button id="btnDelete" class="btn btn-danger d-inline-flex align-items-center gap-2 px-3 py-2 rounded-3">
-                <i class="fas fa-trash"></i>
-                Delete
-            </button>
+        <!-- Operations section -->
+        <div class="editor-section">
+            <div class="section-header">
+                <span class="section-title text-muted">Operations</span>
+                <button id="btnAddOp" type="button" class="section-add-btn" title="Add operation">
+                    <i class="fas fa-plus"></i> Add
+                </button>
+            </div>
+            <div id="clsOpsContainer" class="operations-container">
+                <!-- Dynamic operation cards will be added here -->
+            </div>
         </div>
     </div>
 
-    <div id="packageEditor" class="d-flex flex-column gap-2 mt-3">
-        <label class="form-label text-muted">Module name</label>
-        <input id="pkgName" type="text"
-            class="form-control form-control-sm text-light bg-card border rounded-3" />
-
-        <div class="d-flex gap-3 pt-2">
-            <button id="btnPkgUpdate"
-                class="btn btn-outline-secondary d-inline-flex align-items-center gap-2 px-3 py-2 rounded-3">
-                <i class="fas fa-floppy-disk"></i>
-                Save
-            </button>
-            <button id="btnPkgDelete" class="btn btn-danger d-inline-flex align-items-center gap-2 px-3 py-2 rounded-3">
+    <div id="packageEditor" class="d-flex flex-column gap-2">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <label class="form-label text-muted mb-0">Module name</label>
+            <button id="btnPkgDelete" type="button" class="btn btn-sm btn-outline-danger delete-element-btn"
+                title="Delete module">
                 <i class="fas fa-trash"></i>
-                Delete
             </button>
         </div>
+        <input id="pkgName" type="text" class="form-control form-control-sm text-light bg-card border rounded-3" />
     </div>
 </aside>

@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Background -->
+  <rect width="32" height="32" rx="6" fill="#0f172a"/>
+  
+  <!-- UML Class box -->
+  <rect x="6" y="5" width="20" height="22" rx="3" fill="#0b1220" stroke="#38bdf8" stroke-width="1.5"/>
+  
+  <!-- Class name section (header) -->
+  <rect x="6" y="5" width="20" height="7" rx="3" fill="rgba(56, 189, 248, 0.2)"/>
+  <rect x="6" y="9" width="20" height="3" fill="rgba(56, 189, 248, 0.2)"/>
+  
+  <!-- Separator lines -->
+  <line x1="6" y1="12" x2="26" y2="12" stroke="#1f2937" stroke-width="1"/>
+  <line x1="6" y1="19" x2="26" y2="19" stroke="#1f2937" stroke-width="1"/>
+  
+  <!-- Class name text line -->
+  <rect x="10" y="7" width="12" height="2" rx="1" fill="#38bdf8"/>
+  
+  <!-- Attribute lines -->
+  <rect x="9" y="14" width="10" height="1.5" rx="0.75" fill="#e2e8f0"/>
+  <rect x="9" y="17" width="8" height="1.5" rx="0.75" fill="#e2e8f0" opacity="0.6"/>
+  
+  <!-- Operation lines -->
+  <rect x="9" y="21" width="14" height="1.5" rx="0.75" fill="#94a3b8"/>
+  <rect x="9" y="24" width="11" height="1.5" rx="0.75" fill="#94a3b8" opacity="0.6"/>
+</svg>
+
