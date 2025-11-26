@@ -244,6 +244,80 @@ section {
     opacity: 1;
 }
 
+/* MacBook Air M1 and similar screens (1440px width) */
+@media (min-width: 1280px) and (max-width: 1600px) {
+    /* Increase toolbar button sizes */
+    .toolbar-btn {
+        padding: 0.5rem 0.85rem;
+        font-size: 0.85rem;
+    }
+    
+    .toolbar-btn i {
+        font-size: 0.9rem;
+    }
+    
+    .toolbar-select {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.75rem;
+        min-width: 110px;
+    }
+    
+    .toolbar-input {
+        padding: 0.3rem 0.5rem;
+        font-size: 0.75rem;
+        width: 4rem;
+    }
+    
+    /* Increase panel header sizes */
+    .panel-header,
+    .tree-header {
+        font-size: 0.9rem;
+        padding-bottom: 0.6rem;
+        margin-bottom: 0.85rem;
+    }
+    
+    .section-title {
+        font-size: 0.95rem;
+    }
+    
+    .section-add-btn {
+        padding: 0.3rem 0.7rem;
+        font-size: 0.75rem;
+    }
+    
+    /* Increase form element sizes */
+    .attr-name,
+    .attr-type {
+        font-size: 0.8rem !important;
+    }
+    
+    .op-name {
+        font-size: 0.9rem !important;
+    }
+    
+    .op-return {
+        font-size: 0.8rem !important;
+    }
+    
+    .param-name,
+    .param-type {
+        font-size: 0.75rem !important;
+    }
+    
+    /* Increase SVG text sizes */
+    svg text {
+        font-size: 13px;
+    }
+    
+    .node .title {
+        font-size: 15px;
+    }
+    
+    .package text {
+        font-size: 15px;
+    }
+}
+
 /* Tablet breakpoint */
 @media (max-width: 1200px) {
     .sidebar-left {
