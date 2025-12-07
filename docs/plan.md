@@ -384,34 +384,170 @@ W strukturze projektu wyróżnia się trzy współpracujące ze sobą warstwy:
 
 - Warstwa domeny – realizuje kluczową logikę biznesową w izolacji od warstwy sieciowej. Moduł ten odpowiada za parsowanie struktur UML, mapowanie relacji między obiektami oraz automatyczną generację wynikowych plików i katalogów w języku Python.
 
-## Charakterystyka narzędzi i środowiska wytwarzania (uzasadnienie wyboru)
+## Charakterystyka narzędzi i środowiska wytwarzania
 
-### Języki programowania + frameworki i biblioteki
+### Języki programowania i framework
+
+Aplikacja jest przeznaczona do generowania kodu Python, co naturalnie wpłynęło na wybór języka dla warstwy domenowej. W celu minimalizacji zależności zewnętrznych w tej warstwie wykorzystane zostały wyłącznie biblioteki standardowe.
+
+Warstwa aplikacji została zbudowana w oparciu o Python i framework FastAPI. FastAPI wyróżnia się swoją lekkością i prostotą architektoniczną, co czyni go idealnym rozwiązaniem dla małych serwisów udostępniających REST API. W porównaniu z popularnymi alternatywami takimi jak Flask czy Django, oferuje on znacznie bardziej minimalistyczne podejście przy jednoczesnie wyższej wydajności, choć kosztem mniejszej liczby wbudowanych funkcjonalności. Biorąc pod uwagę relatywnie prostą strukturę warstwy aplikacji, FastAPI okazał się wyborem optymalnym.
+
+Warstwa prezentacji została oparta na HTML, CSS, JavaScript i Bootstrap, bez wykorzystania dedykowanego frameworka. Ta decyzja architektoniczna wynika z faktu, że interfejs użytkownika nie wymaga złożonej logiki – użycie frameworka frontendowego mogłoby zaciemnić strukturę kodu zamiast ją uprościć. Ponieważ rozmiar kodu odpowiada przede wszystkim za efekt wizualny a nie funkcjonalny aplikacji, wprowadzenie rozwiązań takich jak React nie przyniosłoby żadnych rzeczywistych korzyści.
 
 ### Narzędzia (np. Git).
 
-### Uzasadnienie doboru technologii (dlaczego FastAPI, a nie Django?).
+Projekt wykorzystuje Git jako narzędzie do kontroli wersji. Ze względu na modularność warstwy domenowej, która może być autonomicznie wykorzystywana w innych projektach, repozytorium podzielone zostało na dwie części – główne repozytorium aplikacji oraz submoduł zawierający warstwę domenową, oba udostępnione na platformie GitHub.
+
+Zarządzanie zależnościami zewnętrznymi realizowane jest za pośrednictwem venv (służącego do utworzenia izolowanych środowisk Python) oraz pip (odpowiedzialnego za pobieranie i instalację pakietów). Wszystkie wymagane biblioteki zostały dokładnie zdefiniowane w plikach pyproject.toml, zapewniając pełną reprodukowalność środowiska.
+
+Testowanie aplikacji prowadzone jest przy użyciu frameworka pytest, stanowiącego standard w ekosystemie Python.
 
 ## Implementacja rozwiązania
 
-### Opis struktury projektu (pliki, moduły).
+### Opis struktury projektu
 
-### Omówienie kluczowych algorytmów lub trudnych fragmentów logiki biznesowej.
+Aplikacja opiera się na trójwarstwowej architekturze, gdzie każda warstwa odpowiada za określone aspekty funkcjonalności.
+
+#### Warstwa domeny
+
+Warstwa domeny odpowiada za przetwarzanie diagramów UML i generowanie kodu Python. Jej zadaniem jest konwersja modelu UML z formatu XMI na gotową do użytku strukturę projektu.
+
+- syntax.py - definiuje wewnętrzną reprezentację modelu UML
+- XmiParser.py - parsuje pliki XMI zgodnie ze standardem XMI 2.1
+- ProjectGenerator.py - generuje strukturę katalogów i pliki projektu Python
+- TemplateManager.py - renderuje kod Python na podstawie obiektów modelu, obsługuje mapowanie typów i relacji
+- ImportMapping.py - zarządza mapowaniem klas na ścieżki importu w wygenerowanym projekcie
+
+System w pełni obsługuje wszystkie podstawowe relacje UML (asocjacja, agregacja, kompozycja, dziedziczenie, realizacja, zależność) i mapuje je semantycznie na idiomatyczny kod Python.
+
+#### Warstwa aplikacji
+
+Backend udostępnia interfejs API do komunikacji między frontendem a logiką generowania kodu.
+
+Główne endpointy:
+
+- GET / – serwuje interfejs użytkownika
+- POST /generate – przyjmuje plik XMI i zwraca wygenerowany projekt jako archiwum ZIP
+
+Proces generowania obejmuje:
+- Walidację przesłanego pliku
+- Parsowanie struktury XMI
+- Generowanie kodu Python
+- Pakowanie wyników w archiwum ZIP
+- Obsługę błędów na każdym etapie
+
+#### Warstwa prezentacji
+
+Frontend jest aplikacją modułową, gdzie każdy komponent odpowiada za określoną funkcjonalność.
+
+Zarządzanie stanem i renderowaniem:
+- DiagramState.js – przechowuje modelowe dane (klasy, pakiety, relacje, zoom, pan)
+- SvgRenderer.js – renderuje diagram w formacie SVG na podstawie stanu
+
+Interakcja użytkownika:
+- InteractionController.js – obsługuje gesty (przeciąganie, pan, zoom, resize)
+- LinkService.js – umożliwia tworzenie i zarządzanie relacjami między klasami
+
+Wymiana danych:
+- Exporter.js – eksportuje diagram do standardu XMI 2.1 z obsługą pakietów zagnieżdżonych
+- XmiImporter.js – importuje pliki XMI i automatycznie pozycjonuje elementy na diagramie
+- GenerateService.js – komunikuje się z API backendu w celu generowania kodu
+
+Interfejs użytkownika:
+- EditorsUI.js – panele do edycji właściwości klas i pakietów
+- TreeUI.js – hierarchiczny widok drzewa z wskazaniem zagnieżdzenia i relacji
+- Coordinate.js – funkcje transformacji i konwersji współrzędnych
+- Geometry.js – obliczenia geometryczne dla renderowania i interakcji
+
+### Przepływ danych
+
+1. Użytkownik tworzy diagram (Frontend)
+2. Export do XMI (Exporter.js)
+3. Wysłanie na backend (GenerateService.js)
+4. Parsowanie XMI (XmiParser.py)
+5. Generowanie kodu Python (ProjectGenerator.py + TemplateManager.py)
+6. Zwrócenie archiwum ZIP
+7. Pobranie przez użytkownika
 
 ### Prezentacja interfejsu użytkownika (zrzuty ekranu najważniejszych widoków z opisem działania).
 
-### Rozwiązanie napotkanych problemów technicznych.
+TODO
 
 ## Testowanie i weryfikacja
 
-### Plan testów (co testowałeś?).
+### Zakres Testowania
 
-### Testy jednostkowe, integracyjne lub manualne (scenariusze testowe).
+Testowanie obejmowało kluczowe aspekty funkcjonalne aplikacji, w szczególności przetwarzanie danych XMI, generowanie kodu oraz mapowanie struktury projektów. Weryfikacji poddano następujące elementy: parsowanie pakietów, klas i relacji z plików XMI, generowanie kodu Python z zachowaniem hierarchii pakietów, prawidłowe mapowanie importów dla zagnieżdżonych struktur pakietów oraz obsługę wszystkich typów relacji UML. Dodatkowo przeprowadzono weryfikację poprawności generowania plików projektu i inicjalizacji pakietów w wygenerowanym kodzie.
 
-### Wnioski z testów (czy spełniono wymagania funkcjonalne?).
+### Testy Jednostkowe
+
+Zestaw testów jednostkowych implementowanych z wykorzystaniem frameworka pytest obejmował cztery główne komponenty aplikacji:
+
+- ImportMapping – Weryfikacja mechanizmu mapowania ścieżek importów dla klas w zagnieżdżonych pakietach, w tym obsługę scenariuszy z wieloma klasami w jednym pakiecie, klasami rozproszonymi w różnych pakietach oraz przypadkami zawierającymi brakujące klasy.
+
+- ProjectGenerator – Testowanie procesu tworzenia struktury katalogów dla projektów o różnym stopniu złożoności: pakiety puste, struktury płaskie oraz zagnieżdżone hierarchie pakietów, z weryfikacją obecności plików __init__.py i prawidłowego generowania plików klas ze skeletami kodu.
+
+- TemplateManager – Walidacja poprawności generowania definicji klas z właściwościami i operacjami, a także obsługa wszystkich typów relacji UML (asocjacja, agregacja, kompozycja, dziedziczenie, realizacja, zależność) w generowanym kodzie.
+
+- XmiParser – Testowanie parsowania plików XMI o różnych strukturach, w tym pakiety puste i zagnieżdżone, klasy bez pól i metod, wszystkie typy relacji, właściwości i operacje bez jawnie zdefiniowanych typów oraz walidacja obsługi błędnego lub niekompletnego XMI.
+
+### Testy Manualne
+
+Testowanie manualne przeprowadzono w celu weryfikacji aspektów interfejsu użytkownika i wizualizacji, które nie mogą być w pełni ocenione przez testy automatyczne. Obejmowało to: sprawdzenie poprawności eksportu i importu plików XMI poprzez interfejs graficzny oraz weryfikację wizualizacji diagramu UML w formacie SVG, w szczególności poprawne renderowanie relacji między komponentami.
+
+### Wnioski z Testowania
+
+Testy jednostkowe wykonane z użyciem pytest przebiegły pomyślnie i wykazały, że implementacja pokrywa główne scenariusze użycia aplikacji: import i przetwarzanie plików XMI, mapowanie struktur pakietów i klas, generowanie hierarchii projektów oraz prawidłową obsługę wszystkich typów relacji UML. Testy manualne potwierdziły intuicyjność interfejsu użytkownika oraz poprawne działanie podstawowych operacji na diagramach.
+
+Przeprowadzone testowanie wykazało, że wszystkie wymagania funkcjonalne zdefiniowane w sekcji historyjek użytkownika zostały spełnione. Aplikacja poprawnie obsługuje eksport i import danych w formacie XMI, zapewnia logiczną organizację pakietów oraz umożliwia definiowanie złożonych relacji między komponentami modelu. Dodatkowo system generuje kod Python zachowujący strukturę diagramu UML, co stanowi zasadniczy cel aplikacji.
 
 ## Podsumowanie i wnioski końcowe
 
-### Ocena stopnia realizacji celu pracy.
+### Ocena stopnia realizacji projektu
 
-### Możliwości dalszego rozwoju aplikacji.
+Opracowane narzędzie w pełni spełnia założone cele projektu i realizuje wszystkie wymagania funkcjonalne zdefiniowane w początkowych etapach pracy. Przeprowadzona implementacja obejmuje zarówno bibliotekę Pythonową do przetwarzania modeli UML, jak i kompletną aplikację webową umożliwiającą interaktywne tworzenie diagramów klas oraz automatyczne generowanie kodu źródłowego.
+
+W aspekcie funkcjonalnym zrealizowano wszystkie zaplanowane komponenty: parser XMI obsługujący standard 2.1 z pełną obsługą pakietów zagnieżdżonych, relacji międzyklasowych oraz typów danych; generator  koduPython z właściwą mapą typów, wsparciem dla wszystkich sześciu typów relacji UML (asocjacja, agregacja, kompozycja, dziedziczenie, realizacja, zależność) oraz automatycznym zarządzaniem importami; oraz interfejs webowy umożliwiający intuicyjne tworzenie i edycję diagramów w przeglądarce.
+
+Zbudowana architektura oparta na wzorcu trójwarstwowym zapewnia czytelność kodu, łatwość testowania oraz możliwość niezależnego wykorzystywania warstwy domenowej w innych projektach. Szczególnie wartościowym aspektem implementacji jest decyzja o udostępnieniu warstwy logiki biznesowej jako osobnego submodułu Git, co umożliwia jej ponowne wykorzystanie w innych aplikacjach bez konieczności stosowania całego systemu.
+
+Testowanie metodą kombinacji testów jednostkowych (pytest) oraz weryfikacji manualnych potwierdziło poprawność działania wszystkich istotnych scenariuszy użycia. Testy jednostkowe obejmujące parsowanie XMI, generowanie struktury projektu, mapowanie importów oraz obsługę relacji przebiegły pomyślnie, wykazując, że implementacja pokrywa główne przypadki użycia aplikacji. Weryfikacja manualna potwierdziła intuicyjność interfejsu użytkownika oraz poprawne renderowanie diagramów UML w formacie SVG.
+
+### Ocena realizacji projektu z perspektywy komercyjnej i naukowej
+
+Z perspektywy komercyjnej i naukowej opracowane narzędzie zapełnia istotną lukę rynkową. W porównaniu do istniejących rozwiązań narzędzie łączy zalety webowych edytorów graficznych (dostępność, brak instalacji, interfejs przyjazny użytkownikowi) z precyzją inżynierską systemów CASE (obsługa standardu XMI, generowanie kodu z semantycznym rozumieniem UML), będąc jednocześnie rozwiązaniem open source dedykowanym ekosystemowi Pythona. Brakujący wcześniej segment narzędzi wspierających Model-Driven Development w Pythonie został wypełniony gotowym do użycia rozwiązaniem.
+
+Wygenerowany kod Python spełnia standardy współczesnego programowania: zawiera type hints zgodne z PEP 484, wykorzystuje idiomatyczne konstrukty Pythona, zachowuje hierarchię pakietów odpowiadającą strukturze UML oraz jest gotowy do bezpośredniego użycia w projektach. Pozwala to na szybkie prototypowanie aplikacji oraz zmniejszenie czasu początkowych etapów wytwarzania oprogramowania.
+
+### Możliwości dalszego rozwoju aplikacji
+
+Opracowane narzędzie stanowi solidną podstawę do dalszego rozszerzania funkcjonalności.
+Kierunkami dalszego rozwoju mogą być zarówno rozszerzenia funkcjonalne, jak i usprawnienia techniczne.
+
+#### Rozszerzenia funkcjonalne
+
+- Obsługa dodatkowych typów diagramów UML – Aktualnie aplikacja obsługuje wyłącznie diagramy klas. Naturalne rozszerzenie stanowiłoby dodanie obsługi diagramów sekwencji, aktywności, stanów czy przypadków użycia. Implementacja tych typów diagramów pozwoliłaby na pełną obsługę całego standardu UML i byłaby szczególnie wartościowa dla modelowania zaawansowanych systemów.
+
+- Generowanie kodu dla innych języków programowania – Warstwa domenowa została zaprojektowana z myślą o rozszerzalności. Logika parsowania i transformacji modelu jest niezależna od docelowego języka programowania. Dodanie obsługi dla Java, C#, TypeScript czy Go wymagałoby jedynie implementacji nowych szablonów kodu oraz mapowania typów. Takie podejście znacznie rozszerzyłoby grono potencjalnych użytkowników.
+
+- Generowanie logiki biznesowej – Aktualnie system generuje jedynie szkielety metod. Zaawansowaną funkcjonalnością byłoby generowanie pełnej logiki biznesowej na podstawie semantyki definiowanej w diagramach, na przykład automatyczne generowanie getterów/setterów, implementacji interfejsów czy obsługi walidacji. Mogłoby to być wspomagane przez integrację z modelami LLM (Large Language Models), które na podstawie opisu biznesowego w komentarzach mogłyby generować działający kod.
+
+- Reverse engineering – generowanie diagramów z kodu – Implementacja analizy istniejącego kodu Python i konwersji go na diagramy UML stanowiłaby pełny cykl Model-Driven Development. Funkcjonalność ta wymagałaby zaawansowanej analizy kodu źródłowego oraz ekstrahowania informacji o klasach, atrybutach, metodach i relacjach.
+
+- Walidacja i weryfikacja diagramów – System mógłby sprawdzać poprawność modelu w kontekście najlepszych praktyk projektowania: detekcja cykli w hierarchii dziedziczenia, wskazanie naruszeń zasad SOLID, analiza kompleksowości struktury czy sugestie dotyczące refaktoryzacji.
+
+- Wspólne edycje i kontrola wersji – Integracja z systemami kontroli wersji (Git) w celu obsługi wieloosobowych sesji edycji, automatycznego śledzenia zmian modelu i możliwości cofania operacji. Wspólne edycje wymagałyby implementacji mechanizmu konfliktów rozstrzygania zmian oraz synchronizacji stanów między klientami.
+
+- Analityka i metryki modelu – System mógłby przygotowywać raporty na temat modelu: liczba klas, głębokość hierarchii dziedziczenia, stopień sprzężenia, złożoność struktury. Metryki te mogłyby być wizualizowane i służyć do identyfikacji potencjalnych problemów architektonicznych.
+
+- Integracja z IDE – Rozszerzenie wtyczek dla popularnych edytorów (Visual Studio Code, JetBrains IDE) umożliwiłoby użytkownikom pracę z diagramami bez opuszczania ich głównego środowiska programistycznego.
+
+- Generacja dokumentacji – Automatyczne tworzenie dokumentacji technicznej na podstawie modelu UML: diagramy, opisy architektoniczne, słowniki konceptów, mapy zależności modułów.
+
+#### Prace badawcze
+
+- Empiryczna ocena efektywności MDD w Pythonie – Przeprowadzenie badań z udziałem programistów w celu zmierzenia rzeczywistego przyspieszenia wytwarzania oprogramowania przy zastosowaniu narzędzia oraz jakości wygenerowanego kodu.
+
+- Porównanie z innymi podejściami – Analiza różnic między generowaniem kodu z modeli a organicznym rozwojem kodu bez fazy modelowania pod kątem długoterminowej utrzymywalności i elastyczności systemów.
+
+- Optymalizacja dla systemów szkieletowych – Badania nad adaptacją narzędzia do specjalnych dziedzin, takich jak generowanie serwisów mikro, aplikacji mobilnych czy systemów rozproszonychczystością całej pracy.
