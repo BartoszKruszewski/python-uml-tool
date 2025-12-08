@@ -501,6 +501,214 @@ Testy jednostkowe wykonane z użyciem pytest przebiegły pomyślnie i wykazały,
 
 Przeprowadzone testowanie wykazało, że wszystkie wymagania funkcjonalne zdefiniowane w sekcji historyjek użytkownika zostały spełnione. Aplikacja poprawnie obsługuje eksport i import danych w formacie XMI, zapewnia logiczną organizację pakietów oraz umożliwia definiowanie złożonych relacji między komponentami modelu. Dodatkowo system generuje kod Python zachowujący strukturę diagramu UML, co stanowi zasadniczy cel aplikacji.
 
+## Instrukcja Obsługi Narzędzia UML
+
+### Wprowadzenie
+
+Narzędzie UML jest zaawansowaną aplikacją webową do tworzenia diagramów klas UML z możliwością automatycznego generowania kodu Python. Intuicyjny interfejs pozwala użytkownikom na szybkie i efektywne modelowanie systemów informatycznych bez konieczności ręcznego pisania kodu.
+
+### Wdrożenie Aplikacji
+
+#### Instalacja Zależności
+
+Przed pierwszym uruchomieniem aplikacji zainstaluj wymagane pakiety:
+
+```bash
+pip install -e domain
+pip install -e .
+```
+
+#### Uruchamianie Serwera
+
+Aby uruchomić aplikację, wykonaj polecenie:
+
+```bash
+python run.py
+```
+
+Aplikacja będzie dostępna w przeglądarce internetowej pod adresem `http://localhost:8080`.
+
+### Omówienie Interfejsu
+
+Interfejs użytkownika podzielony jest na kilka logicznych sekcji:
+
+| Komponent | Opis |
+|-----------|------|
+| **Obszar rysowania** | Główne pole robocze do tworzenia diagramów |
+| **Pasek narzędzi** | Przyciski do operacji na diagramach |
+| **Widok drzewa** | Hierarchiczna struktura pakietów i klas |
+| **Panele edycji** | Edytory właściwości wybranych elementów |
+
+#### Obszar Rysowania
+
+Obszar rysowania stanowi główne pole robocze aplikacji, gdzie umieszczone są wszystkie elementy diagramu. W tym obszarze możesz wykonywać poniższe operacje:
+
+**Operacje na elementach:**
+- **Przesuwanie elementów** - Kliknij i przytrzymaj element, następnie przeciągnij go w żądane miejsce
+- **Zaznaczanie** - Kliknij na element, aby go zaznaczyć i uaktywnić panel edycji
+- **Przesuwanie widoku** - Przeciągnij pusty obszar kanwy lub przytrzymaj klawisz spacji i przeciągnij, aby przesunąć widok
+- **Zmiana skali** - Użyj kółka myszy do przybliżania i oddalania widoku
+
+#### Pasek Narzędzi
+
+Pasek narzędzi zlokalizowany na dole ekranu zawiera przyciski do wykonywania kluczowych operacji na diagramach:
+
+| Przycisk | Funkcja |
+|----------|---------|
+| **Add Class** | Dodaje nową klasę do diagramu |
+| **Add Package** | Dodaje nowy pakiet do diagramu |
+| **Link Mode** | Włącza tryb tworzenia relacji między klasami |
+| **Save XMI** | Zapisuje diagram do formatu XMI |
+| **Load XMI** | Wczytuje diagram z pliku XMI |
+| **Generate** | Generuje kod Python na podstawie diagramu |
+| **Clear** | Usuwa wszystkie elementy z diagramu |
+
+#### Widok Drzewa
+
+Widok drzewa wyświetla pełną hierarchię struktury projektu:
+
+- Pakiety pojawują się jako węzły nadrzędne (obsługuje wielopoziomowe zagnieżdżenie)
+- Klasy wyświetlane są jako węzły podrzędne w odpowiednich pakietach
+- Relacje między klasami umieszczane są w dedykowanej sekcji
+- Klikając na element w drzewie, automatycznie zaznaczasz go na diagramie
+
+### Tworzenie Diagramu
+
+#### Dodawanie Klasy do Diagramu
+
+Aby dodać nową klasę do diagramu, wykonaj następujące kroki:
+
+1. Kliknij przycisk **Add Class** na pasku narzędzi
+2. Nowa klasa pojawi się w centralnej części obszaru roboczego
+3. Przeciągnij klasę na wybrane miejsce w diagramie
+4. Kliknij na klasę, aby ją zaznaczyć i otworzyć panel edycji
+5. W panelu edycji wprowadź:
+   - Nazwę klasy
+   - Atrybuty (opcjonalnie)
+   - Operacje metod (opcjonalnie)
+   - Pakiet, do którego klasa powinna należeć (opcjonalnie)
+
+#### Organizacja Klas w Pakiety
+
+Pakiety umożliwiają logiczne pogrupowanie powiązanych klas. Aby pracować z pakietami:
+
+1. Kliknij przycisk **Add Package** na pasku narzędzi
+2. Nowy pakiet pojawi się na kanwie jako kontener
+3. Umieść pakiet w wybranym miejscu, przeciągając go
+4. Przeciągnij klasy do wnętrza pakietu, aby je do niego przypisać
+5. W panelu edycji nadaj pakietowi opisową nazwę
+
+**Zagnieżdżanie pakietów:** Możesz tworzyć hierarchiczne struktury pakietów, przeciągając jeden pakiet do innego. Klasy są automatycznie przypisywane do najbardziej zagnieżdżonego pakietu, w którym się znajdują.
+
+#### Tworzenie Relacji między Klasami
+
+Relacje definiują powiązania między klasami. Aby utworzyć relację:
+
+1. Kliknij przycisk **Link Mode** na pasku narzędzi
+2. Z listy rozwijanej wybierz typ relacji (np. dziedziczenie, kompozycja)
+3. Kliknij na klasę źródłową (klasa klient)
+4. Następnie kliknij na klasę docelową (klasa dostawca)
+5. Relacja zostanie wizualnie wyświetlona jako linia łącząca obie klasy
+
+**Ważne:** Relacje mają kierunek - ensure upewnij się, że klikasz klasy w prawidłowej kolejności.
+
+#### Edycja Elementów Diagramu
+
+Aby zmodyfikować właściwości elementu:
+
+1. Kliknij na element (klasę lub pakiet), aby go zaznaczyć
+2. W odpowiednim panelu edycji zmień wymagane pola
+3. Zmiany są zapisywane automatycznie
+
+#### Usuwanie Elementów z Diagramu
+
+Aby usunąć element:
+
+1. Zaznacz element klikając na niego
+2. Kliknij przycisk **Delete** w panelu edycji
+3. Element zostanie usunięty z diagramu
+
+**Istotne:** Usunięcie klasy automatycznie usuwa wszystkie relacje, w których ta klasa uczestniczy.
+
+### Zarządzanie Diagramami
+
+#### Eksportowanie Diagramu do Formatu XMI
+
+Format XMI (XML Metadata Interchange) to standardowy format wymiany diagramów UML. Aby zapisać diagram:
+
+1. Kliknij przycisk **Save XMI** na pasku narzędzi
+2. Plik XMI zostanie automatycznie pobrany do folderu pobierania
+3. Plik zawiera pełną reprezentację diagramu, w tym pakiety, klasy, relacje oraz strukturę zagnieżdżeń
+
+#### Importowanie Diagramu z Pliku XMI
+
+Aby załadować poprzednio zapisany diagram:
+
+1. Kliknij przycisk **Load XMI** na pasku narzędzi
+2. Wybierz plik XMI ze swojego komputera
+3. Diagram zostanie wczytany i wyświetlony na kanwie
+4. Wszystkie elementy automatycznie dostosowują swoją pozycję, aby uniknąć nakładania się
+5. Zagnieżdżone pakiety i klasy są poprawnie odtworzyme
+
+**Uwaga:** Wczytanie nowego diagramu spowoduje zastąpienie obecnego diagramu. Jeśli chcesz zachować bieżący diagram, wcześniej go zapisz.
+
+### Generowanie Kodu Python
+
+#### Przygotowanie Projektu
+
+Przed generowaniem kodu upewnij się, że Twój diagram spełnia następujące warunki:
+
+- Wszystkie klasy posiadają przypisane nazwy
+- Atrybuty i operacje są poprawnie i kompletnie zdefiniowane
+- Relacje między klasami są prawidłowo utworzone
+- Klasy są przypisane do odpowiednich pakietów (zalecane, ale opcjonalne)
+
+#### Proces Generowania
+
+Aby wygenerować kod Python:
+
+1. Kliknij przycisk **Generate** na pasku narzędzi
+2. System automatycznie:
+   - Eksportuje diagram do formatu XMI
+   - Przesyła plik do serwera przetwarzającego
+   - Generuje pełny kod Python z dokumentacją
+   - Pakuje projekt w archiwum ZIP
+3. Gotowe archiwum ZIP pobiera się automatycznie do folderu pobierania
+
+#### Mapowanie Typów Danych
+
+Aplikacja automatycznie konwertuje typy danych UML na odpowiadające im typy Python:
+
+| Typ UML | Typ Python |
+|---------|-----------|
+| `String` | `str` |
+| `Integer` | `int` |
+| `Float` | `float` |
+| Nazwy klas | `ClassName` (bez zmian) |
+
+Nazwy klas w typach danych są traktowane jako referencje do klas użytkownika i nie podlegają transformacji.
+
+### Rozwiązywanie Problemów
+
+#### Kod nie został wygenerowany
+
+Jeśli kod Python nie generuje się prawidłowo, sprawdź:
+
+- Czy wszystkie klasy mają przypisane nazwy
+- Konsolę przeglądarki w poszukiwaniu błędów JavaScript
+- Logi serwera w poszukiwaniu błędów parsowania XMI
+
+#### Elementy nie są widoczne na kanwie
+
+Jeśli nie widzisz elementów na diagramie:
+
+- Sprawdź, czy elementy nie zostały przypadkowo przesunięte poza widoczny obszar
+- Przybliż lub oddalź widok za pomocą kółka myszy
+- Użyj przycisku **Clear** i zacznij od nowa
+- Odśwież stronę w przeglądarce
+
+**Wskazówka:** W razie dodatkowych pytań lub problemów, sprawdź logi w konsoli przeglądarki, które mogą dostarczyć szczegółowych informacji o błędach.
+
 ## Podsumowanie i wnioski końcowe
 
 ### Ocena stopnia realizacji projektu
