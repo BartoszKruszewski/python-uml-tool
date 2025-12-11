@@ -1,22 +1,46 @@
-## Wstęp
+\documentclass[polish,lic,longabstract]{iithesis}
 
-### Wprowadzenie do tematyki
+\usepackage[utf8]{inputenc}
+\usepackage{lipsum}
+\usepackage{enumitem}
+
+
+\polishtitle{Narzędzie do automatycznego generowania kodu Python na podstawie diagramów UML}
+\englishtitle{TODO tytuł po angielsku}
+
+\polishabstract{
+TODO streszczenie
+}
+
+\englishabstract{
+TODO streszczenie po angielsku
+}
+
+\author{Bartosz Kruszewski}
+
+\advisor{dr Marcin Młotkowski}
+
+\begin{document}
+
+\chapter{Wstęp}
+
+\section{Wprowadzenie do tematyki}
 
 Współczesna inżynieria oprogramowania coraz bardziej koncentruje się na automatyzacji procesów wytwórczych, obejmującej zarządzanie infrastrukturą oraz generowanie kodu źródłowego. Wraz ze wzrostem złożoności systemów informatycznych, kluczowym elementem procesu deweloperskiego stało się modelowanie, a standardem w tej dziedzinie jest język UML (Unified Modeling Language). UML umożliwia wizualne przedstawienie architektury systemu przed rozpoczęciem implementacji.
 
 W klasycznym podejściu często występuje rozdźwięk między modelem projektowym a finalnym kodem. Ręczne odwzorowanie diagramów klas na strukturę plików i definicje obiektów jest czasochłonne, powtarzalne i podatne na błędy. Format XMI (XML Metadata Interchange) odgrywa kluczową rolę w interoperacyjności narzędzi modelujących, umożliwiając wymianę metadanych modeli UML między różnymi środowiskami.
 
-### Uzasadnienie wyboru tematu.
+\section{Uzasadnienie wyboru tematu}
 
 Wybór tematu wynika z obserwacji powszechnego problemu w procesie wytwarzania oprogramowania — braku spójności między fazą projektowania a fazą implementacji. Diagramy UML, traktowane jako fundament architektury, szybko stają się nieaktualne wobec rzeczywistego kodu. Ręczna translacja modeli na kod jest żmudna, mechaniczna i obarczona ryzykiem błędów, co prowadzi do powstawania długu technologicznego już na starcie projektu.
 
 Decyzja o stworzeniu narzędzia automatyzującego ten proces wynika z chęci rozwiązania tego problemu poprzez praktyczne zastosowanie podejścia Model-Driven Development (MDD). Komercyjne środowiska CASE (Computer-Aided Software Engineering), takie jak Enterprise Architect czy Visual Paradigm, są często drogie, „ciężkie” oraz oparte na zamkniętym ekosystemie. Istnieje zatem nisza na lekkie, dostępne przez przeglądarkę rozwiązania typu open source, które obniżają próg wejścia do profesjonalnego modelowania systemów.
 
-Projekt odpowiada na rosnącą popularność języka Python w budowaniu złożonych systemów backendowych. W przeciwieństwie do języków silnie typowanych, takich jak Java czy C#, gdzie generowanie kodu z UML jest standardem, w ekosystemie Pythona brakuje nowoczesnych narzędzi łączących elastyczność języka ze sztywnymi regułami architektonicznymi UML. Stworzenie dedykowanego parsera formatu XMI dla Pythona pozwala na wypełnienie tej luki.
+Projekt odpowiada na rosnącą popularność języka Python w budowaniu złożonych systemów backendowych. W przeciwieństwie do języków silnie typowanych, takich jak Java czy C\#, gdzie generowanie kodu z UML jest standardem, w ekosystemie Pythona brakuje nowoczesnych narzędzi łączących elastyczność języka ze sztywnymi regułami architektonicznymi UML. Stworzenie dedykowanego parsera formatu XMI dla Pythona pozwala na wypełnienie tej luki.
 
 Z perspektywy inżynierskiej, realizacja projektu pozwala pogłębić wiedzę na styku inżynierii oprogramowania, modelowania UML, implementacji parserów struktur danych (XML/XMI) oraz projektowania interfejsów API i aplikacji webowych. Praca umożliwia praktyczne wykorzystanie nowoczesnych rozwiązań full-stack, łącząc teoretyczne aspekty kompilacji i generowania kodu z wyzwaniami współczesnego programowania.
 
-### Cel pracy
+\section{Cel pracy}
 
 Celem pracy jest opracowanie kompleksowego narzędzia wspomagającego proces wytwarzania oprogramowania, umożliwiającego automatyczne generowanie struktury aplikacji w języku Python na podstawie diagramów klas UML. Realizacja celu obejmuje opracowanie dwóch kluczowych komponentów:
 
@@ -26,7 +50,7 @@ Celem pracy jest opracowanie kompleksowego narzędzia wspomagającego proces wyt
 
 Ostatecznym efektem pracy ma być system umożliwiający szybkie prototypowanie aplikacji, zapewniający zgodność między modelem architektonicznym a kodem źródłowym oraz wspierający standaryzację i automatyzację początkowych etapów tworzenia oprogramowania.
 
-### Zakres pracy
+\section{Zakres pracy}
 
 Zakres pracy obejmuje projektowanie, implementację oraz testowanie poszczególnych komponentów systemu:
 
@@ -48,13 +72,13 @@ Zakres pracy obejmuje projektowanie, implementację oraz testowanie poszczególn
 
 Praca nie obejmuje implementacji generowania pełnej logiki biznesowej metod (ciała funkcji), a jedynie ich sygnatur oraz struktury architektonicznej wynikającej z modelu UML.
 
-### Krótki opis struktury pracy
+\section{Krótki opis struktury pracy}
 
 TODO
 
-## Analiza dziedziny i przegląd dostępnych rozwiązań
+\chapter{Analiza dziedziny i przegląd narzędzi}
 
-### Opis problemu (biznesowo)
+\section{Opis problemu}
 
 W procesie wytwarzania oprogramowania programiści często poświęcają dużo czasu na ręczne przygotowanie struktury projektu: tworzenie katalogów, plików, klas i ich zależności. W przypadku dużych systemów, zwłaszcza modelowanych za pomocą UML, ten etap wiąże się z ryzykiem błędów, niespójności między modelem a kodem oraz wydłużeniem czasu rozpoczęcia właściwej implementacji.
 
@@ -64,7 +88,7 @@ Istniejące narzędzia CASE generują kod z UML, ale są często kosztowne, wyma
 
 Celem projektu jest eliminacja tych problemów poprzez stworzenie lekkiego, webowego narzędzia do szybkiego i spójnego generowania szkieletu aplikacji Pythonowej na podstawie diagramów UML, co przekłada się na większą efektywność, mniejszą liczbę błędów i lepszą standaryzację architektury projektów.
 
-### Przegląd istniejących, konkurencyjnych rozwiązań
+\section{Przegląd istniejących, konkurencyjnych rozwiązań}
 
 Rynek narzędzi wspierających modelowanie w języku UML jest silnie spolaryzowany. Z jednej strony dominują rozbudowane, komercyjne systemy CASE, z drugiej – proste edytory graficzne dostępne przez przeglądarkę. Analiza dostępnych rozwiązań pozwala wyodrębnić cztery główne grupy narzędzi, z których każda posiada istotne ograniczenia w kontekście szybkiego prototypowania aplikacji Pythonowych.
 
@@ -76,7 +100,7 @@ Trzecią grupą są webowe edytory graficzne, takie jak draw.io (diagrams.net). 
 
 Czwartą grupę stanowią narzędzia typu "Code-as-Diagram", np. PlantUML. Choć są one standardem w dokumentowaniu kodu (model Open Source), nie służą do modelowania architektury w rozumieniu MDD. Nie przechowują one modelu w uniwersalnym formacie metadanych, lecz jedynie renderują obraz na podstawie tekstu, co uniemożliwia dwukierunkową synchronizację z kodem.
 
-### Analiza ich wad i zalet
+\section{Analiza ich wad i zalet}
 
 | Narzędzie            | Kategoria          | Platforma      | Licencja          | Obsługa XMI | Generowanie kodu (Python) | Próg wejścia / UX      |
 | -------------------- | ------------------ | -------------- | ----------------- | ----------- | ------------------------- | ---------------------- |
@@ -89,290 +113,332 @@ Czwartą grupę stanowią narzędzia typu "Code-as-Diagram", np. PlantUML. Choć
 
 Analiza wykazuje wyraźną lukę rynkową. Brakuje narzędzia, które łączyłoby zalety edytorów webowych (dostępność, brak instalacji) z inżynierską precyzją systemów CASE (obsługa XMI, generowanie kodu), będąc jednocześnie rozwiązaniem Open Source dedykowanym specyfice języka Python. Projektowane rozwiązanie ma na celu wypełnienie tej niszy.
 
-## Analiza wymagań i projekt systemu
+\chapter{Analiza wymagań i projekt systemu}
 
-### Wymagania funkcjonalne
+% ==========================================
+% WYMAGANIA FUNKCJONALNE
+% ==========================================
+\section{Wymagania funkcjonalne}
 
-#### Tworzenie i edycja diagramów klas UML
+\subsection{Tworzenie i edycja diagramów klas UML}
 
-**Tworzenie klas**
-- System umożliwia użytkownikowi dodawanie klas do diagramu
-- Użytkownik może nadać klasie nazwę
-- Użytkownik może zdefiniować atrybuty klasy (nazwa, typ)
-- Użytkownik może zdefiniować operacje klasy (nazwa, parametry, typ zwracany)
-- Użytkownik może przypisać klasę do pakietu
+\subsubsection*{Tworzenie klas}
+\begin{enumerate}[label=\textbf{WF-\arabic*}, leftmargin=3.5em]
+    \item System umożliwia użytkownikowi dodawanie klas do diagramu.
+    \item Użytkownik może nadać klasie nazwę.
+    \item Użytkownik może zdefiniować atrybuty klasy (nazwa, typ).
+    \item Użytkownik może zdefiniować operacje klasy (nazwa, parametry, typ zwracany).
+    \item Użytkownik może przypisać klasę do pakietu.
+\end{enumerate}
 
-**Tworzenie pakietów**
-- System umożliwia użytkownikowi dodawanie pakietów do diagramu
-- Użytkownik może nadać pakietowi nazwę
-- System obsługuje zagnieżdżone pakiety
-- Użytkownik może organizować klasy w pakietach
+\subsubsection*{Tworzenie pakietów}
+\begin{enumerate}[resume, label=\textbf{WF-\arabic*}, leftmargin=3.5em]
+    \item System umożliwia użytkownikowi dodawanie pakietów do diagramu.
+    \item Użytkownik może nadać pakietowi nazwę.
+    \item System obsługuje zagnieżdżone pakiety.
+    \item Użytkownik może organizować klasy w pakietach.
+\end{enumerate}
 
-**Definiowanie relacji**
-- System umożliwia tworzenie relacji między klasami
-- System obsługuje następujące typy relacji:
-  - Asocjacja
-  - Agregacja
-  - Kompozycja
-  - Dziedziczenie
-  - Realizacja
-  - Zależność
-- Użytkownik może określić kierunek relacji
+\subsubsection*{Definiowanie relacji}
+\begin{enumerate}[resume, label=\textbf{WF-\arabic*}, leftmargin=3.5em]
+    \item System umożliwia tworzenie relacji między klasami.
+    \item System obsługuje następujące typy relacji: asocjacja, agregacja, kompozycja, dziedziczenie, realizacja, zależność.
+    \item Użytkownik może określić kierunek relacji.
+\end{enumerate}
 
-**Edycja elementów**
-- Użytkownik może modyfikować właściwości klas (nazwa, atrybuty, operacje)
-- Użytkownik może modyfikować właściwości pakietów (nazwa)
-- Użytkownik może usuwać klasy i pakiety
-- Użytkownik może usuwać relacje
+\subsubsection*{Edycja elementów}
+\begin{enumerate}[resume, label=\textbf{WF-\arabic*}, leftmargin=3.5em]
+    \item Użytkownik może modyfikować właściwości klas (nazwa, atrybuty, operacje).
+    \item Użytkownik może modyfikować właściwości pakietów (nazwa).
+    \item Użytkownik może usuwać klasy i pakiety.
+    \item Użytkownik może usuwać relacje.
+\end{enumerate}
 
-**Wizualizacja diagramu**
-- System wyświetla diagram w formie graficznej
-- System renderuje klasy jako prostokąty z sekcjami (nazwa, atrybuty, operacje)
-- System renderuje pakiety jako kontenery
-- System renderuje relacje jako linie między klasami
-- System wyświetla widok drzewa struktury pakietów i klas
+\subsubsection*{Wizualizacja diagramu}
+\begin{enumerate}[resume, label=\textbf{WF-\arabic*}, leftmargin=3.5em]
+    \item System wyświetla diagram w formie graficznej.
+    \item System renderuje klasy jako prostokąty z sekcjami (nazwa, atrybuty, operacje).
+    \item System renderuje pakiety jako kontenery.
+    \item System renderuje relacje jako linie między klasami.
+    \item System wyświetla widok drzewa struktury pakietów i klas.
+\end{enumerate}
 
-#### Eksport i import diagramów
+\subsection{Eksport i import diagramów}
 
-**Eksport do XMI**
-- System eksportuje diagram do formatu XMI 2.1
-- Wyeksportowany plik jest zgodny ze standardem OMG
-- Plik XMI zawiera wszystkie elementy diagramu (klasy, pakiety, relacje)
+\subsubsection*{Eksport do XMI}
+\begin{enumerate}[resume, label=\textbf{WF-\arabic*}, leftmargin=3.5em]
+    \item System eksportuje diagram do formatu XMI 2.1.
+    \item Wyeksportowany plik jest zgodny ze standardem OMG.
+    \item Plik XMI zawiera wszystkie elementy diagramu (klasy, pakiety, relacje).
+\end{enumerate}
 
-**Import XMI**
-- System może parsować pliki XMI 2.1
-- System obsługuje podstawowe elementy XMI (klasy, pakiety, relacje, typy danych)
-- System waliduje poprawność formatu XMI
+\subsubsection*{Import XMI}
+\begin{enumerate}[resume, label=\textbf{WF-\arabic*}, leftmargin=3.5em]
+    \item System może parsować pliki XMI 2.1.
+    \item System obsługuje podstawowe elementy XMI (klasy, pakiety, relacje, typy danych).
+    \item System waliduje poprawność formatu XMI.
+\end{enumerate}
 
-#### Generowanie kodu Python
+\subsection{Generowanie kodu Python}
 
-**Generowanie struktury projektu**
-- System generuje strukturę katalogów odpowiadającą pakietom
-- System tworzy pliki `__init__.py` dla każdego pakietu
-- System generuje pliki `.py` dla każdej klasy
+\subsubsection*{Generowanie struktury projektu}
+\begin{enumerate}[resume, label=\textbf{WF-\arabic*}, leftmargin=3.5em]
+    \item System generuje strukturę katalogów odpowiadającą pakietom.
+    \item System tworzy pliki \texttt{\_\_init\_\_.py} dla każdego pakietu.
+    \item System generuje pliki \texttt{.py} dla każdej klasy.
+\end{enumerate}
 
-**Generowanie klas**
-- System generuje definicje klas Python z odpowiednią składnią
-- System mapuje atrybuty UML na właściwości klasy
-- System generuje konstruktory z parametrami odpowiadającymi atrybutom
-- System generuje metody odpowiadające operacjom UML
-- System używa type hints dla parametrów i zwracanych wartości
+\subsubsection*{Generowanie klas}
+\begin{enumerate}[resume, label=\textbf{WF-\arabic*}, leftmargin=3.5em]
+    \item System generuje definicje klas Python z odpowiednią składnią.
+    \item System mapuje atrybuty UML na właściwości klasy.
+    \item System generuje konstruktory z parametrami odpowiadającymi atrybutom.
+    \item System generuje metody odpowiadające operacjom UML.
+    \item System używa type hints dla parametrów i zwracanych wartości.
+\end{enumerate}
 
-**Mapowanie typów**
-- System mapuje standardowe typy UML na typy Python:
-  - `String` → `str`
-  - `Integer` → `int`
-  - `Float` → `float`
-- System zachowuje nazwy niestandardowych typów (klasy użytkownika)
+\subsubsection*{Mapowanie typów}
+\begin{enumerate}[resume, label=\textbf{WF-\arabic*}, leftmargin=3.5em]
+    \item System mapuje standardowe typy UML na typy Python (\texttt{String} $\to$ \texttt{str}, \texttt{Integer} $\to$ \texttt{int}, \texttt{Float} $\to$ \texttt{float}).
+    \item System zachowuje nazwy niestandardowych typów (klasy użytkownika).
+\end{enumerate}
 
-**Obsługa relacji w kodzie**
-- System generuje odpowiedni kod dla różnych typów relacji:
-  - **Asocjacja**: opcjonalny parametr w konstruktorze
-  - **Agregacja**: lista parametrów w konstruktorze
-  - **Kompozycja**: automatyczne tworzenie obiektu w konstruktorze
-  - **Dziedziczenie/Realizacja**: dziedziczenie w Pythonie
-  - **Zależność**: import bez tworzenia instancji
+\subsubsection*{Obsługa relacji w kodzie}
+\begin{enumerate}[resume, label=\textbf{WF-\arabic*}, leftmargin=3.5em]
+    \item System generuje odpowiedni kod dla różnych typów relacji (asocjacja, agregacja, kompozycja, dziedziczenie/realizacja, zależność).
+\end{enumerate}
 
-**Zarządzanie importami**
-- System automatycznie generuje instrukcje `import` dla używanych klas
-- System generuje poprawne ścieżki importu na podstawie struktury pakietów
-- System obsługuje importy z zagnieżdżonych pakietów
+\subsubsection*{Zarządzanie importami}
+\begin{enumerate}[resume, label=\textbf{WF-\arabic*}, leftmargin=3.5em]
+    \item System automatycznie generuje instrukcje \texttt{import} dla używanych klas.
+    \item System generuje poprawne ścieżki importu na podstawie struktury pakietów.
+    \item System obsługuje importy z zagnieżdżonych pakietów.
+\end{enumerate}
 
-**Eksport wygenerowanego projektu**
-- System pakuje wygenerowany projekt do archiwum ZIP
-- Użytkownik może pobrać archiwum ZIP z wygenerowanym kodem
-- Archiwum zawiera kompletną strukturę projektu gotową do użycia
+\subsubsection*{Eksport wygenerowanego projektu}
+\begin{enumerate}[resume, label=\textbf{WF-\arabic*}, leftmargin=3.5em]
+    \item System pakuje wygenerowany projekt do archiwum ZIP.
+    \item Użytkownik może pobrać archiwum ZIP z wygenerowanym kodem.
+    \item Archiwum zawiera kompletną strukturę projektu gotową do użycia.
+\end{enumerate}
 
-#### Interfejs użytkownika
+\subsection{Interfejs użytkownika}
 
-**Interakcje użytkownika**
-- Użytkownik może przeciągać elementy na diagramie
-- Użytkownik może zaznaczać elementy klikając na nie
-- Użytkownik może edytować elementy w panelach edycji
-- Użytkownik może używać widoku drzewa do nawigacji po strukturze
+\subsubsection*{Interakcje użytkownika}
+\begin{enumerate}[resume, label=\textbf{WF-\arabic*}, leftmargin=3.5em]
+    \item Użytkownik może przeciągać elementy na diagramie.
+    \item Użytkownik może zaznaczać elementy klikając na nie.
+    \item Użytkownik może edytować elementy w panelach edycji.
+    \item Użytkownik może używać widoku drzewa do nawigacji po strukturze.
+\end{enumerate}
 
-**Operacje na diagramie**
-- Użytkownik może czyścić cały diagram
-- Użytkownik może generować kod z aktualnego diagramu
+\subsubsection*{Operacje na diagramie}
+\begin{enumerate}[resume, label=\textbf{WF-\arabic*}, leftmargin=3.5em]
+    \item Użytkownik może czyścić cały diagram.
+    \item Użytkownik może generować kod z aktualnego diagramu.
+\end{enumerate}
 
-### Wymagania niefunkcjonalne
+% ==========================================
+% WYMAGANIA NIEFUNKCJONALNE
+% ==========================================
+\section{Wymagania niefunkcjonalne}
 
-#### Wydajność
+\subsection{Wydajność}
 
-**Czas odpowiedzi**
-- Generowanie kodu dla projektu z maksymalnie 100 klas powinno zakończyć się w czasie poniżej 5 sekund
-- Renderowanie diagramu powinno być płynne (minimum 30 FPS)
-- Interfejs powinien reagować na akcje użytkownika w czasie poniżej 100ms
+\subsubsection*{Czas odpowiedzi}
+% Zmieniamy label na WNF i usuwamy 'resume' aby zacząć numerację od 1
+\begin{enumerate}[label=\textbf{WNF-\arabic*}, leftmargin=4em]
+    \item Generowanie kodu dla projektu z maksymalnie 100 klas powinno zakończyć się w czasie poniżej 5 sekund.
+    \item Renderowanie diagramu powinno być płynne (minimum 30 FPS).
+    \item Interfejs powinien reagować na akcje użytkownika w czasie poniżej 100ms.
+\end{enumerate}
 
-**Skalowalność**
-- System powinien obsługiwać diagramy z maksymalnie 1000 klas
-- System powinien obsługiwać zagnieżdżone pakiety do 10 poziomów głębokości
+\subsubsection*{Skalowalność}
+\begin{enumerate}[resume, label=\textbf{WNF-\arabic*}, leftmargin=4em]
+    \item System powinien obsługiwać diagramy z maksymalnie 1000 klas.
+    \item System powinien obsługiwać zagnieżdżone pakiety do 10 poziomów głębokości.
+\end{enumerate}
 
-#### Użyteczność
+\subsection{Użyteczność}
 
-**Intuicyjność**
-- Interfejs powinien być intuicyjny i nie wymagać szkolenia
-- Operacje powinny być dostępne w maksymalnie 3 kliknięciach
-- System powinien wyświetlać pomocne etykiety
+\subsubsection*{Intuicyjność}
+\begin{enumerate}[resume, label=\textbf{WNF-\arabic*}, leftmargin=4em]
+    \item Interfejs powinien być intuicyjny i nie wymagać szkolenia.
+    \item Operacje powinny być dostępne w maksymalnie 3 kliknięciach.
+    \item System powinien wyświetlać pomocne etykiety.
+\end{enumerate}
 
-**Dostępność**
-- Aplikacja powinna działać w nowoczesnych przeglądarkach (Chrome, Firefox, Safari, Edge)
-- Interfejs powinien być responsywny i dostosowywać się do różnych rozdzielczości ekranu
+\subsubsection*{Dostępność}
+\begin{enumerate}[resume, label=\textbf{WNF-\arabic*}, leftmargin=4em]
+    \item Aplikacja powinna działać w nowoczesnych przeglądarkach (Chrome, Firefox, Safari, Edge).
+    \item Interfejs powinien być responsywny i dostosowywać się do różnych rozdzielczości ekranu.
+\end{enumerate}
 
-#### Niezawodność
+\subsection{Niezawodność}
 
-**Obsługa błędów**
-- System powinien walidować dane wejściowe (pliki XMI)
-- System nie powinien tracić danych przy błędach parsowania
+\subsubsection*{Obsługa błędów}
+\begin{enumerate}[resume, label=\textbf{WNF-\arabic*}, leftmargin=4em]
+    \item System powinien walidować dane wejściowe (pliki XMI).
+    \item System nie powinien tracić danych przy błędach parsowania.
+\end{enumerate}
 
-**Stabilność**
-- System nie powinien zawieszać się podczas normalnego użytkowania
-- Błędy w jednym komponencie nie powinny wpływać na cały system
+\subsubsection*{Stabilność}
+\begin{enumerate}[resume, label=\textbf{WNF-\arabic*}, leftmargin=4em]
+    \item System nie powinien zawieszać się podczas normalnego użytkowania.
+    \item Błędy w jednym komponencie nie powinny wpływać na cały system.
+\end{enumerate}
 
-#### Kompatybilność
+\subsection{Kompatybilność}
 
-**Standardy**
-- System powinien być zgodny ze standardem XMI 2.1
-- Wygenerowany kod powinien być zgodny z Python 3.11+
-- System powinien używać type hints zgodnie z PEP 484
+\subsubsection*{Standardy}
+\begin{enumerate}[resume, label=\textbf{WNF-\arabic*}, leftmargin=4em]
+    \item System powinien być zgodny ze standardem XMI 2.1.
+    \item Wygenerowany kod powinien być zgodny z Python 3.11+.
+    \item System powinien używać type hints zgodnie z PEP 484.
+\end{enumerate}
 
-**Integracja**
-- System powinien być kompatybilny z innymi narzędziami UML eksportującymi XMI 2.1
-- Wygenerowany kod powinien być kompatybilny z popularnymi narzędziami Python (pip, setuptools)
+\subsubsection*{Integracja}
+\begin{enumerate}[resume, label=\textbf{WNF-\arabic*}, leftmargin=4em]
+    \item System powinien być kompatybilny z innymi narzędziami UML eksportującymi XMI 2.1.
+    \item Wygenerowany kod powinien być kompatybilny z popularnymi narzędziami Python (pip, setuptools).
+\end{enumerate}
 
-#### Utrzymanie i rozwój
+\subsection{Utrzymanie i rozwój}
 
-**Modułowość**
-- Kod powinien być podzielony na logiczne moduły
-- Warstwa domeny powinna być niezależna od warstwy aplikacji
-- Komponenty powinny być łatwe do testowania
+\subsubsection*{Modułowość}
+\begin{enumerate}[resume, label=\textbf{WNF-\arabic*}, leftmargin=4em]
+    \item Kod powinien być podzielony na logiczne moduły.
+    \item Warstwa domeny powinna być niezależna od warstwy aplikacji.
+    \item Komponenty powinny być łatwe do testowania.
+\end{enumerate}
 
-**Dokumentacja**
-- Kod powinien zawierać dokumentację docstring
-- System powinien mieć dokumentację użytkownika
-- System powinien mieć dokumentację techniczną dla programistów
+\subsubsection*{Dokumentacja}
+\begin{enumerate}[resume, label=\textbf{WNF-\arabic*}, leftmargin=4em]
+    \item Kod powinien zawierać dokumentację docstring.
+    \item System powinien mieć dokumentację użytkownika.
+    \item System powinien mieć dokumentację techniczną dla programistów.
+\end{enumerate}
 
-#### Bezpieczeństwo
+\subsection{Bezpieczeństwo}
 
-**Bezpieczeństwo danych**
-- System nie przechowuje danych użytkownika po zakończeniu sesji
-- Pliki tymczasowe są automatycznie usuwane
+\subsubsection*{Bezpieczeństwo danych}
+\begin{enumerate}[resume, label=\textbf{WNF-\arabic*}, leftmargin=4em]
+    \item System nie przechowuje danych użytkownika po zakończeniu sesji.
+    \item Pliki tymczasowe są automatycznie usuwane.
+\end{enumerate}
 
-### Historyjki użytkownika
+% ==========================================
+% HISTORYJKI UŻYTKOWNIKA
+% ==========================================
+\section{Historyjki użytkownika}
 
-#### Tworzenie nowego diagramu
-**Jako** programista Python
-**Chcę** utworzyć nowy diagram klas UML
-**Aby** zaprojektować strukturę mojego projektu przed rozpoczęciem kodowania
+% Zmieniamy label na HU i startujemy od 1
+\begin{enumerate}[label=\textbf{HU-\arabic*}, leftmargin=3.5em]
+    
+    \item \textbf{Tworzenie nowego diagramu} \\
+    \textbf{Jako} programista Python \textbf{chcę} utworzyć nowy diagram klas UML, \textbf{aby} zaprojektować strukturę mojego projektu przed rozpoczęciem kodowania. \\
+    \textit{Kryteria akceptacji:}
+    \begin{itemize}
+        \item Mogę dodać klasę do diagramu jednym kliknięciem.
+        \item Mogę nadać klasie nazwę i zdefiniować jej atrybuty oraz metody.
+        \item Widzę diagram wizualnie na ekranie.
+    \end{itemize}
 
-**Kryteria akceptacji:**
-- Mogę dodać klasę do diagramu jednym kliknięciem
-- Mogę nadać klasie nazwę i zdefiniować jej atrybuty oraz metody
-- Widzę diagram wizualnie na ekranie
+    \item \textbf{Organizacja klas w pakietach} \\
+    \textbf{Jako} programista Python \textbf{chcę} organizować klasy w pakietach, \textbf{aby} odzwierciedlić strukturę modułów w moim projekcie. \\
+    \textit{Kryteria akceptacji:}
+    \begin{itemize}
+        \item Mogę utworzyć pakiet i nadać mu nazwę.
+        \item Mogę przypisać klasy do pakietów.
+        \item Mogę tworzyć zagnieżdżone pakiety.
+        \item Widzę strukturę pakietów w widoku drzewa.
+    \end{itemize}
 
-#### Organizacja klas w pakietach
-**Jako** programista Python
-**Chcę** organizować klasy w pakietach
-**Aby** odzwierciedlić strukturę modułów w moim projekcie
+    \item \textbf{Definiowanie relacji między klasami} \\
+    \textbf{Jako} programista Python \textbf{chcę} zdefiniować relacje między klasami, \textbf{aby} zaprojektować zależności i powiązania w moim systemie. \\
+    \textit{Kryteria akceptacji:}
+    \begin{itemize}
+        \item Mogę utworzyć relację między dwiema klasami.
+        \item Mogę wybrać typ relacji.
+        \item Relacja jest wizualnie wyświetlana na diagramie.
+    \end{itemize}
 
-**Kryteria akceptacji:**
-- Mogę utworzyć pakiet i nadać mu nazwę
-- Mogę przypisać klasy do pakietów
-- Mogę tworzyć zagnieżdżone pakiety
-- Widzę strukturę pakietów w widoku drzewa
+    \item \textbf{Generowanie kodu z diagramu} \\
+    \textbf{Jako} programista Python \textbf{chcę} wygenerować kod Python z mojego diagramu, \textbf{aby} szybko stworzyć szkielet projektu bez ręcznego pisania kodu. \\
+    \textit{Kryteria akceptacji:}
+    \begin{itemize}
+        \item Mogę wygenerować kod jednym kliknięciem.
+        \item Otrzymuję archiwum ZIP z kompletnym projektem.
+        \item Wygenerowany kod zawiera wszystkie klasy z diagramu.
+        \item Struktura katalogów odpowiada pakietom w diagramie.
+    \end{itemize}
 
-#### Definiowanie relacji między klasami
-**Jako** programista Python
-**Chcę** zdefiniować relacje między klasami
-**Aby** zaprojektować zależności i powiązania w moim systemie
+    \item \textbf{Import istniejącego diagramu} \\
+    \textbf{Jako} programista Python \textbf{chcę} zaimportować diagram z pliku XMI, \textbf{aby} kontynuować pracę nad diagramem. \\
+    \textit{Kryteria akceptacji:}
+    \begin{itemize}
+        \item Mogę zaimportować plik XMI 2.1.
+        \item Wszystkie elementy diagramu są poprawnie załadowane.
+        \item Mogę edytować zaimportowany diagram.
+    \end{itemize}
 
-**Kryteria akceptacji:**
-- Mogę utworzyć relację między dwiema klasami
-- Mogę wybrać typ relacji
-- Relacja jest wizualnie wyświetlana na diagramie
+    \item \textbf{Edycja właściwości klasy} \\
+    \textbf{Jako} programista Python \textbf{chcę} edytować właściwości klasy (atrybuty, metody), \textbf{aby} dostosować klasę do moich potrzeb. \\
+    \textit{Kryteria akceptacji:}
+    \begin{itemize}
+        \item Mogę zaznaczyć klasę i zobaczyć jej właściwości w panelu edycji.
+        \item Mogę modyfikować nazwę, atrybuty i operacje klasy.
+        \item Zmiany są natychmiast widoczne na diagramie.
+    \end{itemize}
 
-#### Generowanie kodu z diagramu
-**Jako** programista Python
-**Chcę** wygenerować kod Python z mojego diagramu
-**Aby** szybko stworzyć szkielet projektu bez ręcznego pisania kodu
+    \item \textbf{Eksport diagramu do XMI} \\
+    \textbf{Jako} programista Python \textbf{chcę} wyeksportować mój diagram do formatu XMI, \textbf{aby} użyć go w innych narzędziach UML lub zachować jako backup. \\
+    \textit{Kryteria akceptacji:}
+    \begin{itemize}
+        \item Mogę wyeksportować diagram do pliku XMI.
+        \item Wyeksportowany plik jest zgodny ze standardem XMI 2.1.
+        \item Mogę zaimportować wyeksportowany plik z powrotem.
+    \end{itemize}
 
-**Kryteria akceptacji:**
-- Mogę wygenerować kod jednym kliknięciem
-- Otrzymuję archiwum ZIP z kompletnym projektem
-- Wygenerowany kod zawiera wszystkie klasy z diagramu
-- Struktura katalogów odpowiada pakietom w diagramie
+    \item \textbf{Wizualizacja struktury projektu} \\
+    \textbf{Jako} programista Python \textbf{chcę} zobaczyć hierarchiczną strukturę mojego projektu, \textbf{aby} lepiej zrozumieć organizację pakietów i klas. \\
+    \textit{Kryteria akceptacji:}
+    \begin{itemize}
+        \item Widzę drzewo pakietów i klas w osobnym panelu.
+        \item Mogę kliknąć element w drzewie, aby go zaznaczyć na diagramie.
+        \item Struktura jest aktualizowana w czasie rzeczywistym.
+    \end{itemize}
 
-#### Import istniejącego diagramu
-**Jako** programista Python
-**Chcę** zaimportować diagram z pliku XMI
-**Aby** kontynuować pracę nad diagramem
+    \item \textbf{Szybkie prototypowanie} \\
+    \textbf{Jako} programista Python \textbf{chcę} szybko stworzyć szkielet projektu, \textbf{aby} rozpocząć implementację bez tracenia czasu na ręczne tworzenie plików. \\
+    \textit{Kryteria akceptacji:}
+    \begin{itemize}
+        \item Mogę szybko utworzyć podstawowy diagram z kilkoma klasami.
+        \item Generowanie kodu jest szybkie (poniżej 5 sekund dla małych projektów).
+        \item Wygenerowany kod jest gotowy do użycia.
+    \end{itemize}
 
-**Kryteria akceptacji:**
-- Mogę zaimportować plik XMI 2.1
-- Wszystkie elementy diagramu są poprawnie załadowane
-- Mogę edytować zaimportowany diagram
+    \item \textbf{Nauka UML} \\
+    \textbf{Jako} student informatyki \textbf{chcę} używać narzędzia do nauki UML, \textbf{aby} zrozumieć koncepcje modelowania obiektowego. \\
+    \textit{Kryteria akceptacji:}
+    \begin{itemize}
+        \item Interfejs jest intuicyjny i nie wymaga szkolenia.
+        \item Mogę eksperymentować z różnymi typami relacji.
+        \item Widzę jak diagramy UML przekładają się na kod Python.
+    \end{itemize}
 
-#### Edycja właściwości klasy
-**Jako** programista Python
-**Chcę** edytować właściwości klasy (atrybuty, metody)
-**Aby** dostosować klasę do moich potrzeb
+    \item \textbf{Współpraca w zespole} \\
+    \textbf{Jako} członek zespołu programistów \textbf{chcę} udostępnić mój diagram innym, \textbf{aby} omówić architekturę projektu przed implementacją. \\
+    \textit{Kryteria akceptacji:}
+    \begin{itemize}
+        \item Mogę wyeksportować diagram do standardowego formatu (XMI).
+        \item Inni członkowie zespołu mogą zaimportować diagram w swoich narzędziach.
+        \item Diagram jest czytelny i zrozumiały dla innych.
+    \end{itemize}
 
-**Kryteria akceptacji:**
-- Mogę zaznaczyć klasę i zobaczyć jej właściwości w panelu edycji
-- Mogę modyfikować nazwę, atrybuty i operacje klasy
-- Zmiany są natychmiast widoczne na diagramie
+\end{enumerate}
 
-#### Eksport diagramu do XMI
-**Jako** programista Python
-**Chcę** wyeksportować mój diagram do formatu XMI
-**Aby** użyć go w innych narzędziach UML lub zachować jako backup
-
-**Kryteria akceptacji:**
-- Mogę wyeksportować diagram do pliku XMI
-- Wyeksportowany plik jest zgodny ze standardem XMI 2.1
-- Mogę zaimportować wyeksportowany plik z powrotem
-
-#### Wizualizacja struktury projektu
-**Jako** programista Python  
-**Chcę** zobaczyć hierarchiczną strukturę mojego projektu  
-**Aby** lepiej zrozumieć organizację pakietów i klas
-
-**Kryteria akceptacji:**
-- Widzę drzewo pakietów i klas w osobnym panelu
-- Mogę kliknąć element w drzewie, aby go zaznaczyć na diagramie
-- Struktura jest aktualizowana w czasie rzeczywistym
-
-#### Szybkie prototypowanie
-**Jako** programista Python  
-**Chcę** szybko stworzyć szkielet projektu  
-**Aby** rozpocząć implementację bez tracenia czasu na ręczne tworzenie plików
-
-**Kryteria akceptacji:**
-- Mogę szybko utworzyć podstawowy diagram z kilkoma klasami
-- Generowanie kodu jest szybkie (poniżej 5 sekund dla małych projektów)
-- Wygenerowany kod jest gotowy do użycia (można go od razu uruchomić)
-
-#### Nauka UML
-**Jako** student informatyki
-**Chcę** używać narzędzia do nauki UML
-**Aby** zrozumieć koncepcje modelowania obiektowego
-
-**Kryteria akceptacji:**
-- Interfejs jest intuicyjny i nie wymaga szkolenia
-- Mogę eksperymentować z różnymi typami relacji
-- Widzę jak diagramy UML przekładają się na kod Python
-
-#### Współpraca w zespole
-**Jako** członek zespołu programistów
-**Chcę** udostępnić mój diagram innym
-**Aby** omówić architekturę projektu przed implementacją
-
-**Kryteria akceptacji:**
-- Mogę wyeksportować diagram do standardowego formatu (XMI)
-- Inni członkowie zespołu mogą zaimportować diagram w swoich narzędziach
-- Diagram jest czytelny i zrozumiały dla innych
-
-### Architektura systemu
+\section{Architektura systemu}
 
 Architektura systemu jest oparta na wzorcu trójwarstwowym, co gwarantuje modułowość rozwiązania oraz wyraźną separację odpowiedzialności poszczególnych komponentów.
 
@@ -384,9 +450,9 @@ W strukturze projektu wyróżnia się trzy współpracujące ze sobą warstwy:
 
 - Warstwa domeny – realizuje kluczową logikę biznesową w izolacji od warstwy sieciowej. Moduł ten odpowiada za parsowanie struktur UML, mapowanie relacji między obiektami oraz automatyczną generację wynikowych plików i katalogów w języku Python.
 
-## Charakterystyka narzędzi i środowiska wytwarzania
+\chapter{Charakterystyka narzędzi i środowiska}
 
-### Języki programowania i framework
+\section{Języki programowania i framework}
 
 Aplikacja jest przeznaczona do generowania kodu Python, co naturalnie wpłynęło na wybór języka dla warstwy domenowej. W celu minimalizacji zależności zewnętrznych w tej warstwie wykorzystane zostały wyłącznie biblioteki standardowe.
 
@@ -394,7 +460,7 @@ Warstwa aplikacji została zbudowana w oparciu o Python i framework FastAPI. Fas
 
 Warstwa prezentacji została oparta na HTML, CSS, JavaScript i Bootstrap, bez wykorzystania dedykowanego frameworka. Ta decyzja architektoniczna wynika z faktu, że interfejs użytkownika nie wymaga złożonej logiki – użycie frameworka frontendowego mogłoby zaciemnić strukturę kodu zamiast ją uprościć. Ponieważ rozmiar kodu odpowiada przede wszystkim za efekt wizualny a nie funkcjonalny aplikacji, wprowadzenie rozwiązań takich jak React nie przyniosłoby żadnych rzeczywistych korzyści.
 
-### Narzędzia
+\section{Narzędzia}
 
 Projekt wykorzystuje Git jako narzędzie do kontroli wersji. Ze względu na modularność warstwy domenowej, która może być autonomicznie wykorzystywana w innych projektach, repozytorium podzielone zostało na dwie części – główne repozytorium aplikacji oraz submoduł zawierający warstwę domenową, oba udostępnione na platformie GitHub.
 
@@ -402,13 +468,13 @@ Zarządzanie zależnościami zewnętrznymi realizowane jest za pośrednictwem ve
 
 Testowanie aplikacji prowadzone jest przy użyciu frameworka pytest, stanowiącego standard w ekosystemie Python.
 
-## Implementacja rozwiązania
+\chapter{Implementacja rozwiązania}
 
-### Opis struktury projektu
+\section{Opis struktury projektu}
 
 Aplikacja opiera się na trójwarstwowej architekturze, gdzie każda warstwa odpowiada za określone aspekty funkcjonalności.
 
-#### Warstwa domeny
+\subsection{Warstwa domeny}
 
 Warstwa domeny odpowiada za przetwarzanie diagramów UML i generowanie kodu Python. Jej zadaniem jest konwersja modelu UML z formatu XMI na gotową do użytku strukturę projektu.
 
@@ -420,7 +486,7 @@ Warstwa domeny odpowiada za przetwarzanie diagramów UML i generowanie kodu Pyth
 
 System w pełni obsługuje wszystkie podstawowe relacje UML (asocjacja, agregacja, kompozycja, dziedziczenie, realizacja, zależność) i mapuje je semantycznie na idiomatyczny kod Python.
 
-#### Warstwa aplikacji
+\subsection{Warstwa aplikacji}
 
 Backend udostępnia interfejs API do komunikacji między frontendem a logiką generowania kodu.
 
@@ -436,7 +502,7 @@ Proces generowania obejmuje:
 - Pakowanie wyników w archiwum ZIP
 - Obsługę błędów na każdym etapie
 
-#### Warstwa prezentacji
+\subsection{Warstwa prezentacji}
 
 Frontend jest aplikacją modułową, gdzie każdy komponent odpowiada za określoną funkcjonalność.
 
@@ -459,7 +525,7 @@ Interfejs użytkownika:
 - Coordinate.js – funkcje transformacji i konwersji współrzędnych
 - Geometry.js – obliczenia geometryczne dla renderowania i interakcji
 
-### Przepływ danych
+\section{Przepływ danych}
 
 1. Użytkownik tworzy diagram (Frontend)
 2. Export do XMI (Exporter.js)
@@ -469,47 +535,47 @@ Interfejs użytkownika:
 6. Zwrócenie archiwum ZIP
 7. Pobranie przez użytkownika
 
-### Prezentacja interfejsu użytkownika (zrzuty ekranu najważniejszych widoków z opisem działania).
+\section{Prezentacja interfejsu użytkownika}
 
-TODO
+TODO zrzuty ekranu
 
-## Testowanie i weryfikacja
+\chapter{Testowanie i weryfikacja}
 
-### Zakres Testowania
+\section{Zakres Testowania}
 
 Testowanie obejmowało kluczowe aspekty funkcjonalne aplikacji, w szczególności przetwarzanie danych XMI, generowanie kodu oraz mapowanie struktury projektów. Weryfikacji poddano następujące elementy: parsowanie pakietów, klas i relacji z plików XMI, generowanie kodu Python z zachowaniem hierarchii pakietów, prawidłowe mapowanie importów dla zagnieżdżonych struktur pakietów oraz obsługę wszystkich typów relacji UML. Dodatkowo przeprowadzono weryfikację poprawności generowania plików projektu i inicjalizacji pakietów w wygenerowanym kodzie.
 
-### Testy Jednostkowe
+\section{Testy Jednostkowe}
 
 Zestaw testów jednostkowych implementowanych z wykorzystaniem frameworka pytest obejmował cztery główne komponenty aplikacji:
 
 - ImportMapping – Weryfikacja mechanizmu mapowania ścieżek importów dla klas w zagnieżdżonych pakietach, w tym obsługę scenariuszy z wieloma klasami w jednym pakiecie, klasami rozproszonymi w różnych pakietach oraz przypadkami zawierającymi brakujące klasy.
 
-- ProjectGenerator – Testowanie procesu tworzenia struktury katalogów dla projektów o różnym stopniu złożoności: pakiety puste, struktury płaskie oraz zagnieżdżone hierarchie pakietów, z weryfikacją obecności plików __init__.py i prawidłowego generowania plików klas ze skeletami kodu.
+- ProjectGenerator – Testowanie procesu tworzenia struktury katalogów dla projektów o różnym stopniu złożoności: pakiety puste, struktury płaskie oraz zagnieżdżone hierarchie pakietów, z weryfikacją obecności plików i prawidłowego generowania plików klas ze skeletami kodu.
 
 - TemplateManager – Walidacja poprawności generowania definicji klas z właściwościami i operacjami, a także obsługa wszystkich typów relacji UML (asocjacja, agregacja, kompozycja, dziedziczenie, realizacja, zależność) w generowanym kodzie.
 
 - XmiParser – Testowanie parsowania plików XMI o różnych strukturach, w tym pakiety puste i zagnieżdżone, klasy bez pól i metod, wszystkie typy relacji, właściwości i operacje bez jawnie zdefiniowanych typów oraz walidacja obsługi błędnego lub niekompletnego XMI.
 
-### Testy Manualne
+\section{Testy Manualne}
 
 Testowanie manualne przeprowadzono w celu weryfikacji aspektów interfejsu użytkownika i wizualizacji, które nie mogą być w pełni ocenione przez testy automatyczne. Obejmowało to: sprawdzenie poprawności eksportu i importu plików XMI poprzez interfejs graficzny oraz weryfikację wizualizacji diagramu UML w formacie SVG, w szczególności poprawne renderowanie relacji między komponentami.
 
-### Wnioski z Testowania
+\section{Wnioski z Testowania}
 
 Testy jednostkowe wykonane z użyciem pytest przebiegły pomyślnie i wykazały, że implementacja pokrywa główne scenariusze użycia aplikacji: import i przetwarzanie plików XMI, mapowanie struktur pakietów i klas, generowanie hierarchii projektów oraz prawidłową obsługę wszystkich typów relacji UML. Testy manualne potwierdziły intuicyjność interfejsu użytkownika oraz poprawne działanie podstawowych operacji na diagramach.
 
 Przeprowadzone testowanie wykazało, że wszystkie wymagania funkcjonalne zdefiniowane w sekcji historyjek użytkownika zostały spełnione. Aplikacja poprawnie obsługuje eksport i import danych w formacie XMI, zapewnia logiczną organizację pakietów oraz umożliwia definiowanie złożonych relacji między komponentami modelu. Dodatkowo system generuje kod Python zachowujący strukturę diagramu UML, co stanowi zasadniczy cel aplikacji.
 
-## Instrukcja Obsługi Narzędzia UML
+\chapter{Instrukcja Obsługi Narzędzia UML}
 
-### Wprowadzenie
+\section{Wprowadzenie}
 
 Narzędzie UML jest zaawansowaną aplikacją webową do tworzenia diagramów klas UML z możliwością automatycznego generowania kodu Python. Intuicyjny interfejs pozwala użytkownikom na szybkie i efektywne modelowanie systemów informatycznych bez konieczności ręcznego pisania kodu.
 
-### Wdrożenie Aplikacji
+\section{Wdrożenie Aplikacji}
 
-#### Instalacja Zależności
+\subsection{Instalacja Zależności}
 
 Przed pierwszym uruchomieniem aplikacji zainstaluj wymagane pakiety:
 
@@ -518,7 +584,7 @@ pip install -e domain
 pip install -e .
 ```
 
-#### Uruchamianie Serwera
+\subsection{Uruchamianie Serwera}
 
 Aby uruchomić aplikację, wykonaj polecenie:
 
@@ -528,7 +594,7 @@ python run.py
 
 Aplikacja będzie dostępna w przeglądarce internetowej pod adresem `http://localhost:8080`.
 
-### Omówienie Interfejsu
+\section{Omówienie Interfejsu}
 
 Interfejs użytkownika podzielony jest na kilka logicznych sekcji:
 
@@ -539,7 +605,7 @@ Interfejs użytkownika podzielony jest na kilka logicznych sekcji:
 | **Widok drzewa** | Hierarchiczna struktura pakietów i klas |
 | **Panele edycji** | Edytory właściwości wybranych elementów |
 
-#### Obszar Rysowania
+\subsection{Obszar Rysowania}
 
 Obszar rysowania stanowi główne pole robocze aplikacji, gdzie umieszczone są wszystkie elementy diagramu. W tym obszarze możesz wykonywać poniższe operacje:
 
@@ -549,7 +615,7 @@ Obszar rysowania stanowi główne pole robocze aplikacji, gdzie umieszczone są 
 - **Przesuwanie widoku** - Przeciągnij pusty obszar kanwy lub przytrzymaj klawisz spacji i przeciągnij, aby przesunąć widok
 - **Zmiana skali** - Użyj kółka myszy do przybliżania i oddalania widoku
 
-#### Pasek Narzędzi
+\subsection{Pasek Narzędzi}
 
 Pasek narzędzi zlokalizowany na dole ekranu zawiera przyciski do wykonywania kluczowych operacji na diagramach:
 
@@ -563,7 +629,7 @@ Pasek narzędzi zlokalizowany na dole ekranu zawiera przyciski do wykonywania kl
 | **Generate** | Generuje kod Python na podstawie diagramu |
 | **Clear** | Usuwa wszystkie elementy z diagramu |
 
-#### Widok Drzewa
+\subsection{Widok Drzewa}
 
 Widok drzewa wyświetla pełną hierarchię struktury projektu:
 
@@ -572,9 +638,9 @@ Widok drzewa wyświetla pełną hierarchię struktury projektu:
 - Relacje między klasami umieszczane są w dedykowanej sekcji
 - Klikając na element w drzewie, automatycznie zaznaczasz go na diagramie
 
-### Tworzenie Diagramu
+\section{Tworzenie Diagramu}
 
-#### Dodawanie Klasy do Diagramu
+\subsection{Dodawanie Klasy do Diagramu}
 
 Aby dodać nową klasę do diagramu, wykonaj następujące kroki:
 
@@ -588,7 +654,7 @@ Aby dodać nową klasę do diagramu, wykonaj następujące kroki:
    - Operacje metod (opcjonalnie)
    - Pakiet, do którego klasa powinna należeć (opcjonalnie)
 
-#### Organizacja Klas w Pakiety
+\subsection{Organizacja Klas w Pakiety}
 
 Pakiety umożliwiają logiczne pogrupowanie powiązanych klas. Aby pracować z pakietami:
 
@@ -600,7 +666,7 @@ Pakiety umożliwiają logiczne pogrupowanie powiązanych klas. Aby pracować z p
 
 **Zagnieżdżanie pakietów:** Możesz tworzyć hierarchiczne struktury pakietów, przeciągając jeden pakiet do innego. Klasy są automatycznie przypisywane do najbardziej zagnieżdżonego pakietu, w którym się znajdują.
 
-#### Tworzenie Relacji między Klasami
+{Tworzenie Relacji między Klasami}
 
 Relacje definiują powiązania między klasami. Aby utworzyć relację:
 
@@ -612,7 +678,7 @@ Relacje definiują powiązania między klasami. Aby utworzyć relację:
 
 **Ważne:** Relacje mają kierunek - ensure upewnij się, że klikasz klasy w prawidłowej kolejności.
 
-#### Edycja Elementów Diagramu
+{Edycja Elementów Diagramu}
 
 Aby zmodyfikować właściwości elementu:
 
@@ -620,7 +686,7 @@ Aby zmodyfikować właściwości elementu:
 2. W odpowiednim panelu edycji zmień wymagane pola
 3. Zmiany są zapisywane automatycznie
 
-#### Usuwanie Elementów z Diagramu
+{Usuwanie Elementów z Diagramu}
 
 Aby usunąć element:
 
@@ -630,9 +696,9 @@ Aby usunąć element:
 
 **Istotne:** Usunięcie klasy automatycznie usuwa wszystkie relacje, w których ta klasa uczestniczy.
 
-### Zarządzanie Diagramami
+\section{Zarządzanie Diagramami}
 
-#### Eksportowanie Diagramu do Formatu XMI
+{Eksportowanie Diagramu do Formatu XMI}
 
 Format XMI (XML Metadata Interchange) to standardowy format wymiany diagramów UML. Aby zapisać diagram:
 
@@ -640,7 +706,7 @@ Format XMI (XML Metadata Interchange) to standardowy format wymiany diagramów U
 2. Plik XMI zostanie automatycznie pobrany do folderu pobierania
 3. Plik zawiera pełną reprezentację diagramu, w tym pakiety, klasy, relacje oraz strukturę zagnieżdżeń
 
-#### Importowanie Diagramu z Pliku XMI
+{Importowanie Diagramu z Pliku XMI}
 
 Aby załadować poprzednio zapisany diagram:
 
@@ -652,9 +718,9 @@ Aby załadować poprzednio zapisany diagram:
 
 **Uwaga:** Wczytanie nowego diagramu spowoduje zastąpienie obecnego diagramu. Jeśli chcesz zachować bieżący diagram, wcześniej go zapisz.
 
-### Generowanie Kodu Python
+\section{Generowanie Kodu Python}
 
-#### Przygotowanie Projektu
+\subsection{Przygotowanie Projektu}
 
 Przed generowaniem kodu upewnij się, że Twój diagram spełnia następujące warunki:
 
@@ -663,7 +729,7 @@ Przed generowaniem kodu upewnij się, że Twój diagram spełnia następujące w
 - Relacje między klasami są prawidłowo utworzone
 - Klasy są przypisane do odpowiednich pakietów (zalecane, ale opcjonalne)
 
-#### Proces Generowania
+\subsection{Proces Generowania}
 
 Aby wygenerować kod Python:
 
@@ -675,7 +741,7 @@ Aby wygenerować kod Python:
    - Pakuje projekt w archiwum ZIP
 3. Gotowe archiwum ZIP pobiera się automatycznie do folderu pobierania
 
-#### Mapowanie Typów Danych
+\subsection{Mapowanie Typów Danych}
 
 Aplikacja automatycznie konwertuje typy danych UML na odpowiadające im typy Python:
 
@@ -688,9 +754,9 @@ Aplikacja automatycznie konwertuje typy danych UML na odpowiadające im typy Pyt
 
 Nazwy klas w typach danych są traktowane jako referencje do klas użytkownika i nie podlegają transformacji.
 
-### Rozwiązywanie Problemów
+\section{Rozwiązywanie Problemów}
 
-#### Kod nie został wygenerowany
+\subsection{Kod nie został wygenerowany}
 
 Jeśli kod Python nie generuje się prawidłowo, sprawdź:
 
@@ -698,7 +764,7 @@ Jeśli kod Python nie generuje się prawidłowo, sprawdź:
 - Konsolę przeglądarki w poszukiwaniu błędów JavaScript
 - Logi serwera w poszukiwaniu błędów parsowania XMI
 
-#### Elementy nie są widoczne na kanwie
+\subsection{Elementy nie są widoczne na kanwie}
 
 Jeśli nie widzisz elementów na diagramie:
 
@@ -709,9 +775,9 @@ Jeśli nie widzisz elementów na diagramie:
 
 **Wskazówka:** W razie dodatkowych pytań lub problemów, sprawdź logi w konsoli przeglądarki, które mogą dostarczyć szczegółowych informacji o błędach.
 
-## Podsumowanie i wnioski końcowe
+\chapter{Podsumowanie i wnioski końcowe}
 
-### Ocena stopnia realizacji projektu
+\section{Ocena stopnia realizacji projektu}
 
 Opracowane narzędzie w pełni spełnia założone cele projektu i realizuje wszystkie wymagania funkcjonalne zdefiniowane w początkowych etapach pracy. Przeprowadzona implementacja obejmuje zarówno bibliotekę Pythonową do przetwarzania modeli UML, jak i kompletną aplikację webową umożliwiającą interaktywne tworzenie diagramów klas oraz automatyczne generowanie kodu źródłowego.
 
@@ -721,22 +787,22 @@ Zbudowana architektura oparta na wzorcu trójwarstwowym zapewnia czytelność ko
 
 Testowanie metodą kombinacji testów jednostkowych (pytest) oraz weryfikacji manualnych potwierdziło poprawność działania wszystkich istotnych scenariuszy użycia. Testy jednostkowe obejmujące parsowanie XMI, generowanie struktury projektu, mapowanie importów oraz obsługę relacji przebiegły pomyślnie, wykazując, że implementacja pokrywa główne przypadki użycia aplikacji. Weryfikacja manualna potwierdziła intuicyjność interfejsu użytkownika oraz poprawne renderowanie diagramów UML w formacie SVG.
 
-### Ocena realizacji projektu z perspektywy komercyjnej i naukowej
+\section{Ocena realizacji projektu z perspektywy komercyjnej i naukowej}
 
 Z perspektywy komercyjnej i naukowej opracowane narzędzie zapełnia istotną lukę rynkową. W porównaniu do istniejących rozwiązań narzędzie łączy zalety webowych edytorów graficznych (dostępność, brak instalacji, interfejs przyjazny użytkownikowi) z precyzją inżynierską systemów CASE (obsługa standardu XMI, generowanie kodu z semantycznym rozumieniem UML), będąc jednocześnie rozwiązaniem open source dedykowanym ekosystemowi Pythona. Brakujący wcześniej segment narzędzi wspierających Model-Driven Development w Pythonie został wypełniony gotowym do użycia rozwiązaniem.
 
 Wygenerowany kod Python spełnia standardy współczesnego programowania: zawiera type hints zgodne z PEP 484, wykorzystuje idiomatyczne konstrukty Pythona, zachowuje hierarchię pakietów odpowiadającą strukturze UML oraz jest gotowy do bezpośredniego użycia w projektach. Pozwala to na szybkie prototypowanie aplikacji oraz zmniejszenie czasu początkowych etapów wytwarzania oprogramowania.
 
-### Możliwości dalszego rozwoju aplikacji
+\section{Możliwości dalszego rozwoju aplikacji}
 
 Opracowane narzędzie stanowi solidną podstawę do dalszego rozszerzania funkcjonalności.
 Kierunkami dalszego rozwoju mogą być zarówno rozszerzenia funkcjonalne, jak i usprawnienia techniczne.
 
-#### Rozszerzenia funkcjonalne
+\subsection{Rozszerzenia funkcjonalne}
 
 - Obsługa dodatkowych typów diagramów UML – Aktualnie aplikacja obsługuje wyłącznie diagramy klas. Naturalne rozszerzenie stanowiłoby dodanie obsługi diagramów sekwencji, aktywności, stanów czy przypadków użycia. Implementacja tych typów diagramów pozwoliłaby na pełną obsługę całego standardu UML i byłaby szczególnie wartościowa dla modelowania zaawansowanych systemów.
 
-- Generowanie kodu dla innych języków programowania – Warstwa domenowa została zaprojektowana z myślą o rozszerzalności. Logika parsowania i transformacji modelu jest niezależna od docelowego języka programowania. Dodanie obsługi dla Java, C#, TypeScript czy Go wymagałoby jedynie implementacji nowych szablonów kodu oraz mapowania typów. Takie podejście znacznie rozszerzyłoby grono potencjalnych użytkowników.
+- Generowanie kodu dla innych języków programowania – Warstwa domenowa została zaprojektowana z myślą o rozszerzalności. Logika parsowania i transformacji modelu jest niezależna od docelowego języka programowania. Dodanie obsługi dla Java, C\#, TypeScript czy Go wymagałoby jedynie implementacji nowych szablonów kodu oraz mapowania typów. Takie podejście znacznie rozszerzyłoby grono potencjalnych użytkowników.
 
 - Generowanie logiki biznesowej – Aktualnie system generuje jedynie szkielety metod. Zaawansowaną funkcjonalnością byłoby generowanie pełnej logiki biznesowej na podstawie semantyki definiowanej w diagramach, na przykład automatyczne generowanie getterów/setterów, implementacji interfejsów czy obsługi walidacji. Mogłoby to być wspomagane przez integrację z modelami LLM (Large Language Models), które na podstawie opisu biznesowego w komentarzach mogłyby generować działający kod.
 
@@ -752,10 +818,13 @@ Kierunkami dalszego rozwoju mogą być zarówno rozszerzenia funkcjonalne, jak i
 
 - Generacja dokumentacji – Automatyczne tworzenie dokumentacji technicznej na podstawie modelu UML: diagramy, opisy architektoniczne, słowniki konceptów, mapy zależności modułów.
 
-#### Prace badawcze
+\subsection{Prace badawcze}
 
 - Empiryczna ocena efektywności MDD w Pythonie – Przeprowadzenie badań z udziałem programistów w celu zmierzenia rzeczywistego przyspieszenia wytwarzania oprogramowania przy zastosowaniu narzędzia oraz jakości wygenerowanego kodu.
 
 - Porównanie z innymi podejściami – Analiza różnic między generowaniem kodu z modeli a organicznym rozwojem kodu bez fazy modelowania pod kątem długoterminowej utrzymywalności i elastyczności systemów.
 
 - Optymalizacja dla systemów szkieletowych – Badania nad adaptacją narzędzia do specjalnych dziedzin, takich jak generowanie serwisów mikro, aplikacji mobilnych czy systemów rozproszonych czystością całej pracy.
+
+
+\end{document}
