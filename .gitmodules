@@ -1,3 +1,3 @@
 [submodule "domain"]
 	path = domain
-	url = git@github.com:BartoszKruszewski/python-uml-project-generator.git
+	url = https://github.com/BartoszKruszewski/python-uml-project-generator.git
