@@ -3,22 +3,31 @@
 \usepackage[utf8]{inputenc}
 \usepackage{lipsum}
 \usepackage{enumitem}
+\usepackage{listings}
+\usepackage{tabularx}
 
 
-\polishtitle{Narzędzie do automatycznego generowania kodu Python na podstawie diagramów UML}
-\englishtitle{TODO tytuł po angielsku}
+\polishtitle{
+    Narzędzie do automatycznego generowania kodu Python na podstawie diagramów UML
+}
+\englishtitle{
+    Tool for automatic Python code generation from UML diagrams
+}
 
 \polishabstract{
-TODO streszczenie
+    Celem pracy jest opracowanie narzędzia automatyzującego proces tworzenia struktury projektów w języku Python na podstawie diagramów UML. Praca została podzielona na dwa etapy. W części analitycznej dokonano przeglądu dostępnych rozwiązań, identyfikując lukę w narzędziach łączących specyfikę środowiska Python z prostą obsługą. Na tej podstawie sformułowano szczegółowe wymagania funkcjonalne i niefunkcjonalne systemu. Część projektowa obejmuje implementację aplikacji w architekturze trójwarstwowej. Przedstawiono autorski algorytm generowania kodu z plików XMI, warstwę serwerową opartą na frameworku FastAPI oraz interfejs użytkownika umożliwiający edycję diagramów. Skuteczność rozwiązania została zweryfikowana poprzez serię testów funkcjonalnych i wydajnościowych.
 }
 
 \englishabstract{
-TODO streszczenie po angielsku
+    The primary objective of this thesis is the development of a tool designed to automate the process of creating Python project structures based on UML diagrams. The study is organized into two distinct phases. The analytical section provides a review of currently available solutions, identifying a gap in tools that effectively combine the specific characteristics of the Python environment with ease of operation. Consequently, detailed functional and non-functional requirements for the system were formulated. The design section encompasses the implementation of the application utilizing a three-tier architecture. The thesis presents a custom algorithm for generating code from XMI files, a server layer built upon the FastAPI framework, and a user interface facilitating diagram editing. The efficacy of the proposed solution was validated through a comprehensive series of functional and performance tests.
 }
 
 \author{Bartosz Kruszewski}
 
 \advisor{dr Marcin Młotkowski}
+
+\transcriptnum {337568}
+\advisorgen    {dr Marcin Młotkowski}
 
 \begin{document}
 
@@ -104,20 +113,55 @@ Czwartą grupę stanowią narzędzia typu "Code-as-Diagram", np. PlantUML. Choć
 
 \begin{table}[h!]
     \centering
-    \begin{tabular}{|l|l|l|l|l|l|}
+    \begin{tabularx}{\textwidth}{|l|l|l|l|l|l|}
         \hline
-        \textbf{Narzędzie} & \textbf{Kategoria} & \textbf{Platforma} & \textbf{Licencja} & \textbf{\vtop{\hbox{\strut Obsługa}\hbox{\strut XMI}}} & \textbf{\vtop{\hbox{\strut Generowanie}\hbox{\strut kodu Python}}} \\ \hline
-        \vtop{\hbox{\strut Enterprise}\hbox{\strut Architect}} & Zaawansowane & Desktop & Komercyjna & Pełna & Tak \\ \hline
-        \vtop{\hbox{\strut Visual}\hbox{\strut Paradigm}} & Zaawansowane & Desktop & Subskrypcja & Pełna & Tak \\ \hline
-        StarUML & Lekkie & Desktop & Komercyjna & Częściowa & Ograniczone \\ \hline
-        PlantUML & Code-as-Diagram & IDE / CLI & Open Source & Brak & Brak \\ \hline
-        draw.io & Edytor graficzny & Web & Darmowa & Brak & Brak \\ \hline
-        ArgoUML & Open Source & Desktop & Open Source & Pełna & Częściowe \\ \hline
-    \end{tabular}
-
+        \textbf{Narzędzie} & 
+        \textbf{Kategoria} & 
+        \textbf{Platforma} & 
+        \textbf{Licencja} & 
+        \textbf{\vtop{\hbox{\strut Obsługa}\hbox{\strut XMI}}} & 
+        \textbf{\vtop{\hbox{\strut Generowanie}\hbox{\strut kodu Python}}} \\ \hline
+        \vtop{\hbox{\strut Enterprise}\hbox{\strut Architect}} & 
+        Zaawansowane & 
+        Desktop & 
+        Komercyjna & 
+        Pełna & 
+        Tak \\ \hline
+        \vtop{\hbox{\strut Visual}\hbox{\strut Paradigm}} & 
+        Zaawansowane & 
+        Desktop & 
+        Subskrypcja & 
+        Pełna & 
+        Tak \\ \hline
+        StarUML & 
+        Lekkie & 
+        Desktop & 
+        Komercyjna & 
+        Częściowa & 
+        Ograniczone \\ \hline
+        PlantUML & 
+        Code-as-Diagram & 
+        IDE / CLI & 
+        Open Source & 
+        Brak & 
+        Brak \\ \hline
+        draw.io & 
+        Edytor graficzny & 
+        Web & 
+        Darmowa & 
+        Brak & 
+        Brak \\ \hline
+        ArgoUML & 
+        Open Source & 
+        Desktop & 
+        Open Source & 
+        Pełna & 
+        Częściowe \\ \hline
+    \end{tabularx}
     \caption{Porównanie wybranych narzędzi CASE i UML}
     \label{tab:narzedzia_case}
 \end{table}
+
 
 Analiza wykazuje wyraźną lukę rynkową. Brakuje narzędzia, które łączyłoby zalety edytorów webowych (dostępność, brak instalacji) z inżynierską precyzją systemów CASE (obsługa XMI, generowanie kodu), będąc jednocześnie rozwiązaniem Open Source dedykowanym specyfice języka Python. Projektowane rozwiązanie ma na celu wypełnienie tej niszy.
 
@@ -127,118 +171,90 @@ Analiza wykazuje wyraźną lukę rynkową. Brakuje narzędzia, które łączyło
 
 \subsection{Tworzenie i edycja diagramów klas UML}
 
-\subsubsection*{Tworzenie klas}
 \begin{enumerate}[label=\textbf{WF-\arabic*}]
+\subsubsection*{Tworzenie klas}
     \item System umożliwia użytkownikowi dodawanie klas do diagramu.
     \item Użytkownik może nadać klasie nazwę.
     \item Użytkownik może zdefiniować atrybuty klasy (nazwa, typ).
     \item Użytkownik może zdefiniować operacje klasy (nazwa, parametry, typ zwracany).
     \item Użytkownik może przypisać klasę do pakietu.
-\end{enumerate}
 
 \subsubsection*{Tworzenie pakietów}
-\begin{enumerate}[resume, label=\textbf{WF-\arabic*}]
     \item System umożliwia użytkownikowi dodawanie pakietów do diagramu.
     \item Użytkownik może nadać pakietowi nazwę.
     \item System obsługuje zagnieżdżone pakiety.
     \item Użytkownik może organizować klasy w pakietach.
-\end{enumerate}
 
 \subsubsection*{Definiowanie relacji}
-\begin{enumerate}[resume, label=\textbf{WF-\arabic*}]
     \item System umożliwia tworzenie relacji między klasami.
     \item System obsługuje następujące typy relacji: asocjacja, agregacja, kompozycja, dziedziczenie, realizacja, zależność.
     \item Użytkownik może określić kierunek relacji.
-\end{enumerate}
 
 \subsubsection*{Edycja elementów}
-\begin{enumerate}[resume, label=\textbf{WF-\arabic*}]
     \item Użytkownik może modyfikować właściwości klas (nazwa, atrybuty, operacje).
     \item Użytkownik może modyfikować właściwości pakietów (nazwa).
     \item Użytkownik może usuwać klasy i pakiety.
     \item Użytkownik może usuwać relacje.
-\end{enumerate}
 
 \subsubsection*{Wizualizacja diagramu}
-\begin{enumerate}[resume, label=\textbf{WF-\arabic*}]
     \item System wyświetla diagram w formie graficznej.
     \item System renderuje klasy jako prostokąty z sekcjami (nazwa, atrybuty, operacje).
     \item System renderuje pakiety jako kontenery.
     \item System renderuje relacje jako linie między klasami.
     \item System wyświetla widok drzewa struktury pakietów i klas.
-\end{enumerate}
 
 \subsection{Eksport i import diagramów}
 
 \subsubsection*{Eksport do XMI}
-\begin{enumerate}[resume, label=\textbf{WF-\arabic*}]
     \item System eksportuje diagram do formatu XMI 2.1.
     \item Wyeksportowany plik jest zgodny ze standardem OMG.
     \item Plik XMI zawiera wszystkie elementy diagramu (klasy, pakiety, relacje).
-\end{enumerate}
 
 \subsubsection*{Import XMI}
-\begin{enumerate}[resume, label=\textbf{WF-\arabic*}]
     \item System może parsować pliki XMI 2.1.
     \item System obsługuje podstawowe elementy XMI (klasy, pakiety, relacje, typy danych).
     \item System waliduje poprawność formatu XMI.
-\end{enumerate}
 
 \subsection{Generowanie kodu Python}
 
 \subsubsection*{Generowanie struktury projektu}
-\begin{enumerate}[resume, label=\textbf{WF-\arabic*}]
     \item System generuje strukturę katalogów odpowiadającą pakietom.
     \item System tworzy pliki \texttt{\_\_init\_\_.py} dla każdego pakietu.
     \item System generuje pliki \texttt{.py} dla każdej klasy.
-\end{enumerate}
 
 \subsubsection*{Generowanie klas}
-\begin{enumerate}[resume, label=\textbf{WF-\arabic*}]
     \item System generuje definicje klas Python z odpowiednią składnią.
     \item System mapuje atrybuty UML na właściwości klasy.
     \item System generuje konstruktory z parametrami odpowiadającymi atrybutom.
     \item System generuje metody odpowiadające operacjom UML.
     \item System używa type hints dla parametrów i zwracanych wartości.
-\end{enumerate}
 
 \subsubsection*{Mapowanie typów}
-\begin{enumerate}[resume, label=\textbf{WF-\arabic*}]
     \item System mapuje standardowe typy UML na typy Python (\texttt{String} $\to$ \texttt{str}, \texttt{Integer} $\to$ \texttt{int}, \texttt{Float} $\to$ \texttt{float}).
     \item System zachowuje nazwy niestandardowych typów (klasy użytkownika).
-\end{enumerate}
 
 \subsubsection*{Obsługa relacji w kodzie}
-\begin{enumerate}[resume, label=\textbf{WF-\arabic*}]
     \item System generuje odpowiedni kod dla różnych typów relacji (asocjacja, agregacja, kompozycja, dziedziczenie/realizacja, zależność).
-\end{enumerate}
 
 \subsubsection*{Zarządzanie importami}
-\begin{enumerate}[resume, label=\textbf{WF-\arabic*}]
     \item System automatycznie generuje instrukcje \texttt{import} dla używanych klas.
     \item System generuje poprawne ścieżki importu na podstawie struktury pakietów.
     \item System obsługuje importy z zagnieżdżonych pakietów.
-\end{enumerate}
 
 \subsubsection*{Eksport wygenerowanego projektu}
-\begin{enumerate}[resume, label=\textbf{WF-\arabic*}]
     \item System pakuje wygenerowany projekt do archiwum ZIP.
     \item Użytkownik może pobrać archiwum ZIP z wygenerowanym kodem.
     \item Archiwum zawiera kompletną strukturę projektu gotową do użycia.
-\end{enumerate}
 
 \subsection{Interfejs użytkownika}
 
 \subsubsection*{Interakcje użytkownika}
-\begin{enumerate}[resume, label=\textbf{WF-\arabic*}]
     \item Użytkownik może przeciągać elementy na diagramie.
     \item Użytkownik może zaznaczać elementy klikając na nie.
     \item Użytkownik może edytować elementy w panelach edycji.
     \item Użytkownik może używać widoku drzewa do nawigacji po strukturze.
-\end{enumerate}
 
 \subsubsection*{Operacje na diagramie}
-\begin{enumerate}[resume, label=\textbf{WF-\arabic*}]
     \item Użytkownik może czyścić cały diagram.
     \item Użytkownik może generować kod z aktualnego diagramu.
 \end{enumerate}
@@ -597,20 +613,21 @@ Narzędzie UML jest zaawansowaną aplikacją webową do tworzenia diagramów kla
 
 Przed pierwszym uruchomieniem aplikacji zainstaluj wymagane pakiety:
 
-```bash
+\begin{lstlisting}[language=Bash]
 pip install -e domain
 pip install -e .
-```
+\end{lstlisting}
+    
 
 \subsection{Uruchamianie Serwera}
 
 Aby uruchomić aplikację, wykonaj polecenie:
 
-```bash
+\begin{lstlisting}[language=Bash]
 python run.py
-```
+\end{lstlisting}
 
-Aplikacja będzie dostępna w przeglądarce internetowej pod adresem `http://localhost:8080`.
+Aplikacja będzie dostępna w przeglądarce internetowej pod adresem \texttt{http://localhost:8080}.
 
 \section{Omówienie Interfejsu}
 
@@ -771,10 +788,9 @@ Aplikacja automatycznie konwertuje typy danych UML na odpowiadające im typy Pyt
 
 | Typ UML | Typ Python |
 |---------|-----------|
-| `String` | `str` |
-| `Integer` | `int` |
-| `Float` | `float` |
-| Nazwy klas | `ClassName` (bez zmian) |
+| \texttt{String} | \texttt{str} |
+| \texttt{Integer} | \texttt{int} |
+| \texttt{Float}| \texttt{float} |
 
 Nazwy klas w typach danych są traktowane jako referencje do klas użytkownika i nie podlegają transformacji.
 
@@ -855,5 +871,9 @@ Kierunkami dalszego rozwoju mogą być zarówno rozszerzenia funkcjonalne, jak i
 
     \item Porównanie z innymi podejściami – Analiza różnic między generowaniem kodu z modeli a organicznym rozwojem kodu bez fazy modelowania pod kątem długoterminowej utrzymywalności i elastyczności systemów.
 \end{itemize}
+
+\begin{thebibliography}{1}
+    \bibitem{example} \emph{The Example}, \url{https://example.com/}. Dostęp: 12-12-2025.
+\end{thebibliography}
 
 \end{document}

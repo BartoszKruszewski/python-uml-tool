@@ -22,12 +22,21 @@ A tool for interactive UML class diagram modeling and automatic Python code gene
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
+git clone --recursive <repository-url>
 cd python-uml-tool
 ```
 
 2. Install dependencies:
 ```bash
+# Make virtual environment
+python -m venv venv
+
+# Activate virtual environment (Windows)
+./venv/Scripts/activate
+
+# Activate virtual environment (Linux/MacOS)
+source ./venv/bin
+
 # Install code generation module (domain layer)
 pip install -e domain
 
