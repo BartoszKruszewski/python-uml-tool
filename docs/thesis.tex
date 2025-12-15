@@ -35,15 +35,15 @@
 
 \section{Wprowadzenie do tematyki}
 
-Współczesna inżynieria oprogramowania coraz bardziej koncentruje się na automatyzacji procesów wytwórczych, obejmującej zarządzanie infrastrukturą oraz generowanie kodu źródłowego. Wraz ze wzrostem złożoności systemów informatycznych, kluczowym elementem procesu deweloperskiego stało się modelowanie, a standardem w tej dziedzinie jest język UML (Unified Modeling Language). UML umożliwia wizualne przedstawienie architektury systemu przed rozpoczęciem implementacji.
+Współczesna inżynieria oprogramowania coraz bardziej koncentruje się na automatyzacji procesów wytwórczych, obejmującej zarządzanie infrastrukturą oraz generowanie kodu źródłowego. Wraz ze wzrostem złożoności systemów informatycznych, kluczowym elementem procesu deweloperskiego stało się modelowanie, a standardem w tej dziedzinie jest język UML (Unified Modeling Language) \cite{omg_uml}. UML umożliwia wizualne przedstawienie architektury systemu przed rozpoczęciem implementacji.
 
-W klasycznym podejściu często występuje rozdźwięk między modelem projektowym a finalnym kodem. Ręczne odwzorowanie diagramów klas na strukturę plików i definicje obiektów jest czasochłonne, powtarzalne i podatne na błędy. Format XMI (XML Metadata Interchange) odgrywa kluczową rolę w interoperacyjności narzędzi modelujących, umożliwiając wymianę metadanych modeli UML między różnymi środowiskami.
+W klasycznym podejściu często występuje rozdźwięk między modelem projektowym a finalnym kodem. Ręczne odwzorowanie diagramów klas na strukturę plików i definicje obiektów jest czasochłonne, powtarzalne i podatne na błędy. Format XMI (XML Metadata Interchange) \cite{omg_xmi} odgrywa kluczową rolę w interoperacyjności narzędzi modelujących, umożliwiając wymianę metadanych modeli UML między różnymi środowiskami.
 
 \section{Uzasadnienie wyboru tematu}
 
 Wybór tematu wynika z obserwacji powszechnego problemu w procesie wytwarzania oprogramowania — braku spójności między fazą projektowania a fazą implementacji. Diagramy UML, traktowane jako fundament architektury, szybko stają się nieaktualne wobec rzeczywistego kodu. Ręczna translacja modeli na kod jest żmudna, mechaniczna i obarczona ryzykiem błędów, co prowadzi do powstawania długu technologicznego już na starcie projektu.
 
-Decyzja o stworzeniu narzędzia automatyzującego ten proces wynika z chęci rozwiązania tego problemu poprzez praktyczne zastosowanie podejścia Model-Driven Development (MDD). Komercyjne środowiska CASE (Computer-Aided Software Engineering), takie jak Enterprise Architect czy Visual Paradigm, są często drogie, „ciężkie” oraz oparte na zamkniętym ekosystemie. Istnieje zatem nisza na lekkie, dostępne przez przeglądarkę rozwiązania typu open source, które obniżają próg wejścia do profesjonalnego modelowania systemów.
+Decyzja o stworzeniu narzędzia automatyzującego ten proces wynika z chęci rozwiązania tego problemu poprzez praktyczne zastosowanie podejścia Model-Driven Development (MDD) \cite{france_mdd}. Komercyjne środowiska CASE (Computer-Aided Software Engineering), takie jak Enterprise Architect czy Visual Paradigm, są często drogie, „ciężkie” oraz oparte na zamkniętym ekosystemie. Istnieje zatem nisza na lekkie, dostępne przez przeglądarkę rozwiązania typu open source, które obniżają próg wejścia do profesjonalnego modelowania systemów.
 
 Projekt odpowiada na rosnącą popularność języka Python w budowaniu złożonych systemów backendowych. W przeciwieństwie do języków silnie typowanych, takich jak Java czy C\#, gdzie generowanie kodu z UML jest standardem, w ekosystemie Pythona brakuje nowoczesnych narzędzi łączących elastyczność języka ze sztywnymi regułami architektonicznymi UML. Stworzenie dedykowanego parsera formatu XMI dla Pythona pozwala na wypełnienie tej luki.
 
@@ -69,7 +69,7 @@ Zakres pracy obejmuje projektowanie, implementację oraz testowanie poszczególn
 
     \item Projekt i implementację logiki generowania szkieletu projektu w języku Python, obejmującą tworzenie katalogów, plików modułów, definicji klas, atrybutów, metod oraz relacji dziedziczenia i asocjacji.
 
-    \item Implementację backendu aplikacji webowej w oparciu o framework FastAPI, zapewniającego interfejs API do obsługi żądań generowania kodu oraz eksportu projektu.
+    \item Implementację backendu aplikacji webowej w oparciu o framework FastAPI\cite{fastapi}, zapewniającego interfejs API do obsługi żądań generowania kodu oraz eksportu projektu.
 
     \item Implementację frontendu aplikacji, umożliwiającego interaktywne tworzenie i edycję diagramów klas UML.
 
@@ -101,13 +101,13 @@ Celem projektu jest eliminacja tych problemów poprzez stworzenie lekkiego, webo
 
 Rynek narzędzi wspierających modelowanie w języku UML jest silnie spolaryzowany. Z jednej strony dominują rozbudowane, komercyjne systemy CASE, z drugiej – proste edytory graficzne dostępne przez przeglądarkę. Analiza dostępnych rozwiązań pozwala wyodrębnić cztery główne grupy narzędzi, z których każda posiada istotne ograniczenia w kontekście szybkiego prototypowania aplikacji Pythonowych.
 
-Pierwszą grupę stanowią zaawansowane środowiska CASE, takie jak Enterprise Architect czy Visual Paradigm. Są to kompletne platformy inżynierskie oferujące pełną obsługę standardu XMI, inżynierię zwrotną oraz wbudowane generatory kodu. Ich główną wadą jest jednak "ciężkość" (wymóg instalacji desktopowej), wysoki koszt licencji oraz wysoki próg wejścia wynikający ze skomplikowanego interfejsu. Są to narzędzia dedykowane dla architektów korporacyjnych, a nie dla zwinnych zespołów deweloperskich.
+Pierwszą grupę stanowią zaawansowane środowiska CASE, takie jak Enterprise Architect \cite{enterprise_arch} czy Visual Paradigm \cite{visual_paradigm}. Są to kompletne platformy inżynierskie oferujące pełną obsługę standardu XMI, inżynierię zwrotną oraz wbudowane generatory kodu. Ich główną wadą jest jednak "ciężkość" (wymóg instalacji desktopowej), wysoki koszt licencji oraz wysoki próg wejścia wynikający ze skomplikowanego interfejsu. Są to narzędzia dedykowane dla architektów korporacyjnych, a nie dla zwinnych zespołów deweloperskich.
 
-Drugą kategorię tworzą lekkie narzędzia desktopowe, reprezentowane przez StarUML. Oferują one znacznie lepszy UX niż systemy korporacyjne, jednak ich funkcjonalność w zakresie generowania kodu (szczególnie dla Pythona) opiera się na wtyczkach tworzonych przez społeczność, które często są nieaktualne lub porzucane. Ponadto, wciąż wymagają one instalacji lokalnej, co utrudnia pracę w chmurze.
+Drugą kategorię tworzą lekkie narzędzia desktopowe, reprezentowane przez StarUML \cite{staruml}. Oferują one znacznie lepszy UX niż systemy korporacyjne, jednak ich funkcjonalność w zakresie generowania kodu (szczególnie dla Pythona) opiera się na wtyczkach tworzonych przez społeczność, które często są nieaktualne lub porzucane. Ponadto, wciąż wymagają one instalacji lokalnej, co utrudnia pracę w chmurze.
 
-Trzecią grupą są webowe edytory graficzne, takie jak draw.io (diagrams.net). Cieszą się one ogromną popularnością ze względu na darmowy dostęp i brak konieczności instalacji. Są to jednak narzędzia stricte do rysowania – nie posiadają semantycznego rozumienia obiektów UML. Traktują diagram jako zbiór kształtów, a nie strukturę klas, co w połączeniu z brakiem obsługi formatu XMI całkowicie wyklucza je z procesów automatycznego generowania kodu.
+Trzecią grupą są webowe edytory graficzne, takie jak draw.io (diagrams.net) \cite{drawio}. Cieszą się one ogromną popularnością ze względu na darmowy dostęp i brak konieczności instalacji. Są to jednak narzędzia stricte do rysowania - nie posiadają semantycznego rozumienia obiektów UML. Traktują diagram jako zbiór kształtów, a nie strukturę klas, co w połączeniu z brakiem obsługi formatu XMI całkowicie wyklucza je z procesów automatycznego generowania kodu.
 
-Czwartą grupę stanowią narzędzia typu "Code-as-Diagram", np. PlantUML. Choć są one standardem w dokumentowaniu kodu (model Open Source), nie służą do modelowania architektury w rozumieniu MDD. Nie przechowują one modelu w uniwersalnym formacie metadanych, lecz jedynie renderują obraz na podstawie tekstu, co uniemożliwia dwukierunkową synchronizację z kodem.
+Czwartą grupę stanowią narzędzia typu "Code-as-Diagram", np. PlantUML \cite{plantuml}. Choć są one standardem w dokumentowaniu kodu (model Open Source), nie służą do modelowania architektury w rozumieniu MDD. Nie przechowują one modelu w uniwersalnym formacie metadanych, lecz jedynie renderują obraz na podstawie tekstu, co uniemożliwia dwukierunkową synchronizację z kodem.
 
 \section{Analiza ich wad i zalet}
 
@@ -151,12 +151,6 @@ Czwartą grupę stanowią narzędzia typu "Code-as-Diagram", np. PlantUML. Choć
         Darmowa & 
         Brak & 
         Brak \\ \hline
-        ArgoUML & 
-        Open Source & 
-        Desktop & 
-        Open Source & 
-        Pełna & 
-        Częściowe \\ \hline
     \end{tabularx}
     \caption{Porównanie wybranych narzędzi CASE i UML}
     \label{tab:narzedzia_case}
@@ -227,7 +221,7 @@ Analiza wykazuje wyraźną lukę rynkową. Brakuje narzędzia, które łączyło
     \item System mapuje atrybuty UML na właściwości klasy.
     \item System generuje konstruktory z parametrami odpowiadającymi atrybutom.
     \item System generuje metody odpowiadające operacjom UML.
-    \item System używa type hints dla parametrów i zwracanych wartości.
+    \item System używa type hints \cite{pep484} dla parametrów i zwracanych wartości.
 
 \subsubsection*{Mapowanie typów}
     \item System mapuje standardowe typy UML na typy Python (\texttt{String} $\to$ \texttt{str}, \texttt{Integer} $\to$ \texttt{int}, \texttt{Float} $\to$ \texttt{float}).
@@ -454,7 +448,7 @@ Analiza wykazuje wyraźną lukę rynkową. Brakuje narzędzia, które łączyło
 
 \section{Architektura systemu}
 
-Architektura systemu jest oparta na wzorcu trójwarstwowym, co gwarantuje modułowość rozwiązania oraz wyraźną separację odpowiedzialności poszczególnych komponentów.
+Architektura systemu jest oparta na wzorcu trójwarstwowym, co gwarantuje modułowość rozwiązania oraz wyraźną separację odpowiedzialności poszczególnych komponentów. \cite{clean_arch}
 
 W strukturze projektu wyróżnia się trzy współpracujące ze sobą warstwy:
 \begin{itemize}
@@ -483,7 +477,7 @@ Projekt wykorzystuje Git jako narzędzie do kontroli wersji. Ze względu na modu
 
 Zarządzanie zależnościami zewnętrznymi realizowane jest za pośrednictwem venv (służącego do utworzenia izolowanych środowisk Python) oraz pip (odpowiedzialnego za pobieranie i instalację pakietów). Wszystkie wymagane biblioteki zostały dokładnie zdefiniowane w plikach pyproject.toml, zapewniając pełną reprodukowalność środowiska.
 
-Testowanie aplikacji prowadzone jest przy użyciu frameworka pytest, stanowiącego standard w ekosystemie Python.
+Testowanie aplikacji prowadzone jest przy użyciu frameworka pytest \cite{pytest_okken}, stanowiącego standard w ekosystemie Python.
 
 \chapter{Implementacja rozwiązania}
 
@@ -633,12 +627,23 @@ Aplikacja będzie dostępna w przeglądarce internetowej pod adresem \texttt{htt
 
 Interfejs użytkownika podzielony jest na kilka logicznych sekcji:
 
-| Komponent | Opis |
-|-----------|------|
-| **Obszar rysowania** | Główne pole robocze do tworzenia diagramów |
-| **Pasek narzędzi** | Przyciski do operacji na diagramach |
-| **Widok drzewa** | Hierarchiczna struktura pakietów i klas |
-| **Panele edycji** | Edytory właściwości wybranych elementów |
+\begin{table}[h!]
+    \centering
+    \begin{tabularx}{0.9\textwidth}{|X|X|}
+        \hline
+        \textbf{Komponent} &
+        \textbf{Opis} \\ \hline
+        \textbf{Obszar rysowania} &
+        Główne pole robocze do tworzenia diagramów \\ \hline
+        \textbf{Pasek narzędzi} &
+        Przyciski do operacji na diagramach \\ \hline
+        \textbf{Widok drzewa} &
+        Hierarchiczna struktura pakietów i klas \\ \hline
+        \textbf{Panele edycji} &
+        Edytory właściwości wybranych elementów \\ \hline
+    \end{tabularx}
+    \caption{Podstawowe komponenty interfejsu aplikacji do edycji diagramów UML}
+\end{table}
 
 \subsection{Obszar Rysowania}
 
@@ -786,11 +791,21 @@ Aby wygenerować kod Python:
 
 Aplikacja automatycznie konwertuje typy danych UML na odpowiadające im typy Python:
 
-| Typ UML | Typ Python |
-|---------|-----------|
-| \texttt{String} | \texttt{str} |
-| \texttt{Integer} | \texttt{int} |
-| \texttt{Float}| \texttt{float} |
+\begin{table}[h!]
+    \centering
+    \begin{tabularx}{0.6\textwidth}{|X|X|}
+        \hline
+        \textbf{Typ UML} &
+        \textbf{Typ Python} \\ \hline
+        \texttt{String} &
+        \texttt{str} \\ \hline
+        \texttt{Integer} &
+        \texttt{int} \\ \hline
+        \texttt{Float} &
+        \texttt{float} \\ \hline
+    \end{tabularx}
+    \caption{Mapowanie typów UML na typy w Pythonie}
+\end{table}
 
 Nazwy klas w typach danych są traktowane jako referencje do klas użytkownika i nie podlegają transformacji.
 
@@ -872,8 +887,34 @@ Kierunkami dalszego rozwoju mogą być zarówno rozszerzenia funkcjonalne, jak i
     \item Porównanie z innymi podejściami – Analiza różnic między generowaniem kodu z modeli a organicznym rozwojem kodu bez fazy modelowania pod kątem długoterminowej utrzymywalności i elastyczności systemów.
 \end{itemize}
 
-\begin{thebibliography}{1}
-    \bibitem{example} \emph{The Example}, \url{https://example.com/}. Dostęp: 12-12-2025.
+\begin{thebibliography}{13}
+
+    \bibitem{omg_uml} Object Management Group, \emph{OMG Unified Modeling Language (UML) Version 2.5.1}, formal/17-12-05, \url{https://www.omg.org/spec/UML/2.5.1/}. Dostęp: 2025-12-15.
+
+    \bibitem{omg_xmi} Object Management Group, \emph{XML Metadata Interchange (XMI) Version 2.1.1}, formal/12-05-01, \url{https://www.omg.org/spec/XMI/2.1.1/}. Dostęp: 2025-12-15.
+
+    \bibitem{france_mdd} France R., Rumpe B., \emph{Model-driven Development of complex Software: A Research Roadmap}, Future of Software Engineering Research, ACM, 2010. Dostęp: 2025-12-15.
+
+    \bibitem{brambilla_mdse} Brambilla M., Cabot J., Wimmer M., \emph{Model-Driven Software Engineering in Practice}, Morgan \& Claypool Publishers, 2017.
+
+    \bibitem{pep484} Python Software Foundation, \emph{typing -- Support for type hints}, Python 3.12 Documentation, \url{https://docs.python.org/3/library/typing.html}. Dostęp: 2025-12-15.
+
+    \bibitem{fastapi} Tiobe Software, \emph{FastAPI Documentation: High-Performance Python Web Framework}, \url{https://fastapi.tiangolo.com/}. Dostęp: 2025-12-15.
+
+    \bibitem{enterprise_arch} Sparx Systems, \emph{Enterprise Architect User Guide v16}, Sparx Systems Pty Ltd, \url{https://sparxsystems.com/enterprise_architect_user_guide/}. Dostęp: 2025-12-15.
+
+    \bibitem{visual_paradigm} Visual Paradigm International, \emph{Visual Paradigm User Manual}, \url{https://www.visual-paradigm.com/support/documents/vpuserguide/}. Dostęp: 2025-12-15.
+
+    \bibitem{staruml} Plastic Software Inc., \emph{StarUML Documentation v6.0}, \url{https://docs.staruml.io/}. Dostęp: 2025-12-15.
+
+    \bibitem{plantuml} PlantUML Team, \emph{PlantUML Documentation}, \url{https://plantuml.com/}. Dostęp: 2025-12-15.
+
+    \bibitem{drawio} JGraph Ltd., \emph{diagrams.net (draw.io) Technical Documentation}, \url{https://www.diagrams.net/doc/}. Dostęp: 2025-12-15.
+
+    \bibitem{clean_arch} Martin R.C., \emph{Clean Architecture: A Craftsman's Guide to Software Structure and Design}, Pearson, 2017, \url{https://www.pearson.com/en-us/subject-catalog/p/clean-architecture-a-craftsmans-guide-to-software-structure-and-design/PGM334846.html}. Dostęp: 2025-12-15.
+
+    \bibitem{pytest_okken} Okken B., \emph{Python Testing with pytest, Second Edition}, Pragmatic Bookshelf, 2022, \url{https://pragprog.com/titles/bopytest2/python-testing-with-pytest-second-edition/}. Dostęp: 2025-12-15.
+
 \end{thebibliography}
 
 \end{document}
