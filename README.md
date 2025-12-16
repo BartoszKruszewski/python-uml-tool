@@ -18,6 +18,15 @@ A tool for interactive UML class diagram modeling and automatic Python code gene
 
 ## 🚀 Quick Start
 
+### Documentation
+
+The documentation is also an engineering thesis. It was written in LateX. To compile it to PDF, you must:
+
+```bash
+cd docs
+make
+```
+
 ### Installation
 
 1. Clone the repository:
