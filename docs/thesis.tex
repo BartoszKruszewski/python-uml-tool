@@ -568,25 +568,25 @@ Sekcja prezentuje wizualną realizację warstwy prezentacji aplikacji webowej, z
 Główny ekran aplikacji udostępnia trzy kluczowe panele: obszar rysowania diagramu, pasek narzędzi oraz hierarchiczne drzewo struktury projektu.
 
 \begin{figure}[htbp]
-\centering
-\includegraphics[width=0.95\textwidth]{img/main_view.png}
-\caption{Główny widok aplikacji z paskiem narzędzi, obszarem rysowania i drzewem struktury.}
-\label{fig:glowny_widok}
+    \centering
+    \includegraphics[width=0.95\textwidth]{img/main_view.png}
+    \caption{Główny widok aplikacji z paskiem narzędzi, obszarem rysowania i drzewem struktury.}
+    \label{fig:glowny_widok}
 \end{figure}
 
 Pasek narzędzi (dolna część rys. \ref{fig:glowny_widok}) zawiera przyciski do podstawowych operacji: dodawania klas (\emph{Add Class}), pakietów (\emph{Add Package}), tworzenia relacji (\emph{Link Mode}), eksportu/importu XMI oraz generowania kodu (\emph{Generate}). Obszar rysowania wspiera gesty przeciągania, zoom (kółko myszy) i panowanie (spacja + przeciąganie).
 
-\section{Tworzenie i edycja elementów}
+\subsection{Tworzenie i edycja elementów}
 Interfejs umożliwia definiowanie pełnych klas UML z atrybutami, operacjami i przypisaniem do pakietów poprzez dedykowane panele edycji.
 
 \begin{figure}[htbp]
-\centering
-\includegraphics[width=0.9\textwidth]{img/edit_class.png}
-\caption{Panel edycji klasy z zdefiniowanymi atrybutami, operacjami i mapowaniem typów.}
-\label{fig:edycja_klasy}
+    \centering
+    \includegraphics[width=0.9\textwidth]{img/edit_class.png}
+    \caption{Panel edycji klasy z zdefiniowanymi atrybutami, operacjami i mapowaniem typów.}
+    \label{fig:edycja_klasy}
 \end{figure}
 
-Na rys. \ref{fig:edycja_klasy} widoczny jest panel edycji klasy \emph{UserService} z atrybutami typowanymi (\texttt{user\_id: int}, \texttt{email: str}) i operacjami z type hints (\texttt{create\_user(email: str) → User}).
+Na rys. \ref{fig:edycja_klasy} widoczny jest panel edycji klasy z atrybutami i operacjami.
 
 \subsection{Organizacja w pakietach i relacje}
 Pakiety umożliwiają hierarchiczną organizację klas odpowiadającą strukturze modułów Pythona. Relacje między klasami renderowane są jako skierowane linie z odpowiednimi oznaczeniami UML.
@@ -594,11 +594,11 @@ Pakiety umożliwiają hierarchiczną organizację klas odpowiadającą strukturz
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.95\textwidth]{img/packages_relations.png}
-\caption{Hierarchia pakietów z relacjami: dziedziczenie, kompozycja i asocjacja.}
+\caption{Hierarchia pakietów z relacjami}
 \label{fig:pakiety_relacje}
 \end{figure}
 
-Rysunek \ref{fig:pakiety_relacje} pokazuje zagnieżdżoną strukturę pakietów \emph{services/user} → \emph{services}, klasę \emph{UserRepository} kompozytującą \emph{DatabaseConnection} (czarna diament) oraz dziedziczenie \emph{AdminUser} po \emph{User} (pusta strzałka). Widok drzewa po lewej synchronizuje się z diagramem.
+Rysunek \ref{fig:pakiety_relacje} pokazuje zagnieżdżoną strukturę pakietów i relacji.
 
 \chapter{Testowanie i weryfikacja}
 
