@@ -215,9 +215,9 @@ export default class Exporter {
   }
 
   /**
-   * Create UML relation elements under appropriate parent nodes. If both source and target
-   * classes belong to the same package, the relation is nested inside that package; otherwise
-   * it is attached directly to the model root.
+   * Create UML relation elements under appropriate parent nodes. Relations are nested inside
+   * packages: if both classes are in the same package, the relation goes there; if classes are
+   * in different packages, the relation goes to the source (client) class's package.
    * @param {XMLDocument} xmlDocument - Target XML document.
    * @param {import("./DiagramState.js").default} diagramState - Full diagram state.
    * @param {Element} modelRootNode - UML model root element.
@@ -236,14 +236,24 @@ export default class Exporter {
     diagramState.relationList.forEach(rel => {
       const xmiType = relationTypeMap[rel.type];
       if (xmiType) {
-        // choose parent: package if both endpoints share the same package
         const source = diagramState.getClassById?.(rel.source);
         const target = diagramState.getClassById?.(rel.target);
-        const samePkg = source?.packageId && source.packageId === target?.packageId
-          ? source.packageId
-          : null;
-        const parent = samePkg && packageElementNodeById.has(samePkg)
-          ? packageElementNodeById.get(samePkg)
+
+        let parentPackageId = null;
+        if (source?.packageId && target?.packageId) {
+          if (source.packageId === target.packageId) {
+            parentPackageId = source.packageId;
+          } else {
+            parentPackageId = source.packageId;
+          }
+        } else if (source?.packageId) {
+          parentPackageId = source.packageId;
+        } else if (target?.packageId) {
+          parentPackageId = target.packageId;
+        }
+        
+        const parent = parentPackageId && packageElementNodeById.has(parentPackageId)
+          ? packageElementNodeById.get(parentPackageId)
           : modelRootNode;
 
         const element = xmlDocument.createElement('packagedElement');
