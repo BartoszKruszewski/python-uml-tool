@@ -2,7 +2,7 @@
  * Side-panel editors for classes and packages.
  * Available types for attributes and parameters.
  */
-const AVAILABLE_TYPES = ["String", "Integer", "Boolean"];
+const AVAILABLE_TYPES = ["String", "Integer", "Float", "Boolean"];
 
 /**
  * @typedef {Object} EditorsReferences
