@@ -84,7 +84,7 @@ export default class EditorsUI {
   }
 
   /**
-   * Create a type select element.
+   * Create a type select element with standard types and classes from the diagram.
    * @param {string} selectedType
    * @param {string} className
    * @returns {HTMLSelectElement}
@@ -98,13 +98,40 @@ export default class EditorsUI {
     emptyOption.value = "";
     emptyOption.textContent = "-";
     select.appendChild(emptyOption);
-    
+
     AVAILABLE_TYPES.forEach((type) => {
       const option = document.createElement("option");
       option.value = type;
       option.textContent = type;
       select.appendChild(option);
     });
+
+    const currentClass = this.diagramState.selectedElement?.type === "class" 
+      ? this.diagramState.getClassById(this.diagramState.selectedElement.id)
+      : null;
+    
+    const classNames = this.diagramState.classList
+      .filter(cls => cls.name && cls.name.trim() !== "")
+      .filter(cls => !currentClass || cls.id !== currentClass.id)
+      .map(cls => cls.name.trim())
+      .filter((name, index, self) => self.indexOf(name) === index)
+      .sort();
+    
+    if (classNames.length > 0) {
+      if (AVAILABLE_TYPES.length > 0) {
+        const separator = document.createElement("option");
+        separator.disabled = true;
+        separator.textContent = "──────────";
+        select.appendChild(separator);
+      }
+
+      classNames.forEach((classTypeName) => {
+        const option = document.createElement("option");
+        option.value = classTypeName;
+        option.textContent = classTypeName;
+        select.appendChild(option);
+      });
+    }
     
     select.value = selectedType || "";
     select.addEventListener("change", () => this.scheduleAutoSave());
