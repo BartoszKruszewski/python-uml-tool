@@ -184,90 +184,90 @@ Analiza wykazuje wyraźną lukę rynkową. Brakuje narzędzia, które łączyło
 \begin{enumerate}[label=\textbf{WF-\arabic*}, leftmargin=*, align=left, font=\bfseries, labelsep=1em]
 
 \subsubsection{Tworzenie klas}
-    \item System umożliwia użytkownikowi dodawanie klas do diagramu.
-    \item Użytkownik może nadać klasie nazwę.
-    \item Użytkownik może zdefiniować atrybuty klasy (nazwa, typ).
-    \item Użytkownik może zdefiniować operacje klasy (nazwa, parametry, typ zwracany).
-    \item Użytkownik może przypisać klasę do pakietu.
+\item\label{WF-klasa1} System umożliwia użytkownikowi dodawanie klas do diagramu.
+\item\label{WF-klasa2} Użytkownik może nadać klasie nazwę.
+\item\label{WF-klasa3} Użytkownik może zdefiniować atrybuty klasy (nazwa, typ).
+\item\label{WF-klasa4} Użytkownik może zdefiniować operacje klasy (nazwa, parametry, typ zwracany).
+\item\label{WF-klasa5} Użytkownik może przypisać klasę do pakietu.
 
 \subsubsection{Tworzenie pakietów}
-    \item System umożliwia użytkownikowi dodawanie pakietów do diagramu.
-    \item Użytkownik może nadać pakietowi nazwę.
-    \item System obsługuje zagnieżdżone pakiety.
-    \item Użytkownik może organizować klasy w pakietach.
+\item\label{WF-pakiet1} System umożliwia użytkownikowi dodawanie pakietów do diagramu.
+\item\label{WF-pakiet2} Użytkownik może nadać pakietowi nazwę.
+\item\label{WF-pakiet3} System obsługuje zagnieżdżone pakiety.
+\item\label{WF-pakiet4} Użytkownik może organizować klasy w pakietach.
 
 \subsubsection{Definiowanie relacji}
-    \item System umożliwia tworzenie relacji między klasami.
-    \item System obsługuje następujące typy relacji: asocjacja, agregacja, kompozycja, dziedziczenie, realizacja, zależność.
-    \item Użytkownik może określić kierunek relacji.
+\item\label{WF-relacja1} System umożliwia tworzenie relacji między klasami.
+\item\label{WF-relacja2} System obsługuje następujące typy relacji: asocjacja, agregacja, kompozycja, dziedziczenie, realizacja, zależność.
+\item\label{WF-relacja3} Użytkownik może określić kierunek relacji.
 
 \subsubsection{Edycja elementów}
-    \item Użytkownik może modyfikować właściwości klas (nazwa, atrybuty, operacje).
-    \item Użytkownik może modyfikować właściwości pakietów (nazwa).
-    \item Użytkownik może usuwać klasy i pakiety.
-    \item Użytkownik może usuwać relacje.
+\item\label{WF-edycja1} Użytkownik może modyfikować właściwości klas (nazwa, atrybuty, operacje).
+\item\label{WF-edycja2} Użytkownik może modyfikować właściwości pakietów (nazwa).
+\item\label{WF-edycja3} Użytkownik może usuwać klasy i pakiety.
+\item\label{WF-edycja4} Użytkownik może usuwać relacje.
 
 \subsubsection{Wizualizacja diagramu}
-    \item System wyświetla diagram w formie graficznej.
-    \item System renderuje klasy jako prostokąty z sekcjami (nazwa, atrybuty, operacje).
-    \item System renderuje pakiety jako kontenery.
-    \item System renderuje relacje jako linie między klasami.
-    \item System wyświetla widok drzewa struktury pakietów i klas.
+\item\label{WF-wizualizacja1} System wyświetla diagram w formie graficznej.
+\item\label{WF-wizualizacja2} System renderuje klasy jako prostokąty z sekcjami (nazwa, atrybuty, operacje).
+\item\label{WF-wizualizacja3} System renderuje pakiety jako kontenery.
+\item\label{WF-wizualizacja4} System renderuje relacje jako linie między klasami.
+\item\label{WF-wizualizacja5} System wyświetla widok drzewa struktury pakietów i klas.
 
 \subsection{Eksport i import diagramów}
 
 \subsubsection{Eksport do XMI}
-    \item System eksportuje diagram do formatu XMI 2.1.
-    \item Wyeksportowany plik jest zgodny ze standardem OMG.
-    \item Plik XMI zawiera wszystkie elementy diagramu (klasy, pakiety, relacje).
+\item\label{WF-eksport1} System eksportuje diagram do formatu XMI 2.1.
+\item\label{WF-eksport2} Wyeksportowany plik jest zgodny ze standardem OMG.
+\item\label{WF-eksport3} Plik XMI zawiera wszystkie elementy diagramu (klasy, pakiety, relacje).
 
 \subsubsection{Import XMI}
-    \item System może parsować pliki XMI 2.1.
-    \item System obsługuje podstawowe elementy XMI (klasy, pakiety, relacje, typy danych).
-    \item System waliduje poprawność formatu XMI.
+\item\label{WF-import1} System może parsować pliki XMI 2.1.
+\item\label{WF-import2} System obsługuje podstawowe elementy XMI (klasy, pakiety, relacje, typy danych).
+\item\label{WF-import3} System waliduje poprawność formatu XMI.
 
 \subsection{Generowanie kodu Python}
 
 \subsubsection{Generowanie struktury projektu}
-    \item System generuje strukturę katalogów odpowiadającą pakietom.
-    \item System tworzy pliki \texttt{\_\_init\_\_.py} dla każdego pakietu.
-    \item System generuje pliki \texttt{.py} dla każdej klasy.
+\item\label{WF-struktura1} System generuje strukturę katalogów odpowiadającą pakietom.
+\item\label{WF-struktura2} System tworzy pliki \texttt{\_\_init\_\_.py} dla każdego pakietu.
+\item\label{WF-struktura3} System generuje pliki \texttt{.py} dla każdej klasy.
 
 \subsubsection{Generowanie klas}
-    \item System generuje definicje klas Python z odpowiednią składnią.
-    \item System mapuje atrybuty UML na właściwości klasy.
-    \item System generuje konstruktory z parametrami odpowiadającymi atrybutom.
-    \item System generuje metody odpowiadające operacjom UML.
-    \item System używa type hints \cite{pep484} dla parametrów i zwracanych wartości.
+\item\label{WF-klasy1} System generuje definicje klas Python z odpowiednią składnią.
+\item\label{WF-klasy2} System mapuje atrybuty UML na właściwości klasy.
+\item\label{WF-klasy3} System generuje konstruktory z parametrami odpowiadającymi atrybutom.
+\item\label{WF-klasy4} System generuje metody odpowiadające operacjom UML.
+\item\label{WF-klasy5} System używa type hints \cite{pep484} dla parametrów i zwracanych wartości.
 
 \subsubsection{Mapowanie typów}
-    \item System mapuje standardowe typy UML na typy Python (\texttt{String} $\to$ \texttt{str}, \texttt{Integer} $\to$ \texttt{int}, \texttt{Float} $\to$ \texttt{float}).
-    \item System zachowuje nazwy niestandardowych typów (klasy użytkownika).
+\item\label{WF-typy1} System mapuje standardowe typy UML na typy Python (\texttt{String} $\to$ \texttt{str}, \texttt{Integer} $\to$ \texttt{int}, \texttt{Float} $\to$ \texttt{float}).
+\item\label{WF-typy2} System zachowuje nazwy niestandardowych typów (klasy użytkownika).
 
 \subsubsection{Obsługa relacji w kodzie}
-    \item System generuje odpowiedni kod dla różnych typów relacji (asocjacja, agregacja, kompozycja, dziedziczenie/realizacja, zależność).
+\item\label{WF-relacje1} System generuje odpowiedni kod dla różnych typów relacji (asocjacja, agregacja, kompozycja, dziedziczenie/realizacja, zależność).
 
 \subsubsection{Zarządzanie importami}
-    \item System automatycznie generuje instrukcje \texttt{import} dla używanych klas.
-    \item System generuje poprawne ścieżki importu na podstawie struktury pakietów.
-    \item System obsługuje importy z zagnieżdżonych pakietów.
+\item\label{WF-importy1} System automatycznie generuje instrukcje \texttt{import} dla używanych klas.
+\item\label{WF-importy2} System generuje poprawne ścieżki importu na podstawie struktury pakietów.
+\item\label{WF-importy3} System obsługuje importy z zagnieżdżonych pakietów.
 
 \subsubsection{Eksport wygenerowanego projektu}
-    \item System pakuje wygenerowany projekt do archiwum ZIP.
-    \item Użytkownik może pobrać archiwum ZIP z wygenerowanym kodem.
-    \item Archiwum zawiera kompletną strukturę projektu gotową do użycia.
+\item\label{WF-zip1} System pakuje wygenerowany projekt do archiwum ZIP.
+\item\label{WF-zip2} Użytkownik może pobrać archiwum ZIP z wygenerowanym kodem.
+\item\label{WF-zip3} Archiwum zawiera kompletną strukturę projektu gotową do użycia.
 
 \subsection{Interfejs użytkownika}
 
 \subsubsection{Interakcje użytkownika}
-    \item Użytkownik może przeciągać elementy na diagramie.
-    \item Użytkownik może zaznaczać elementy klikając na nie.
-    \item Użytkownik może edytować elementy w panelach edycji.
-    \item Użytkownik może używać widoku drzewa do nawigacji po strukturze.
+\item\label{WF-interakcje1} Użytkownik może przeciągać elementy na diagramie.
+\item\label{WF-interakcje2} Użytkownik może zaznaczać elementy klikając na nie.
+\item\label{WF-interakcje3} Użytkownik może edytować elementy w panelach edycji.
+\item\label{WF-interakcje4} Użytkownik może używać widoku drzewa do nawigacji po strukturze.
 
 \subsubsection{Operacje na diagramie}
-    \item Użytkownik może czyścić cały diagram.
-    \item Użytkownik może generować kod z aktualnego diagramu.
+\item\label{WF-operacje1} Użytkownik może czyścić cały diagram.
+\item\label{WF-operacje2} Użytkownik może generować kod z aktualnego diagramu.
 
 \end{enumerate}
 
@@ -278,63 +278,63 @@ Analiza wykazuje wyraźną lukę rynkową. Brakuje narzędzia, które łączyło
 \begin{enumerate}[label=\textbf{WNF-\arabic*}, leftmargin=*, align=left, font=\bfseries, labelsep=1em]
 
 \subsubsection{Czas odpowiedzi}
-    \item Generowanie kodu dla projektu z maksymalnie 100 klas powinno zakończyć się w czasie poniżej 5 sekund.
-    \item Renderowanie diagramu powinno być płynne (minimum 30 FPS).
-    \item Interfejs powinien reagować na akcje użytkownika w czasie poniżej 100ms.
+\item\label{WNF-czas1} Generowanie kodu dla projektu z maksymalnie 100 klas powinno zakończyć się w czasie poniżej 5 sekund.
+\item\label{WNF-czas2} Renderowanie diagramu powinno być płynne (minimum 30 FPS).
+\item\label{WNF-czas3} Interfejs powinien reagować na akcje użytkownika w czasie poniżej 100ms.
 
 \subsubsection{Skalowalność}
-    \item System powinien obsługiwać diagramy z maksymalnie 1000 klas.
-    \item System powinien obsługiwać zagnieżdżone pakiety do 10 poziomów głębokości.
+\item\label{WNF-skalowalnosc1} System powinien obsługiwać diagramy z maksymalnie 1000 klas.
+\item\label{WNF-skalowalnosc2} System powinien obsługiwać zagnieżdżone pakiety do 10 poziomów głębokości.
 
 \subsection{Użyteczność}
 
 \subsubsection{Intuicyjność}
-    \item Interfejs powinien być intuicyjny i nie wymagać szkolenia.
-    \item Operacje powinny być dostępne w maksymalnie 3 kliknięciach.
-    \item System powinien wyświetlać pomocne etykiety.
+\item\label{WNF-intuicyjnosc1} Interfejs powinien być intuicyjny i nie wymagać szkolenia.
+\item\label{WNF-intuicyjnosc2} Operacje powinny być dostępne w maksymalnie 3 kliknięciach.
+\item\label{WNF-intuicyjnosc3} System powinien wyświetlać pomocne etykiety.
 
 \subsubsection{Dostępność}
-    \item Aplikacja powinna działać w nowoczesnych przeglądarkach (Chrome, Firefox, Safari, Edge).
-    \item Interfejs powinien być responsywny i dostosowywać się do różnych rozdzielczości ekranu.
+\item\label{WNF-dostepnosc1} Aplikacja powinna działać w nowoczesnych przeglądarkach (Chrome, Firefox, Safari, Edge).
+\item\label{WNF-dostepnosc2} Interfejs powinien być responsywny i dostosowywać się do różnych rozdzielczości ekranu.
 
 \subsection{Niezawodność}
 
 \subsubsection{Obsługa błędów}
-    \item System powinien walidować dane wejściowe (pliki XMI).
-    \item System nie powinien tracić danych przy błędach parsowania.
+\item\label{WNF-walidacja1} System powinien walidować dane wejściowe (pliki XMI).
+\item\label{WNF-walidacja2} System nie powinien tracić danych przy błędach parsowania.
 
 \subsubsection{Stabilność}
-    \item System nie powinien zawieszać się podczas normalnego użytkowania.
-    \item Błędy w jednym komponencie nie powinny wpływać na cały system.
+\item\label{WNF-stabilnosc1} System nie powinien zawieszać się podczas normalnego użytkowania.
+\item\label{WNF-stabilnosc2} Błędy w jednym komponencie nie powinny wpływać na cały system.
 
 \subsection{Kompatybilność}
 
 \subsubsection{Standardy}
-    \item System powinien być zgodny ze standardem XMI 2.1.
-    \item Wygenerowany kod powinien być zgodny z Python 3.11+.
-    \item System powinien używać type hints zgodnie z PEP 484.
+\item\label{WNF-standardy1} System powinien być zgodny ze standardem XMI 2.1.
+\item\label{WNF-standardy2} Wygenerowany kod powinien być zgodny z Python 3.11+.
+\item\label{WNF-standardy3} System powinien używać type hints zgodnie z PEP 484.
 
 \subsubsection{Integracja}
-    \item System powinien być kompatybilny z innymi narzędziami UML eksportującymi XMI 2.1.
-    \item Wygenerowany kod powinien być kompatybilny z popularnymi narzędziami Python (pip, setuptools).
+\item\label{WNF-integracja1} System powinien być kompatybilny z innymi narzędziami UML eksportującymi XMI 2.1.
+\item\label{WNF-integracja2} Wygenerowany kod powinien być kompatybilny z popularnymi narzędziami Python (pip, setuptools).
 
 \subsection{Utrzymanie i rozwój}
 
 \subsubsection{Modułowość}
-    \item Kod powinien być podzielony na logiczne moduły.
-    \item Warstwa domeny powinna być niezależna od warstwy aplikacji.
-    \item Komponenty powinny być łatwe do testowania.
+\item\label{WNF-modulowosc1} Kod powinien być podzielony na logiczne moduły.
+\item\label{WNF-modulowosc2} Warstwa domeny powinna być niezależna od warstwy aplikacji.
+\item\label{WNF-modulowosc3} Komponenty powinny być łatwe do testowania.
 
 \subsubsection{Dokumentacja}
-    \item Kod powinien zawierać dokumentację docstring.
-    \item System powinien mieć dokumentację użytkownika.
-    \item System powinien mieć dokumentację techniczną dla programistów.
+\item\label{WNF-dokumentacja1} Kod powinien zawierać dokumentację docstring.
+\item\label{WNF-dokumentacja2} System powinien mieć dokumentację użytkownika.
+\item\label{WNF-dokumentacja3} System powinien mieć dokumentację techniczną dla programistów.
 
 \subsection{Bezpieczeństwo}
 
 \subsubsection{Bezpieczeństwo danych}
-    \item System nie przechowuje danych użytkownika po zakończeniu sesji.
-    \item Pliki tymczasowe są automatycznie usuwane.
+\item\label{WNF-bezpieczenstwo1} System nie przechowuje danych użytkownika po zakończeniu sesji.
+\item\label{WNF-bezpieczenstwo2} Pliki tymczasowe są automatycznie usuwane.
 \end{enumerate}
 
 \section{Historyjki użytkownika}
@@ -461,33 +461,33 @@ Komunikacja między warstwami ma charakter kaskadowy: warstwa prezentacji wysył
 
 \section{Implementacja warstw}
 
-W dalszej części przedstawiono implementację poszczególnych warstw, opisując użyte technologie programistyczne oraz strukturę katalogów źródłowych. Szczegółowe zadania modułów opisano w komentarzach kodu źródłowego.
+W dalszej części przedstawiono implementację poszczególnych warstw, opisując użyte technologie programistyczne oraz strukturę katalogów źródłowych, odnosząc się do wcześniej zdefiniowanych wymagań funkcjonalnych i niefunkcjonalnych. Szczegółowe zadania modułów opisano w komentarzach kodu źródłowego.
 
 \subsection{Warstwa domeny}
 
-Warstwa domeny została zaimplementowana w języku Python z wykorzystaniem wyłącznie bibliotek standardowych, co minimalizuje zależności zewnętrzne i ułatwia ponowne wykorzystanie tego modułu w innych projektach. Kod warstwy domenowej jest zorganizowany jako submoduł w katalogu \path{domain/src/project_generator/}, zawierając moduły odpowiedzialne m.in. za wewnętrzną reprezentację modelu UML, parsowanie plików XMI oraz generowanie struktury katalogów i plików projektu Python.
+Warstwa domeny została zaimplementowana w języku Python z wykorzystaniem wyłącznie bibliotek standardowych, co minimalizuje zależności zewnętrzne i ułatwia ponowne wykorzystanie tego modułu w innych projektach (\ref{WF-struktura1}, \ref{WF-struktura2}, \ref{WF-struktura3}, \ref{WF-klasy1}, \ref{WF-typy1}). Kod warstwy domenowej jest zorganizowany jako submoduł w katalogu \path{domain/src/project_generator/}, zawierając moduły odpowiedzialne m.in.\ za wewnętrzną reprezentację modelu UML, parsowanie plików XMI (\ref{WF-import1}, \ref{WF-import2}, \ref{WF-import3}) oraz generowanie struktury katalogów i plików projektu Python.
 
-Warstwa ta obsługuje podstawowe relacje UML, takie jak asocjacje, agregacje, kompozycje, dziedziczenie, realizacje i zależności, mapując je na idiomatyczne konstrukcje języka Python w generowanym projekcie. Proces przetwarzania obejmuje konwersję modelu UML z formatu XMI na wewnętrzną reprezentację, a następnie utworzenie finalnej struktury modułów i pakietów w wygenerowanym projekcie.
+Warstwa ta obsługuje podstawowe relacje UML, takie jak asocjacje, agregacje, kompozycje, dziedziczenie, realizacje i zależności (\ref{WF-relacje1}), mapując je na idiomatyczne konstrukcje języka Python w generowanym projekcie (\ref{WNF-skalowalnosc1}). Proces przetwarzania obejmuje konwersję modelu UML z formatu XMI na wewnętrzną reprezentację, a następnie utworzenie finalnej struktury modułów i pakietów w wygenerowanym projekcie (\ref{WNF-standardy1}).
 
 \subsection{Warstwa aplikacji}
 
-Warstwa aplikacji objemuje główne pliki Python projektu znajdujące się w katalogu \path{/src/uml_tool/} i została zbudowana w oparciu o framework FastAPI. FastAPI charakteryzuje się wysoką wydajnością oraz prostą definicją endpointów, co czyni go dobrym wyborem dla lekkich serwisów udostępniających REST API \cite{fastapi}. W porównaniu z alternatywami takimi jak Flask czy Django oferuje on minimalistyczne podejście przy zachowaniu wysokiej wydajności, kosztem mniejszej liczby wbudowanych funkcjonalności, co jest wystarczające dla potrzeb prezentowanej aplikacji.
- 
-Warstwa aplikacji wystawia endpoint serwujący interfejs użytkownika oraz endpoint odpowiedzialny za przyjmowanie plików XMI i zwracanie wygenerowanego projektu jako archiwum ZIP. Jej logika obejmuje walidację przesyłanych plików, wywołanie odpowiednich funkcji warstwy domenowej, obsługę błędów na każdym etapie procesu oraz przygotowanie jednolitego formatu odpowiedzi dla klienta.
+Warstwa aplikacji obejmuje główne pliki Python projektu znajdujące się w katalogu \path{/src/uml_tool/} i została zbudowana w oparciu o framework FastAPI \cite{fastapi}. FastAPI charakteryzuje się wysoką wydajnością oraz prostą definicją endpointów, co czyni go dobrym wyborem dla lekkich serwisów udostępniających REST API \cite{fastapi}. W porównaniu z alternatywami takimi jak Flask czy Django oferuje on minimalistyczne podejście przy zachowaniu wysokiej wydajności, kosztem mniejszej liczby wbudowanych funkcjonalności, co jest wystarczające dla potrzeb prezentowanej aplikacji (\ref{WNF-czas1}).
+
+Warstwa aplikacji wystawia endpoint serwujący interfejs użytkownika oraz endpoint odpowiedzialny za przyjmowanie plików XMI i zwracanie wygenerowanego projektu jako archiwum ZIP (\ref{WF-zip1}, \ref{WF-zip2}). Jej logika obejmuje walidację przesyłanych plików (\ref{WNF-walidacja1}), wywołanie odpowiednich funkcji warstwy domenowej, obsługę błędów na każdym etapie procesu (\ref{WNF-stabilnosc1}) oraz przygotowanie jednolitego formatu odpowiedzi dla klienta.
 
 \subsection{Warstwa prezentacji}
 
-Warstwa prezentacji została zaimplementowana z wykorzystaniem HTML, CSS, JavaScript oraz biblioteki Bootstrap, bez użycia dedykowanego frameworka frontendowego. Taki wybór wynika z relatywnie prostej logiki interfejsu, w którym dominują aspekty wizualne i operacje na diagramie, a wprowadzenie cięższego frameworka (np.\ React) nie przyniosłoby proporcjonalnych korzyści w stosunku do zwiększonej złożoności rozwiązania. Kod frontendu zorganizowano w katalogu \path{src/static/}, dzieląc go na moduły odpowiedzialne za zarządzanie stanem diagramu, renderowanie SVG, obsługę interakcji użytkownika oraz wymianę danych z backendem.
+Warstwa prezentacji została zaimplementowana z wykorzystaniem HTML, CSS, JavaScript oraz biblioteki Bootstrap, bez użycia dedykowanego frameworka frontendowego (\ref{WNF-intuicyjnosc1}, \ref{WNF-dostepnosc1}). Taki wybór wynika z relatywnie prostej logiki interfejsu, w którym dominują aspekty wizualne i operacje na diagramie (\ref{WF-klasa1}, \ref{WF-klasa2}, \ref{WF-pakiet1}, \ref{WF-wizualizacja1}), a wprowadzenie cięższego frameworka (np.\ React) nie przyniosłoby proporcjonalnych korzyści w stosunku do zwiększonej złożoności rozwiązania. Kod frontendu zorganizowano w katalogu \path{src/static/}, dzieląc go na moduły odpowiedzialne za zarządzanie stanem diagramu, renderowanie SVG, obsługę interakcji użytkownika (\ref{WF-interakcje1}) oraz wymianę danych z backendem.
 
-Warstwa prezentacji umożliwia użytkownikowi tworzenie i edycję diagramów UML, zarządza stanem elementów (klasy, pakiety, relacje) oraz obsługuje eksport diagramu do formatu XMI, który jest następnie przekazywany do warstwy aplikacji. Dodatkowo warstwa ta udostępnia mechanizmy importu istniejących plików XMI oraz pozwala użytkownikowi pobrać wygenerowane archiwum ZIP z projektem w języku Python.
+Warstwa prezentacji umożliwia użytkownikowi tworzenie i edycję diagramów UML, zarządza stanem elementów (klasy, pakiety, relacje) oraz obsługuje eksport diagramu do formatu XMI (\ref{WF-eksport1}), który jest następnie przekazywany do warstwy aplikacji. Dodatkowo warstwa ta udostępnia mechanizmy importu istniejących plików XMI oraz pozwala użytkownikowi pobrać wygenerowane archiwum ZIP z projektem w języku Python (\ref{WF-operacje1}, \ref{WF-operacje2}).
 
 \section{Narzędzia i środowisko}
 
-Do zarządzania kodem źródłowym wykorzystano system kontroli wersji Git. Ze względu na modularność warstwy domenowej, która może być autonomicznie wykorzystywana w innych projektach, repozytorium zostało podzielone na główne repozytorium aplikacji oraz submoduł zawierający warstwę domenową, oba hostowane na platformie GitHub.
+Do zarządzania kodem źródłowym wykorzystano system kontroli wersji Git (\ref{WNF-modulowosc1}). Ze względu na modularność warstwy domenowej, która może być autonomicznie wykorzystywana w innych projektach (\ref{WNF-modulowosc2}), repozytorium zostało podzielone na główne repozytorium aplikacji oraz submoduł zawierający warstwę domenową, oba hostowane na platformie GitHub.
 
-Zależności zewnętrzne zarządzane są przy pomocy wirtualnych środowisk \texttt{venv} oraz narzędzia \texttt{pip}. Konfiguracja pakietów oraz minimalny zestaw wymaganych bibliotek zostały zdefiniowane w pliku \texttt{pyproject.toml}, co zapewnia pełną reprodukowalność środowiska deweloperskiego.
+Zależności zewnętrzne zarządzane są przy pomocy wirtualnych środowisk \texttt{venv} oraz narzędzia \texttt{pip}. Konfiguracja pakietów oraz minimalny zestaw wymaganych bibliotek zostały zdefiniowane w pliku \texttt{pyproject.toml}, co zapewnia pełną reprodukowalność środowiska deweloperskiego (\ref{WNF-integracja2}).
 
-Testy automatyczne dla warstwy domenowej oraz wybranych elementów warstwy aplikacji zostały przygotowane z użyciem frameworka \texttt{pytest}, który stanowi standard w nowoczesnych projektach Python \cite{pytest_okken}.
+Testy automatyczne dla warstwy domenowej oraz wybranych elementów warstwy aplikacji zostały przygotowane z użyciem frameworka \texttt{pytest} \cite{pytest_okken}, który stanowi standard w nowoczesnych projektach Python (\ref{WNF-modulowosc3}).
 
 \section{Przepływ danych}
 
