@@ -602,11 +602,11 @@ Rysunek \ref{fig:pakiety_relacje} pokazuje zagnieżdżoną strukturę pakietów 
 
 \chapter{Testowanie i weryfikacja}
 
-\section{Zakres Testowania}
+\section{Zakres testowania}
 
 Testowanie obejmowało kluczowe aspekty funkcjonalne aplikacji, w szczególności przetwarzanie danych XMI, generowanie kodu oraz mapowanie struktury projektów. Weryfikacji poddano następujące elementy: parsowanie pakietów, klas i relacji z plików XMI, generowanie kodu Python z zachowaniem hierarchii pakietów, prawidłowe mapowanie importów dla zagnieżdżonych struktur pakietów oraz obsługę wszystkich typów relacji UML. Dodatkowo przeprowadzono weryfikację poprawności generowania plików projektu i inicjalizacji pakietów w wygenerowanym kodzie.
 
-\section{Testy Jednostkowe}
+\section{Testy jednostkowe}
 
 Zestaw testów jednostkowych implementowanych z wykorzystaniem frameworka pytest obejmował cztery główne komponenty aplikacji:
 
@@ -620,25 +620,25 @@ Zestaw testów jednostkowych implementowanych z wykorzystaniem frameworka pytest
     \item XmiParser - Testowanie parsowania plików XMI o różnych strukturach, w tym pakiety puste i zagnieżdżone, klasy bez pól i metod, wszystkie typy relacji, właściwości i operacje bez jawnie zdefiniowanych typów oraz walidacja obsługi błędnego lub niekompletnego XMI.
 \end{itemize}
 
-\section{Testy Manualne}
+\section{Testy manualne}
 
 Testowanie manualne przeprowadzono w celu weryfikacji aspektów interfejsu użytkownika i wizualizacji, które nie mogą być w pełni ocenione przez testy automatyczne. Obejmowało to: sprawdzenie poprawności eksportu i importu plików XMI poprzez interfejs graficzny oraz weryfikację wizualizacji diagramu UML w formacie SVG, w szczególności poprawne renderowanie relacji między komponentami.
 
-\section{Wnioski z Testowania}
+\section{Wnioski z testowania}
 
 Testy jednostkowe wykonane z użyciem pytest przebiegły pomyślnie i wykazały, że implementacja pokrywa główne scenariusze użycia aplikacji: import i przetwarzanie plików XMI, mapowanie struktur pakietów i klas, generowanie hierarchii projektów oraz prawidłową obsługę wszystkich typów relacji UML. Testy manualne potwierdziły intuicyjność interfejsu użytkownika oraz poprawne działanie podstawowych operacji na diagramach.
 
 Przeprowadzone testowanie wykazało, że wszystkie wymagania funkcjonalne zdefiniowane w sekcji historyjek użytkownika zostały spełnione. Aplikacja poprawnie obsługuje eksport i import danych w formacie XMI, zapewnia logiczną organizację pakietów oraz umożliwia definiowanie złożonych relacji między komponentami modelu. Dodatkowo system generuje kod Python zachowujący strukturę diagramu UML, co stanowi zasadniczy cel aplikacji.
 
-\chapter{Instrukcja Obsługi Narzędzia UML}
+\chapter{Instrukcja obsługi}
 
 \section{Wprowadzenie}
 
 Narzędzie UML jest zaawansowaną aplikacją webową do tworzenia diagramów klas UML z możliwością automatycznego generowania kodu Python. Intuicyjny interfejs pozwala użytkownikom na szybkie i efektywne modelowanie systemów informatycznych bez konieczności ręcznego pisania kodu.
 
-\section{Wdrożenie Aplikacji}
+\section{Wdrożenie aplikacji}
 
-\subsection{Instalacja Zależności}
+\subsection{Instalacja zależności}
 
 Przed pierwszym uruchomieniem aplikacji zainstaluj wymagane pakiety:
 
@@ -647,7 +647,7 @@ pip install -e domain
 pip install -e .
 \end{lstlisting}
 
-\subsection{Uruchamianie Serwera}
+\subsection{Uruchamianie serwera}
 
 Aby uruchomić aplikację, wykonaj polecenie:
 
@@ -657,7 +657,7 @@ python run.py
 
 Aplikacja będzie dostępna w przeglądarce internetowej pod adresem \url{https://localhost:8080}.
 
-\section{Omówienie Interfejsu}
+\section{Omówienie interfejsu}
 
 Interfejs użytkownika podzielony jest na kilka logicznych sekcji:
 
@@ -681,7 +681,7 @@ Interfejs użytkownika podzielony jest na kilka logicznych sekcji:
     \label{tab:intrukcja_uml_komponenty}
 \end{table}
 
-\subsection{Obszar Rysowania}
+\subsection{Obszar rysowania}
 
 Obszar rysowania stanowi główne pole robocze aplikacji, gdzie umieszczone są wszystkie elementy diagramu. W tym obszarze możesz wykonywać poniższe operacje:
 
@@ -693,7 +693,7 @@ Operacje na elementach:
     \item Zmiana skali - Użyj kółka myszy do przybliżania i oddalania widoku
 \end{itemize}
 
-\subsection{Pasek Narzędzi}
+\subsection{Pasek narzędzi}
 
 Pasek narzędzi zlokalizowany na dole ekranu zawiera przyciski do wykonywania kluczowych operacji na diagramach:
 
@@ -707,7 +707,7 @@ Pasek narzędzi zlokalizowany na dole ekranu zawiera przyciski do wykonywania kl
     \item Clear - Usuwa wszystkie elementy z diagramu
 \end{itemize}
 
-\subsection{Widok Drzewa}
+\subsection{Widok drzewa}
 
 Widok drzewa wyświetla pełną hierarchię struktury projektu:
 
@@ -718,9 +718,9 @@ Widok drzewa wyświetla pełną hierarchię struktury projektu:
     \item Klikając na element w drzewie, automatycznie zaznaczasz go na diagramie
 \end{itemize}
 
-\section{Tworzenie Diagramu}
+\section{Tworzenie diagramu}
 
-\subsection{Dodawanie Klasy do Diagramu}
+\subsection{Dodawanie klasy do diagramu}
 
 Aby dodać nową klasę do diagramu, wykonaj następujące kroki:
 
@@ -738,7 +738,7 @@ Aby dodać nową klasę do diagramu, wykonaj następujące kroki:
     \end{itemize}
 \end{enumerate}
 
-\subsection{Organizacja Klas w Pakiety}
+\subsection{Organizacja klas w pakiety}
 
 Pakiety umożliwiają logiczne pogrupowanie powiązanych klas. Aby pracować z pakietami:
 
@@ -752,7 +752,7 @@ Pakiety umożliwiają logiczne pogrupowanie powiązanych klas. Aby pracować z p
 
 Możesz tworzyć hierarchiczne struktury pakietów, przeciągając jeden pakiet do innego. Klasy są automatycznie przypisywane do najbardziej zagnieżdżonego pakietu, w którym się znajdują.
 
-\subsubsection{Tworzenie Relacji między Klasami}
+\subsubsection{Tworzenie relacji między klasami}
 
 Relacje definiują powiązania między klasami. Aby utworzyć relację:
 
@@ -766,7 +766,7 @@ Relacje definiują powiązania między klasami. Aby utworzyć relację:
 
 \small{\slshape{Relacje mają kierunek - upewnij się, że klikasz klasy w prawidłowej kolejności}}
 
-\subsubsection{Edycja Elementów Diagramu}
+\subsubsection{Edycja elementów diagramu}
 
 Aby zmodyfikować właściwości elementu:
 
@@ -776,7 +776,7 @@ Aby zmodyfikować właściwości elementu:
     \item Zmiany są zapisywane automatycznie
 \end{enumerate}
 
-\subsubsection{Usuwanie Elementów z Diagramu}
+\subsubsection{Usuwanie elementów z diagramu}
 
 Aby usunąć element:
 
@@ -788,9 +788,9 @@ Aby usunąć element:
 
 \small{\slshape{Usunięcie klasy automatycznie usuwa wszystkie relacje, w których ta klasa uczestniczy.}}
 
-\section{Zarządzanie Diagramami}
+\section{Zarządzanie diagramami}
 
-\subsubsection{Eksportowanie Diagramu do Formatu XMI}
+\subsubsection{Eksportowanie diagramu do formatu XMI}
 
 Format XMI (XML Metadata Interchange) to standardowy format wymiany diagramów UML. Aby zapisać diagram:
 
@@ -800,7 +800,7 @@ Format XMI (XML Metadata Interchange) to standardowy format wymiany diagramów U
     \item Plik zawiera pełną reprezentację diagramu, w tym pakiety, klasy, relacje oraz strukturę zagnieżdżeń
 \end{enumerate}
 
-\subsubsection{Importowanie Diagramu z Pliku XMI}
+\subsubsection{Importowanie diagramu z pliku XMI}
 
 Aby załadować poprzednio zapisany diagram:
 
@@ -814,9 +814,9 @@ Aby załadować poprzednio zapisany diagram:
 
 \small{\slshape{Wczytanie nowego diagramu spowoduje zastąpienie obecnego diagramu. Jeśli chcesz zachować bieżący diagram, wcześniej go zapisz.}}
 
-\section{Generowanie Kodu Python}
+\section{Generowanie kodu Python}
 
-\subsection{Przygotowanie Projektu}
+\subsection{Przygotowanie projektu}
 
 Przed generowaniem kodu upewnij się, że Twój diagram spełnia następujące warunki:
 
@@ -827,7 +827,7 @@ Przed generowaniem kodu upewnij się, że Twój diagram spełnia następujące w
     \item Klasy są przypisane do odpowiednich pakietów (zalecane, ale opcjonalne)
 \end{itemize}
 
-\subsection{Proces Generowania}
+\subsection{Proces generowania kodu}
 
 Aby wygenerować kod Python:
 
@@ -843,7 +843,7 @@ Aby wygenerować kod Python:
     \item Gotowe archiwum ZIP pobiera się automatycznie do folderu pobierania
 \end{enumerate}
 
-\subsection{Mapowanie Typów Danych}
+\subsection{Mapowanie typów danych}
 
 Aplikacja automatycznie konwertuje typy danych UML na odpowiadające im typy Python:
 
@@ -867,7 +867,7 @@ Aplikacja automatycznie konwertuje typy danych UML na odpowiadające im typy Pyt
 
 Nazwy klas w typach danych są traktowane jako referencje do klas użytkownika i nie podlegają transformacji.
 
-\section{Rozwiązywanie Problemów}
+\section{Rozwiązywanie problemów}
 
 \subsection{Kod nie został wygenerowany}
 
