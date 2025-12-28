@@ -61,6 +61,10 @@ python run.py
 
 The application will be available at `http://localhost:8080`.
 
+### Examples
+
+You can use the sample *.xmi* files located in the *examples* folder.
+
 ## 📖 Usage
 
 ### Creating a Diagram
