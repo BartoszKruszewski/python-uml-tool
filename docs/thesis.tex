@@ -56,7 +56,7 @@ Z perspektywy inżynierskiej, realizacja projektu pozwala pogłębić wiedzę na
 
 Celem pracy jest opracowanie kompleksowego narzędzia wspomagającego proces wytwarzania oprogramowania, umożliwiającego automatyczne generowanie struktury aplikacji w języku Python na podstawie diagramów klas UML. Realizacja celu obejmuje opracowanie dwóch kluczowych komponentów:
 \begin{itemize}
-    \item Biblioteki Pythonowej służącej do parsowania plików XMI, reprezentujących modele UML, oraz generowania fizycznej struktury projektu: katalogów, plików modułów, definicji klas, atrybutów, metod i relacji. Biblioteka ma zapewniać elastyczność i łatwość integracji z różnymi środowiskami deweloperskimi.
+    \item Biblioteki pythonowej służącej do parsowania plików XMI, reprezentujących modele UML, oraz generowania fizycznej struktury projektu: katalogów, plików modułów, definicji klas, atrybutów, metod i relacji. Biblioteka ma zapewniać elastyczność i łatwość integracji z różnymi środowiskami deweloperskimi.
 
     \item Aplikacji webowej stanowiącej interaktywny edytor diagramów UML, umożliwiający użytkownikowi tworzenie, modyfikowanie i eksportowanie modeli bezpośrednio w przeglądarce. Aplikacja zapewnia wygodny interfejs graficzny oraz komunikację z backendem, który odpowiada za przetworzenie modelu i wygenerowanie kodu źródłowego.
 \end{itemize}
@@ -82,17 +82,17 @@ Zakres pracy obejmuje projektowanie, implementację oraz testowanie poszczególn
 
     \item Dokumentację rozwiązania oraz przygotowanie przykładowych przypadków użycia.
 \end{itemize}
-Praca nie obejmuje implementacji generowania pełnej logiki biznesowej metod (ciała funkcji), a jedynie ich sygnatur oraz struktury architektonicznej wynikającej z modelu UML.
+Praca nie obejmuje implementacji generowania pełnej logiki biznesowej ciał metod, a jedynie ich sygnatur oraz struktury architektonicznej wynikającej z modelu UML.
 
 \section{Krótki opis struktury pracy}
 
 Praca została podzielona na dwa główne etapy: analityczny i projektowy.
 
-Etap analityczny (rozdziały 1-2) obejmuje przegląd literatury i istniejących rozwiązań CASE, identyfikację luk rynkowych oraz sformułowanie wymagań funkcjonalnych i niefunkcjonalnych systemu.
+Etap analityczny (rozdziały 2-3) obejmuje przegląd literatury i istniejących rozwiązań CASE, identyfikację luk rynkowych oraz sformułowanie wymagań funkcjonalnych i niefunkcjonalnych systemu.
 
-Etap projektowy (rozdziały 3-5) opisuje architekturę trójwarstwową aplikacji, implementację kluczowych modułów (parser XMI, generator kodu Python, frontend JS), testy jednostkowe (pytest) oraz instrukcję obsługi.
+Etap projektowy (rozdziały 4-6) opisuje architekturę trójwarstwową aplikacji, implementację kluczowych modułów (parser XMI, generator kodu Python, frontend JS), testy jednostkowe (pytest) oraz instrukcję obsługi.
 
-Zakończenie (rozdział 6) zawiera podsumowanie, ocenę realizacji celów oraz perspektywy rozwoju (obsługa innych diagramów UML, języków programowania).
+Zakończenie (rozdział 7) zawiera podsumowanie, ocenę realizacji celów oraz perspektywy rozwoju, w tym m.in. rozszerzenie obsługi o inne diagramy UML i języki programowania.
 
 \chapter{Analiza dziedziny i przegląd narzędzi}
 
@@ -177,13 +177,19 @@ Analiza wykazuje wyraźną lukę rynkową. Brakuje narzędzia, które łączyło
 
 \chapter{Analiza wymagań}
 
+\section{Wprowadzenie}
+
+Na podstawie analizy rynku oraz identyfikacji potrzeb użytkowników opracowano zestaw wymagań, które precyzyjnie określają zakres implementacji narzędzia i stanowią podstawę do weryfikacji zgodności projektu z założeniami pracy.
+
+Podział wymagań na funkcjonalne (WF), niefunkcjonalne (WNF) oraz historyjki użytkownika (HU) umożliwia systematyczną analizę potrzeb programisty Python, wspiera modularne projektowanie architektury systemu oraz zapewnia obiektywne kryteria oceny stopnia realizacji założonych celów.
+
 \section{Wymagania funkcjonalne}
 
 \subsection{Tworzenie i edycja diagramów klas UML}
 
 \begin{enumerate}[label=\textbf{WF-\arabic*}, leftmargin=*, align=left, font=\bfseries, labelsep=1em]
 
-\item\label{WF-klasa1} System umożliwia użytkownikowi dodawanie klas do diagramu.
+\item\label{WF-klasa1} Aplikacja umożliwia użytkownikowi dodawanie klas do diagramu.
 \item\label{WF-klasa2} Użytkownik może nadać klasie nazwę.
 \item\label{WF-klasa3} Użytkownik może zdefiniować atrybuty klasy (nazwa, typ).
 \item\label{WF-klasa4} Użytkownik może zdefiniować operacje klasy (nazwa, parametry, typ zwracany).
@@ -233,11 +239,11 @@ Analiza wykazuje wyraźną lukę rynkową. Brakuje narzędzia, które łączyło
 \item\label{WF-struktura2} System tworzy pliki \texttt{\_\_init\_\_.py} dla każdego pakietu.
 \item\label{WF-struktura3} System generuje pliki \texttt{.py} dla każdej klasy.
 
-\item\label{WF-klasy1} System generuje definicje klas Python z odpowiednią składnią.
+\item\label{WF-klasy1} System generuje definicje klas Python zgodnie ze składnią.
 \item\label{WF-klasy2} System mapuje atrybuty UML na właściwości klasy.
 \item\label{WF-klasy3} System generuje konstruktory z parametrami odpowiadającymi atrybutom.
 \item\label{WF-klasy4} System generuje metody odpowiadające operacjom UML.
-\item\label{WF-klasy5} System używa type hints \cite{pep484} dla parametrów i zwracanych wartości.
+\item\label{WF-klasy5} System używa \texttt{type hints} \cite{pep484} dla parametrów i zwracanych wartości.
 
 \item\label{WF-typy1} System mapuje standardowe typy UML na typy Python (\texttt{String} $\to$ \texttt{str}, \texttt{Integer} $\to$ \texttt{int}, \texttt{Float} $\to$ \texttt{float}).
 \item\label{WF-typy2} System zachowuje nazwy niestandardowych typów (klasy użytkownika).
@@ -270,7 +276,7 @@ Analiza wykazuje wyraźną lukę rynkową. Brakuje narzędzia, które łączyło
 \item\label{WNF-czas2} Renderowanie diagramu powinno być płynne (minimum 30 FPS).
 \item\label{WNF-czas3} Interfejs powinien reagować na akcje użytkownika w czasie poniżej 100ms.
 
-\item\label{WNF-skalowalnosc1} System powinien obsługiwać diagramy z maksymalnie 1000 klas.
+\item\label{WNF-skalowalnosc1} System powinien obsługiwać diagramy zawierające nawet 1000 klas.
 \item\label{WNF-skalowalnosc2} System powinien obsługiwać zagnieżdżone pakiety do 10 poziomów głębokości.
 
 \item\label{WNF-intuicyjnosc1} Interfejs powinien być intuicyjny i nie wymagać szkolenia.
@@ -286,12 +292,12 @@ Analiza wykazuje wyraźną lukę rynkową. Brakuje narzędzia, które łączyło
 \item\label{WNF-stabilnosc1} System nie powinien zawieszać się podczas normalnego użytkowania.
 \item\label{WNF-stabilnosc2} Błędy w jednym komponencie nie powinny wpływać na cały system.
 
-\item\label{WNF-standardy1} System powinien być zgodny ze standardem XMI 2.1.
+\item\label{WNF-standardy1} Pliki wykorzystywane przez system powinny być zgodne ze standardem XMI 2.1.
 \item\label{WNF-standardy2} Wygenerowany kod powinien być zgodny z Python 3.11+.
-\item\label{WNF-standardy3} System powinien używać type hints zgodnie z PEP 484.
+\item\label{WNF-standardy3} System powinien używać \texttt{type hints} zgodnie z PEP 484.
 
-\item\label{WNF-integracja1} System powinien być kompatybilny z innymi narzędziami UML eksportującymi XMI 2.1.
-\item\label{WNF-integracja2} Wygenerowany kod powinien być kompatybilny z popularnymi narzędziami Python (pip, setuptools).
+\item\label{WNF-integracja1} System powinien obsługiwać import modeli z innych narzędzi UML eksportujących pliki w formacie XMI 2.1.
+\item\label{WNF-integracja2} Wygenerowany kod musi tworzyć strukturę pakietów Python zgodną ze standardami setuptools i pip
 
 \item\label{WNF-modulowosc1} Kod powinien być podzielony na logiczne moduły.
 \item\label{WNF-modulowosc2} Warstwa domeny powinna być niezależna od warstwy aplikacji.
@@ -524,7 +530,7 @@ Aby uruchomić aplikację, wykonaj polecenie:
 python run.py
 \end{lstlisting}
 
-Aplikacja będzie dostępna w przeglądarce internetowej pod adresem \url{https://localhost:8080}.
+Aplikacja będzie dostępna w przeglądarce internetowej pod adresem \\ \url{https://localhost:8080}.
 
 \section{Prezentacja interfejsu użytkownika}
 
@@ -830,6 +836,8 @@ Kierunkami dalszego rozwoju mogą być zarówno rozszerzenia funkcjonalne, jak i
 
 \subsection{Rozszerzenia funkcjonalne}
 
+W trakcie prac nad projektem pojawiły się liczne pomysły na rozwój i rozszerzenie funkcjonalności systemu. Część z nich wynikała z analizy ograniczeń obecnej implementacji, a część z obserwacji potencjalnych kierunków wykorzystania narzędzia w szerszym kontekście inżynierii oprogramowania. Poniżej przedstawiono przykładowe propozycje możliwych usprawnień i rozszerzeń.
+
 \begin{itemize}
     \item Obsługa dodatkowych typów diagramów UML - Aktualnie aplikacja obsługuje wyłącznie diagramy klas. Naturalne rozszerzenie stanowiłoby dodanie obsługi diagramów sekwencji, aktywności, stanów czy przypadków użycia. Implementacja tych typów diagramów pozwoliłaby na pełną obsługę całego standardu UML i byłaby szczególnie wartościowa dla modelowania zaawansowanych systemów.
 
@@ -851,6 +859,8 @@ Kierunkami dalszego rozwoju mogą być zarówno rozszerzenia funkcjonalne, jak i
 \end{itemize}
 
 \subsection{Prace badawcze}
+
+W toku realizacji projektu wyłoniły się również koncepcje potencjalnych kierunków badań. Ich realizacja mogłaby dostarczyć danych na temat skuteczności i praktycznego zastosowania podejścia MDD w środowisku Pythona, a także pozwolić na porównanie go z tradycyjnymi metodami wytwarzania oprogramowania.
 
 \begin{itemize}
     \item Empiryczna ocena efektywności MDD w Pythonie - Przeprowadzenie badań z udziałem programistów w celu zmierzenia rzeczywistego przyspieszenia wytwarzania oprogramowania przy zastosowaniu narzędzia oraz jakości wygenerowanego kodu.
