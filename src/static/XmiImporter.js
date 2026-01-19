@@ -31,6 +31,7 @@ export default class XmiImporter {
     const relations = [];
     const packageMap = new Map(); // id -> package data
     const classMapByName = new Map(); // name -> class data
+    const classMapById = new Map(); // id -> class data
 
     // Layout configuration
     const CLASS_WIDTH = 200;
@@ -121,6 +122,7 @@ export default class XmiImporter {
             const classData = parseClass(childElement, packageId, classes.length, packageData, classIndexInPackage);
             classes.push(classData);
             classMapByName.set(classData.name, classData);
+            classMapById.set(classData.id, classData);
             classIndexInPackage++;
           } else if (xmiType === "uml:Package" || xmiType === "Package") {
             parsePackage(childElement, packageId, packages.length, packageData);
@@ -227,12 +229,19 @@ export default class XmiImporter {
     // Parse a relation element
     const parseRelation = (relationElement, relationType) => {
       const relationId = getAttr(relationElement, "id");
-      const clientName = getAttr(relationElement, "client");
-      const supplierName = getAttr(relationElement, "supplier");
+      const normalizeRef = (value) => (value || "").replace(/^#/, "");
+      const clientRef = normalizeRef(getAttr(relationElement, "client"));
+      const supplierRef = normalizeRef(getAttr(relationElement, "supplier"));
       
-      // Find classes by name (using map for faster lookup)
-      const clientClass = classMapByName.get(clientName) || classes.find(c => c.name === clientName);
-      const supplierClass = classMapByName.get(supplierName) || classes.find(c => c.name === supplierName);
+      // Find classes by id first, then by name
+      const clientClass =
+        classMapById.get(clientRef) ||
+        classMapByName.get(clientRef) ||
+        classes.find((c) => c.id === clientRef || c.name === clientRef);
+      const supplierClass =
+        classMapById.get(supplierRef) ||
+        classMapByName.get(supplierRef) ||
+        classes.find((c) => c.id === supplierRef || c.name === supplierRef);
       
       if (!clientClass || !supplierClass) {
         return null;
@@ -276,6 +285,7 @@ export default class XmiImporter {
           const classData = parseClass(element, null, classCounter, null);
           classes.push(classData);
           classMapByName.set(classData.name, classData);
+          classMapById.set(classData.id, classData);
           classCounter++;
         }
       }

@@ -241,108 +241,8 @@ export default class App {
           this.diagramState.classList.push(classElement);
           classMap.set(cls.id, classElement);
         });
-
-        // Adjust nested packages positions and package sizes
-        // Process packages from deepest to shallowest (bottom-up)
-        const packagesByDepth = [];
-        const getPackageDepth = (pkgId) => {
-          let depth = 0;
-          let currentId = pkgId;
-          while (currentId) {
-            const pkg = this.diagramState.packageList.find(p => p.id === currentId);
-            if (!pkg || !pkg.parentId) break;
-            depth++;
-            currentId = pkg.parentId;
-          }
-          return depth;
-        };
-        
-        this.diagramState.packageList.forEach(pkg => {
-          packagesByDepth.push({ pkg, depth: getPackageDepth(pkg.id) });
-        });
-        packagesByDepth.sort((a, b) => b.depth - a.depth); // Deepest first
-        
-        // Process each package (deepest first)
-        packagesByDepth.forEach(({ pkg }) => {
-          const classesInPackage = this.diagramState.classList.filter(c => c.packageId === pkg.id);
-          const nestedPackages = this.diagramState.packageList.filter(p => p.parentId === pkg.id);
-          
-          // Calculate bounding box for classes
-          let minX, minY, maxX, maxY;
-          
-          if (classesInPackage.length > 0) {
-            minX = Math.min(...classesInPackage.map(c => c.x));
-            minY = Math.min(...classesInPackage.map(c => c.y));
-            maxX = Math.max(...classesInPackage.map(c => c.x + c.w));
-            maxY = Math.max(...classesInPackage.map(c => c.y + c.h));
-          } else {
-            // No classes, use package position
-            minX = pkg.x;
-            minY = pkg.y;
-            maxX = pkg.x + pkg.w;
-            maxY = pkg.y + pkg.h;
-          }
-          
-          // Position nested packages to the right of classes
-          if (nestedPackages.length > 0) {
-            const classesRightEdge = classesInPackage.length > 0 ? maxX : pkg.x + pkg.w;
-            const startX = classesRightEdge + 50; // Space after classes
-            let currentY = minY;
-            
-            nestedPackages.forEach((nestedPkg, index) => {
-              nestedPkg.x = startX;
-              nestedPkg.y = currentY;
-              
-              // Reposition classes inside this nested package
-              const classesInNestedPackage = this.diagramState.classList.filter(c => c.packageId === nestedPkg.id);
-              classesInNestedPackage.forEach((cls, clsIndex) => {
-                const row = Math.floor(clsIndex / 3); // 3 classes per row
-                const col = clsIndex % 3;
-                cls.x = nestedPkg.x + 30 + col * (cls.w + 80);
-                cls.y = nestedPkg.y + 50 + row * (cls.h + 80);
-              });
-              
-              // Adjust nested package size to cover its classes
-              if (classesInNestedPackage.length > 0) {
-                const nestedMinX = Math.min(...classesInNestedPackage.map(c => c.x));
-                const nestedMinY = Math.min(...classesInNestedPackage.map(c => c.y));
-                const nestedMaxX = Math.max(...classesInNestedPackage.map(c => c.x + c.w));
-                const nestedMaxY = Math.max(...classesInNestedPackage.map(c => c.y + c.h));
-                
-                const nestedPadding = 30;
-                nestedPkg.x = Math.min(nestedPkg.x, nestedMinX - nestedPadding);
-                nestedPkg.y = Math.min(nestedPkg.y, nestedMinY - nestedPadding - 16);
-                nestedPkg.w = Math.max(360, nestedMaxX - nestedPkg.x + nestedPadding);
-                nestedPkg.h = Math.max(240, nestedMaxY - nestedPkg.y + nestedPadding + 16);
-              }
-              
-              currentY += nestedPkg.h + 50; // Stack nested packages vertically
-            });
-            
-            // Update bounding box to include nested packages
-            const nestedMaxX = Math.max(...nestedPackages.map(p => p.x + p.w));
-            const nestedMaxY = Math.max(...nestedPackages.map(p => p.y + p.h));
-            maxX = Math.max(maxX, nestedMaxX);
-            maxY = Math.max(maxY, nestedMaxY);
-          }
-          
-          // Add padding
-          const padding = 30;
-          minX -= padding;
-          minY -= padding;
-          maxX += padding;
-          maxY += padding;
-          
-          // Ensure minimum size
-          const minWidth = 360;
-          const minHeight = 240;
-          
-          // Update package position and size to cover classes and nested packages
-          pkg.x = Math.min(pkg.x, minX);
-          pkg.y = Math.min(pkg.y, minY - 16); // Account for header
-          pkg.w = Math.max(minWidth, maxX - pkg.x);
-          pkg.h = Math.max(minHeight, maxY - pkg.y + 16); // Account for header
-        });
+        this.fitClassesToContent();
+        this.autoLayoutImportedDiagram();
 
         // Load relations (after classes are loaded)
         parsed.relations.forEach(rel => {
@@ -383,6 +283,241 @@ export default class App {
 
     // First render
     this.scheduleRender();
+  }
+
+  /**
+   * Resize classes so their labels, attributes, and operations fit inside after import.
+   */
+  fitClassesToContent() {
+    const MIN_W = 200;
+    const MIN_H = 110;
+    const PADDING_X = 20; // 10px left + 10px right
+    const PADDING_BOTTOM = 10;
+    const TITLE_FONT = "16px Inter, system-ui, sans-serif";
+    const BODY_FONT = "14px Inter, system-ui, sans-serif";
+
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const formatAttribute = (attribute) => {
+      if (typeof attribute === "object" && attribute !== null) {
+        const visibility = attribute.isPrivate ? "- " : "+ ";
+        const typeStr = attribute.type ? `: ${attribute.type}` : "";
+        return `${visibility}${attribute.name}${typeStr}`;
+      }
+      return String(attribute || "");
+    };
+
+    const formatOperation = (operation) => {
+      if (typeof operation === "object" && operation !== null) {
+        const visibility = operation.isPrivate ? "- " : "+ ";
+        const params = operation.params || [];
+        const paramStrs = params.map((p) => (p.type ? `${p.name}: ${p.type}` : p.name));
+        const paramStr = `(${paramStrs.join(", ")})`;
+        const returnStr = operation.returnType ? `: ${operation.returnType}` : "";
+        return `${visibility}${operation.name}${paramStr}${returnStr}`;
+      }
+      return String(operation || "");
+    };
+
+    const measureTextWidth = (text, font) => {
+      ctx.font = font;
+      return ctx.measureText(text || "").width;
+    };
+
+    this.diagramState.classList.forEach((cls) => {
+      const titleText = cls.name || "Class";
+      const attrLines = (cls.attributes || []).map(formatAttribute);
+      const opLines = (cls.operations || []).map(formatOperation);
+
+      let maxTextWidth = measureTextWidth(titleText, TITLE_FONT);
+      attrLines.forEach((line) => {
+        maxTextWidth = Math.max(maxTextWidth, measureTextWidth(line, BODY_FONT));
+      });
+      opLines.forEach((line) => {
+        maxTextWidth = Math.max(maxTextWidth, measureTextWidth(line, BODY_FONT));
+      });
+
+      let y = 10; // top padding before title
+      y += 28; // title block height
+
+      if (attrLines.length > 0) {
+        y += attrLines.length * 18;
+      } else {
+        y += 8; // small spacer when no attributes
+      }
+
+      if (opLines.length > 0) {
+        y += opLines.length * 18;
+      }
+
+      const requiredWidth = Math.max(MIN_W, Math.ceil(maxTextWidth + PADDING_X));
+      const requiredHeight = Math.max(MIN_H, Math.ceil(y + PADDING_BOTTOM));
+
+      cls.w = requiredWidth;
+      cls.h = requiredHeight;
+    });
+  }
+
+  /**
+   * Auto-layout imported diagrams to avoid overlapping nodes.
+   * Positions packages in a coarse grid, stacks nested packages, and grids classes.
+   */
+  autoLayoutImportedDiagram() {
+    const CLASS_W = 200;
+    const CLASS_H = 110;
+    const CLASS_GAP = 80;
+    const PACKAGE_MIN_W = 360;
+    const PACKAGE_MIN_H = 240;
+    const PACKAGE_PADDING = 30;
+    const PACKAGE_HEADER = 24;
+    const STACK_GAP = 70;
+    const ROOT_GAP_X = 180;
+    const ROOT_GAP_Y = 220;
+    const START_X = 80;
+    const START_Y = 80;
+
+    const packageMap = new Map(
+      this.diagramState.packageList.map((pkg) => [pkg.id, pkg])
+    );
+
+    const classesByPackage = new Map();
+    const childPackagesByParent = new Map();
+
+    const ensureBucket = (map, key) => {
+      if (!map.has(key)) map.set(key, []);
+      return map.get(key);
+    };
+
+    this.diagramState.classList.forEach((cls) => {
+      ensureBucket(classesByPackage, cls.packageId || null).push(cls);
+      cls.w = cls.w || CLASS_W;
+      cls.h = cls.h || CLASS_H;
+    });
+
+    this.diagramState.packageList.forEach((pkg) => {
+      ensureBucket(childPackagesByParent, pkg.parentId || null).push(pkg);
+    });
+
+    // Store measured sizes to reuse in placement phase
+    const layoutInfo = new Map();
+
+    // Bottom-up measurement pass
+    const measurePackage = (pkgId) => {
+      const pkg = packageMap.get(pkgId);
+      const nestedPackages = childPackagesByParent.get(pkgId) || [];
+      nestedPackages.forEach((child) => measurePackage(child.id));
+
+      const classesInPackage = classesByPackage.get(pkgId) || [];
+      const classCols = classesInPackage.length > 0 ? Math.ceil(Math.sqrt(classesInPackage.length)) : 0;
+      const classRows = classCols > 0 ? Math.ceil(classesInPackage.length / classCols) : 0;
+      const maxClassW = classesInPackage.length > 0 ? Math.max(...classesInPackage.map((c) => c.w || CLASS_W)) : CLASS_W;
+      const maxClassH = classesInPackage.length > 0 ? Math.max(...classesInPackage.map((c) => c.h || CLASS_H)) : CLASS_H;
+      const classAreaW = classCols > 0 ? classCols * maxClassW + (classCols - 1) * CLASS_GAP : 0;
+      const classAreaH = classRows > 0 ? classRows * maxClassH + (classRows - 1) * CLASS_GAP : 0;
+
+      const nestedWidths = nestedPackages.map((p) => layoutInfo.get(p.id).width);
+      const nestedHeights = nestedPackages.map((p) => layoutInfo.get(p.id).height);
+      const nestedAreaW = nestedWidths.length > 0 ? Math.max(...nestedWidths) : 0;
+      const nestedAreaH = nestedHeights.length > 0
+        ? nestedHeights.reduce((sum, h) => sum + h, 0) + (nestedPackages.length - 1) * STACK_GAP
+        : 0;
+
+      const innerWidth = Math.max(classAreaW, nestedAreaW);
+      const gapBetweenBlocks = classAreaH > 0 && nestedAreaH > 0 ? STACK_GAP : 0;
+      const innerHeight = classAreaH + gapBetweenBlocks + nestedAreaH;
+
+      const width = Math.max(PACKAGE_MIN_W, innerWidth + PACKAGE_PADDING * 2);
+      const height = Math.max(
+        PACKAGE_MIN_H,
+        PACKAGE_HEADER + PACKAGE_PADDING * 2 + innerHeight
+      );
+
+      layoutInfo.set(pkgId, {
+        width,
+        height,
+        classCols,
+        classAreaH,
+        nestedAreaH,
+        maxClassW,
+        maxClassH,
+      });
+
+      pkg.w = width;
+      pkg.h = height;
+    };
+
+    // Measure every package starting from roots
+    const rootPackages = childPackagesByParent.get(null) || [];
+    rootPackages.forEach((pkg) => measurePackage(pkg.id));
+
+    // Top-down placement pass
+    const placePackage = (pkgId, originX, originY) => {
+      const info = layoutInfo.get(pkgId);
+      const pkg = packageMap.get(pkgId);
+      pkg.x = originX;
+      pkg.y = originY;
+      pkg.w = info.width;
+      pkg.h = info.height;
+
+      const classesInPackage = classesByPackage.get(pkgId) || [];
+      classesInPackage.forEach((cls, index) => {
+        const row = Math.floor(index / Math.max(1, info.classCols));
+        const col = info.classCols > 0 ? index % info.classCols : 0;
+        cls.x = originX + PACKAGE_PADDING + col * (info.maxClassW + CLASS_GAP);
+        cls.y = originY + PACKAGE_HEADER + PACKAGE_PADDING + row * (info.maxClassH + CLASS_GAP);
+      });
+
+      const nestedPackages = childPackagesByParent.get(pkgId) || [];
+      let currentY = originY + PACKAGE_HEADER + PACKAGE_PADDING + info.classAreaH;
+      if (info.classAreaH > 0 && nestedPackages.length > 0) {
+        currentY += STACK_GAP;
+      }
+      nestedPackages.forEach((childPkg) => {
+        const childInfo = layoutInfo.get(childPkg.id);
+        placePackage(childPkg.id, originX + PACKAGE_PADDING, currentY);
+        currentY += childInfo.height + STACK_GAP;
+      });
+    };
+
+    if (rootPackages.length > 0) {
+      const rootCols = Math.max(1, Math.ceil(Math.sqrt(rootPackages.length)));
+      const maxRootWidth = Math.max(...rootPackages.map((pkg) => layoutInfo.get(pkg.id).width));
+      const maxRootHeight = Math.max(...rootPackages.map((pkg) => layoutInfo.get(pkg.id).height));
+
+      rootPackages.forEach((pkg, index) => {
+        const col = index % rootCols;
+        const row = Math.floor(index / rootCols);
+        const x = START_X + col * (maxRootWidth + ROOT_GAP_X);
+        const y = START_Y + row * (maxRootHeight + ROOT_GAP_Y);
+        placePackage(pkg.id, x, y);
+      });
+    }
+
+    // Layout classes not assigned to any package under the last row of packages
+    const rootClasses = classesByPackage.get(null) || [];
+    if (rootClasses.length > 0) {
+      const rootPackageRows = rootPackages.length
+        ? Math.ceil(rootPackages.length / Math.max(1, Math.ceil(Math.sqrt(rootPackages.length))))
+        : 0;
+      const maxRootHeight = rootPackages.length
+        ? Math.max(...rootPackages.map((pkg) => layoutInfo.get(pkg.id).height))
+        : 0;
+      const baseY = rootPackageRows > 0
+        ? START_Y + rootPackageRows * (maxRootHeight + ROOT_GAP_Y)
+        : START_Y;
+
+      const cols = Math.max(1, Math.ceil(Math.sqrt(rootClasses.length)));
+      const maxRootClassW = Math.max(...rootClasses.map((c) => c.w || CLASS_W));
+      const maxRootClassH = Math.max(...rootClasses.map((c) => c.h || CLASS_H));
+      rootClasses.forEach((cls, index) => {
+        const col = index % cols;
+        const row = Math.floor(index / cols);
+        cls.x = START_X + col * (maxRootClassW + CLASS_GAP);
+        cls.y = baseY + row * (maxRootClassH + CLASS_GAP);
+      });
+    }
   }
 
   /**
