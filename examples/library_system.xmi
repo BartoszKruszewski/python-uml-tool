@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmlns:xmi="http://schema.omg.org/spec/XMI/2.1" xmlns:uml="http://schema.omg.org/spec/UML/2.1"
+    xmi:version="2.1">
+    <uml:Model xmlns:uml="http://schema.omg.org/spec/UML/2.1" xmi:id="model1" name="LibraryManagementSystem">
+        
+        <!-- Core Domain Module -->
+        <packagedElement xmi:type="uml:Package" xmi:id="pkg_core" name="core">
+            
+            <!-- Entities Sub-package -->
+            <packagedElement xmi:type="uml:Package" xmi:id="pkg_entities" name="entities">
+                
+                <packagedElement xmi:type="uml:Class" xmi:id="cls_book" name="Book">
+                    <ownedAttribute xmi:id="attr_book_isbn" name="isbn" type="String" visibility="private" />
+                    <ownedAttribute xmi:id="attr_book_title" name="title" type="String" visibility="private" />
+                    <ownedAttribute xmi:id="attr_book_author" name="author" type="String" visibility="private" />
+                    <ownedAttribute xmi:id="attr_book_year" name="publicationYear" type="Integer" visibility="private" />
+                    <ownedAttribute xmi:id="attr_book_copies" name="availableCopies" type="Integer" visibility="private" />
+                    <ownedOperation xmi:id="op_book_get_info" name="getBookInfo" visibility="public">
+                        <ownedParameter xmi:id="param_book_info_return" type="String" direction="return" />
+                    </ownedOperation>
+                    <ownedOperation xmi:id="op_book_borrow" name="borrowCopy" visibility="public">
+                        <ownedParameter xmi:id="param_book_borrow_return" type="Boolean" direction="return" />
+                    </ownedOperation>
+                    <ownedOperation xmi:id="op_book_return" name="returnCopy" visibility="public">
+                        <ownedParameter xmi:id="param_book_return_void" direction="return" />
+                    </ownedOperation>
+                </packagedElement>
+                
+                <packagedElement xmi:type="uml:Class" xmi:id="cls_user" name="User">
+                    <ownedAttribute xmi:id="attr_user_id" name="userId" type="String" visibility="private" />
+                    <ownedAttribute xmi:id="attr_user_name" name="name" type="String" visibility="private" />
+                    <ownedAttribute xmi:id="attr_user_email" name="email" type="String" visibility="private" />
+                    <ownedAttribute xmi:id="attr_user_registered" name="registrationDate" type="Date" visibility="private" />
+                    <ownedOperation xmi:id="op_user_validate" name="validateCredentials" visibility="public">
+                        <ownedParameter xmi:id="param_user_validate_pass" name="password" type="String" direction="in" />
+                        <ownedParameter xmi:id="param_user_validate_return" type="Boolean" direction="return" />
+                    </ownedOperation>
+                    <ownedOperation xmi:id="op_user_profile" name="getProfile" visibility="public">
+                        <ownedParameter xmi:id="param_user_profile_return" type="UserProfile" direction="return" />
+                    </ownedOperation>
+                </packagedElement>
+                
+                <packagedElement xmi:type="uml:Class" xmi:id="cls_member" name="Member">
+                    <ownedAttribute xmi:id="attr_member_card" name="membershipCardNumber" type="String" visibility="private" />
+                    <ownedAttribute xmi:id="attr_member_expiry" name="expiryDate" type="Date" visibility="private" />
+                    <ownedAttribute xmi:id="attr_member_points" name="loyaltyPoints" type="Integer" visibility="private" />
+                    <ownedOperation xmi:id="op_member_renew" name="renewMembership" visibility="public">
+                        <ownedParameter xmi:id="param_member_renew_months" name="months" type="Integer" direction="in" />
+                        <ownedParameter xmi:id="param_member_renew_return" direction="return" />
+                    </ownedOperation>
+                    <ownedOperation xmi:id="op_member_active" name="isActive" visibility="public">
+                        <ownedParameter xmi:id="param_member_active_return" type="Boolean" direction="return" />
+                    </ownedOperation>
+                </packagedElement>
+                
+                <packagedElement xmi:type="uml:Class" xmi:id="cls_loan" name="Loan">
+                    <ownedAttribute xmi:id="attr_loan_id" name="loanId" type="String" visibility="private" />
+                    <ownedAttribute xmi:id="attr_loan_borrowed" name="borrowDate" type="Date" visibility="private" />
+                    <ownedAttribute xmi:id="attr_loan_due" name="dueDate" type="Date" visibility="private" />
+                    <ownedAttribute xmi:id="attr_loan_returned" name="returnDate" type="Date" visibility="private" />
+                    <ownedOperation xmi:id="op_loan_overdue" name="isOverdue" visibility="public">
+                        <ownedParameter xmi:id="param_loan_overdue_return" type="Boolean" direction="return" />
+                    </ownedOperation>
+                    <ownedOperation xmi:id="op_loan_fine" name="calculateFine" visibility="public">
+                        <ownedParameter xmi:id="param_loan_fine_return" type="Decimal" direction="return" />
+                    </ownedOperation>
+                    <ownedOperation xmi:id="op_loan_extend" name="extendDueDate" visibility="public">
+                        <ownedParameter xmi:id="param_loan_extend_days" name="days" type="Integer" direction="in" />
+                        <ownedParameter xmi:id="param_loan_extend_return" type="Boolean" direction="return" />
+                    </ownedOperation>
+                </packagedElement>
+                
+                <packagedElement xmi:type="uml:Class" xmi:id="cls_reservation" name="Reservation">
+                    <ownedAttribute xmi:id="attr_res_id" name="reservationId" type="String" visibility="private" />
+                    <ownedAttribute xmi:id="attr_res_date" name="reservationDate" type="Date" visibility="private" />
+                    <ownedAttribute xmi:id="attr_res_status" name="status" type="ReservationStatus" visibility="private" />
+                    <ownedOperation xmi:id="op_res_cancel" name="cancel" visibility="public">
+                        <ownedParameter xmi:id="param_res_cancel_return" direction="return" />
+                    </ownedOperation>
+                    <ownedOperation xmi:id="op_res_fulfill" name="fulfill" visibility="public">
+                        <ownedParameter xmi:id="param_res_fulfill_return" type="Loan" direction="return" />
+                    </ownedOperation>
+                </packagedElement>
+                
+            </packagedElement>
+            
+            <!-- Repositories Sub-package -->
+            <packagedElement xmi:type="uml:Package" xmi:id="pkg_repositories" name="repositories">
+                
+                <packagedElement xmi:type="uml:Class" xmi:id="cls_repo_interface" name="IRepository">
+                    <ownedOperation xmi:id="op_repo_find" name="findById" visibility="public">
+                        <ownedParameter xmi:id="param_repo_find_id" name="id" type="String" direction="in" />
+                        <ownedParameter xmi:id="param_repo_find_return" type="Object" direction="return" />
+                    </ownedOperation>
+                    <ownedOperation xmi:id="op_repo_save" name="save" visibility="public">
+                        <ownedParameter xmi:id="param_repo_save_entity" name="entity" type="Object" direction="in" />
+                        <ownedParameter xmi:id="param_repo_save_return" direction="return" />
+                    </ownedOperation>
+                    <ownedOperation xmi:id="op_repo_delete" name="delete" visibility="public">
+                        <ownedParameter xmi:id="param_repo_delete_id" name="id" type="String" direction="in" />
+                        <ownedParameter xmi:id="param_repo_delete_return" direction="return" />
+                    </ownedOperation>
+                </packagedElement>
+                
+                <packagedElement xmi:type="uml:Class" xmi:id="cls_book_repo" name="BookRepository">
+                    <ownedOperation xmi:id="op_book_repo_search" name="searchByTitle" visibility="public">
+                        <ownedParameter xmi:id="param_book_repo_search_title" name="title" type="String" direction="in" />
+                        <ownedParameter xmi:id="param_book_repo_search_return" type="List" direction="return" />
+                    </ownedOperation>
+                    <ownedOperation xmi:id="op_book_repo_author" name="findByAuthor" visibility="public">
+                        <ownedParameter xmi:id="param_book_repo_author_name" name="author" type="String" direction="in" />
+                        <ownedParameter xmi:id="param_book_repo_author_return" type="List" direction="return" />
+                    </ownedOperation>
+                </packagedElement>
+                
+                <packagedElement xmi:type="uml:Class" xmi:id="cls_user_repo" name="UserRepository">
+                    <ownedOperation xmi:id="op_user_repo_email" name="findByEmail" visibility="public">
+                        <ownedParameter xmi:id="param_user_repo_email_email" name="email" type="String" direction="in" />
+                        <ownedParameter xmi:id="param_user_repo_email_return" type="User" direction="return" />
+                    </ownedOperation>
+                </packagedElement>
+                
+                <packagedElement xmi:type="uml:Class" xmi:id="cls_loan_repo" name="LoanRepository">
+                    <ownedOperation xmi:id="op_loan_repo_user" name="findByUser" visibility="public">
+                        <ownedParameter xmi:id="param_loan_repo_user_id" name="userId" type="String" direction="in" />
+                        <ownedParameter xmi:id="param_loan_repo_user_return" type="List" direction="return" />
+                    </ownedOperation>
+                    <ownedOperation xmi:id="op_loan_repo_overdue" name="findOverdueLoans" visibility="public">
+                        <ownedParameter xmi:id="param_loan_repo_overdue_return" type="List" direction="return" />
+                    </ownedOperation>
+                </packagedElement>
+                
+            </packagedElement>
+            
+        </packagedElement>
+        
+        <!-- Services Module -->
+        <packagedElement xmi:type="uml:Package" xmi:id="pkg_services" name="services">
+            
+            <packagedElement xmi:type="uml:Class" xmi:id="cls_loan_service" name="LoanService">
+                <ownedOperation xmi:id="op_loan_svc_borrow" name="borrowBook" visibility="public">
+                    <ownedParameter xmi:id="param_loan_svc_borrow_user" name="userId" type="String" direction="in" />
+                    <ownedParameter xmi:id="param_loan_svc_borrow_book" name="bookIsbn" type="String" direction="in" />
+                    <ownedParameter xmi:id="param_loan_svc_borrow_return" type="Loan" direction="return" />
+                </ownedOperation>
+                <ownedOperation xmi:id="op_loan_svc_return" name="returnBook" visibility="public">
+                    <ownedParameter xmi:id="param_loan_svc_return_loan" name="loanId" type="String" direction="in" />
+                    <ownedParameter xmi:id="param_loan_svc_return_void" direction="return" />
+                </ownedOperation>
+                <ownedOperation xmi:id="op_loan_svc_extend" name="extendLoan" visibility="public">
+                    <ownedParameter xmi:id="param_loan_svc_extend_loan" name="loanId" type="String" direction="in" />
+                    <ownedParameter xmi:id="param_loan_svc_extend_return" type="Boolean" direction="return" />
+                </ownedOperation>
+            </packagedElement>
+            
+            <packagedElement xmi:type="uml:Class" xmi:id="cls_reservation_service" name="ReservationService">
+                <ownedOperation xmi:id="op_res_svc_create" name="createReservation" visibility="public">
+                    <ownedParameter xmi:id="param_res_svc_create_user" name="userId" type="String" direction="in" />
+                    <ownedParameter xmi:id="param_res_svc_create_book" name="bookIsbn" type="String" direction="in" />
+                    <ownedParameter xmi:id="param_res_svc_create_return" type="Reservation" direction="return" />
+                </ownedOperation>
+                <ownedOperation xmi:id="op_res_svc_notify" name="notifyUserWhenAvailable" visibility="public">
+                    <ownedParameter xmi:id="param_res_svc_notify_res" name="reservationId" type="String" direction="in" />
+                    <ownedParameter xmi:id="param_res_svc_notify_return" direction="return" />
+                </ownedOperation>
+            </packagedElement>
+            
+            <packagedElement xmi:type="uml:Class" xmi:id="cls_notification_service" name="NotificationService">
+                <ownedOperation xmi:id="op_notif_send_email" name="sendEmail" visibility="public">
+                    <ownedParameter xmi:id="param_notif_email_to" name="toEmail" type="String" direction="in" />
+                    <ownedParameter xmi:id="param_notif_email_subject" name="subject" type="String" direction="in" />
+                    <ownedParameter xmi:id="param_notif_email_body" name="body" type="String" direction="in" />
+                    <ownedParameter xmi:id="param_notif_email_return" direction="return" />
+                </ownedOperation>
+                <ownedOperation xmi:id="op_notif_remind" name="sendOverdueReminder" visibility="public">
+                    <ownedParameter xmi:id="param_notif_remind_loan" name="loan" type="Loan" direction="in" />
+                    <ownedParameter xmi:id="param_notif_remind_return" direction="return" />
+                </ownedOperation>
+            </packagedElement>
+            
+            <packagedElement xmi:type="uml:Class" xmi:id="cls_search_service" name="SearchService">
+                <ownedOperation xmi:id="op_search_advanced" name="advancedSearch" visibility="public">
+                    <ownedParameter xmi:id="param_search_criteria" name="criteria" type="SearchCriteria" direction="in" />
+                    <ownedParameter xmi:id="param_search_return" type="List" direction="return" />
+                </ownedOperation>
+                <ownedOperation xmi:id="op_search_recommend" name="getRecommendations" visibility="public">
+                    <ownedParameter xmi:id="param_search_rec_user" name="userId" type="String" direction="in" />
+                    <ownedParameter xmi:id="param_search_rec_return" type="List" direction="return" />
+                </ownedOperation>
+            </packagedElement>
+            
+        </packagedElement>
+        
+        <!-- Infrastructure Module -->
+        <packagedElement xmi:type="uml:Package" xmi:id="pkg_infrastructure" name="infrastructure">
+            
+            <packagedElement xmi:type="uml:Package" xmi:id="pkg_database" name="database">
+                
+                <packagedElement xmi:type="uml:Class" xmi:id="cls_db_connection" name="DatabaseConnection">
+                    <ownedAttribute xmi:id="attr_db_conn_string" name="connectionString" type="String" visibility="private" />
+                    <ownedAttribute xmi:id="attr_db_pool_size" name="poolSize" type="Integer" visibility="private" />
+                    <ownedOperation xmi:id="op_db_connect" name="connect" visibility="public">
+                        <ownedParameter xmi:id="param_db_connect_return" direction="return" />
+                    </ownedOperation>
+                    <ownedOperation xmi:id="op_db_disconnect" name="disconnect" visibility="public">
+                        <ownedParameter xmi:id="param_db_disconnect_return" direction="return" />
+                    </ownedOperation>
+                    <ownedOperation xmi:id="op_db_execute" name="executeQuery" visibility="public">
+                        <ownedParameter xmi:id="param_db_execute_sql" name="sql" type="String" direction="in" />
+                        <ownedParameter xmi:id="param_db_execute_return" type="ResultSet" direction="return" />
+                    </ownedOperation>
+                </packagedElement>
+                
+                <packagedElement xmi:type="uml:Class" xmi:id="cls_transaction_mgr" name="TransactionManager">
+                    <ownedOperation xmi:id="op_txn_begin" name="beginTransaction" visibility="public">
+                        <ownedParameter xmi:id="param_txn_begin_return" direction="return" />
+                    </ownedOperation>
+                    <ownedOperation xmi:id="op_txn_commit" name="commit" visibility="public">
+                        <ownedParameter xmi:id="param_txn_commit_return" direction="return" />
+                    </ownedOperation>
+                    <ownedOperation xmi:id="op_txn_rollback" name="rollback" visibility="public">
+                        <ownedParameter xmi:id="param_txn_rollback_return" direction="return" />
+                    </ownedOperation>
+                </packagedElement>
+                
+            </packagedElement>
+            
+            <packagedElement xmi:type="uml:Package" xmi:id="pkg_external" name="external">
+                
+                <packagedElement xmi:type="uml:Class" xmi:id="cls_email_client" name="EmailClient">
+                    <ownedOperation xmi:id="op_email_send" name="send" visibility="public">
+                        <ownedParameter xmi:id="param_email_send_msg" name="message" type="EmailMessage" direction="in" />
+                        <ownedParameter xmi:id="param_email_send_return" type="Boolean" direction="return" />
+                    </ownedOperation>
+                </packagedElement>
+                
+                <packagedElement xmi:type="uml:Class" xmi:id="cls_payment_gateway" name="PaymentGateway">
+                    <ownedOperation xmi:id="op_payment_process" name="processPayment" visibility="public">
+                        <ownedParameter xmi:id="param_payment_amount" name="amount" type="Decimal" direction="in" />
+                        <ownedParameter xmi:id="param_payment_method" name="paymentMethod" type="String" direction="in" />
+                        <ownedParameter xmi:id="param_payment_return" type="PaymentResult" direction="return" />
+                    </ownedOperation>
+                </packagedElement>
+                
+            </packagedElement>
+            
+        </packagedElement>
+        
+        <!-- UI Module -->
+        <packagedElement xmi:type="uml:Package" xmi:id="pkg_ui" name="ui">
+            
+            <packagedElement xmi:type="uml:Class" xmi:id="cls_library_controller" name="LibraryController">
+                <ownedOperation xmi:id="op_ctrl_search" name="handleSearchRequest" visibility="public">
+                    <ownedParameter xmi:id="param_ctrl_search_query" name="query" type="String" direction="in" />
+                    <ownedParameter xmi:id="param_ctrl_search_return" type="View" direction="return" />
+                </ownedOperation>
+                <ownedOperation xmi:id="op_ctrl_borrow" name="handleBorrowRequest" visibility="public">
+                    <ownedParameter xmi:id="param_ctrl_borrow_isbn" name="isbn" type="String" direction="in" />
+                    <ownedParameter xmi:id="param_ctrl_borrow_return" type="View" direction="return" />
+                </ownedOperation>
+            </packagedElement>
+            
+            <packagedElement xmi:type="uml:Class" xmi:id="cls_user_controller" name="UserController">
+                <ownedOperation xmi:id="op_user_ctrl_login" name="handleLogin" visibility="public">
+                    <ownedParameter xmi:id="param_user_ctrl_email" name="email" type="String" direction="in" />
+                    <ownedParameter xmi:id="param_user_ctrl_pass" name="password" type="String" direction="in" />
+                    <ownedParameter xmi:id="param_user_ctrl_return" type="View" direction="return" />
+                </ownedOperation>
+            </packagedElement>
+            
+        </packagedElement>
+        
+        <!-- Data Types -->
+        <packagedElement xmi:type="uml:DataType" xmi:id="dt_string" name="String" />
+        <packagedElement xmi:type="uml:DataType" xmi:id="dt_integer" name="Integer" />
+        <packagedElement xmi:type="uml:DataType" xmi:id="dt_boolean" name="Boolean" />
+        <packagedElement xmi:type="uml:DataType" xmi:id="dt_date" name="Date" />
+        <packagedElement xmi:type="uml:DataType" xmi:id="dt_decimal" name="Decimal" />
+        
+        <!-- Relations: Generalization (Inheritance) -->
+        <packagedElement xmi:type="uml:Generalization" xmi:id="gen_member_user" name="MemberInheritsUser" 
+                         client="cls_member" supplier="cls_user" />
+        
+        <!-- Relations: Realization (Interface Implementation) -->
+        <packagedElement xmi:type="uml:Realization" xmi:id="real_book_repo" name="BookRepoImplementsIRepo" 
+                         client="cls_book_repo" supplier="cls_repo_interface" />
+        <packagedElement xmi:type="uml:Realization" xmi:id="real_user_repo" name="UserRepoImplementsIRepo" 
+                         client="cls_user_repo" supplier="cls_repo_interface" />
+        <packagedElement xmi:type="uml:Realization" xmi:id="real_loan_repo" name="LoanRepoImplementsIRepo" 
+                         client="cls_loan_repo" supplier="cls_repo_interface" />
+        
+        <!-- Relations: Association -->
+        <packagedElement xmi:type="uml:Association" xmi:id="assoc_loan_book" name="LoanHasBook" 
+                         client="cls_loan" supplier="cls_book" />
+        <packagedElement xmi:type="uml:Association" xmi:id="assoc_loan_member" name="LoanHasMember" 
+                         client="cls_loan" supplier="cls_member" />
+        <packagedElement xmi:type="uml:Association" xmi:id="assoc_res_book" name="ReservationForBook" 
+                         client="cls_reservation" supplier="cls_book" />
+        <packagedElement xmi:type="uml:Association" xmi:id="assoc_res_member" name="ReservationByMember" 
+                         client="cls_reservation" supplier="cls_member" />
+        
+        <!-- Relations: Dependency -->
+        <packagedElement xmi:type="uml:Dependency" xmi:id="dep_loan_svc_book_repo" name="LoanServiceUsesBookRepo" 
+                         client="cls_loan_service" supplier="cls_book_repo" />
+        <packagedElement xmi:type="uml:Dependency" xmi:id="dep_loan_svc_user_repo" name="LoanServiceUsesUserRepo" 
+                         client="cls_loan_service" supplier="cls_user_repo" />
+        <packagedElement xmi:type="uml:Dependency" xmi:id="dep_loan_svc_loan_repo" name="LoanServiceUsesLoanRepo" 
+                         client="cls_loan_service" supplier="cls_loan_repo" />
+        <packagedElement xmi:type="uml:Dependency" xmi:id="dep_res_svc_notif" name="ReservationServiceUsesNotification" 
+                         client="cls_reservation_service" supplier="cls_notification_service" />
+        <packagedElement xmi:type="uml:Dependency" xmi:id="dep_notif_email" name="NotificationUsesEmailClient" 
+                         client="cls_notification_service" supplier="cls_email_client" />
+        <packagedElement xmi:type="uml:Dependency" xmi:id="dep_search_book_repo" name="SearchServiceUsesBookRepo" 
+                         client="cls_search_service" supplier="cls_book_repo" />
+        
+        <!-- Relations: Composition (strong ownership) -->
+        <packagedElement xmi:type="uml:Composition" xmi:id="comp_repo_db" name="RepositoryOwnsDBConnection" 
+                         client="cls_book_repo" supplier="cls_db_connection" />
+        <packagedElement xmi:type="uml:Composition" xmi:id="comp_txn_db" name="TransactionManagerOwnsConnection" 
+                         client="cls_transaction_mgr" supplier="cls_db_connection" />
+        
+        <!-- Relations: Aggregation (weak ownership) -->
+        <packagedElement xmi:type="uml:Aggregation" xmi:id="agg_ctrl_loan_svc" name="ControllerAggregatesLoanService" 
+                         client="cls_library_controller" supplier="cls_loan_service" />
+        <packagedElement xmi:type="uml:Aggregation" xmi:id="agg_ctrl_search_svc" name="ControllerAggregatesSearchService" 
+                         client="cls_library_controller" supplier="cls_search_service" />
+        <packagedElement xmi:type="uml:Aggregation" xmi:id="agg_user_ctrl_user_repo" name="UserControllerAggregatesUserRepo" 
+                         client="cls_user_controller" supplier="cls_user_repo" />
+        
+    </uml:Model>
+</xmi:XMI>
